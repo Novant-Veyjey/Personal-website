@@ -1,0 +1,42 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 1000" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="base" x1="0" y1="0" x2="1" y2="1">
+      <stop stop-color="#090103"/>
+      <stop offset=".42" stop-color="#4c0410"/>
+      <stop offset=".72" stop-color="#b90b1b"/>
+      <stop offset="1" stop-color="#210106"/>
+    </linearGradient>
+    <radialGradient id="core">
+      <stop stop-color="#ff5a4f" stop-opacity=".95"/>
+      <stop offset=".35" stop-color="#ca101e" stop-opacity=".72"/>
+      <stop offset="1" stop-color="#370108" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="cloud">
+      <stop stop-color="#ff6a58" stop-opacity=".76"/>
+      <stop offset=".48" stop-color="#8f0717" stop-opacity=".62"/>
+      <stop offset="1" stop-color="#140105" stop-opacity="0"/>
+    </radialGradient>
+    <filter id="soft"><feGaussianBlur stdDeviation="28"/></filter>
+    <filter id="cloudBlur"><feGaussianBlur stdDeviation="16"/></filter>
+    <filter id="flash"><feGaussianBlur stdDeviation="7" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+  </defs>
+  <rect width="1600" height="1000" fill="url(#base)"/>
+  <ellipse cx="800" cy="470" rx="760" ry="470" fill="url(#core)" filter="url(#soft)"/>
+  <g filter="url(#cloudBlur)" opacity=".9">
+    <ellipse cx="245" cy="315" rx="330" ry="240" fill="url(#cloud)"/>
+    <ellipse cx="565" cy="220" rx="360" ry="215" fill="url(#cloud)"/>
+    <ellipse cx="920" cy="260" rx="430" ry="250" fill="url(#cloud)"/>
+    <ellipse cx="1300" cy="340" rx="430" ry="260" fill="url(#cloud)"/>
+    <ellipse cx="380" cy="710" rx="420" ry="245" fill="url(#cloud)"/>
+    <ellipse cx="820" cy="720" rx="480" ry="260" fill="url(#cloud)"/>
+    <ellipse cx="1250" cy="660" rx="430" ry="250" fill="url(#cloud)"/>
+  </g>
+  <path d="M1180 18l-114 212 92-18-116 214 172-14-72 175 214-254-128 14 118-196-130 12z" fill="#fff4e8" opacity=".94" filter="url(#flash)"/>
+  <path d="M286 278l-72 155 75-11-96 174 152-18-57 148 178-216-111 13 91-166-100 12z" fill="#ffd9cc" opacity=".76" filter="url(#flash)"/>
+  <path d="M1360 470l-96 136 66-6-103 145 151-13-78 130 193-202-111 9 90-128-132 18z" fill="#ffede3" opacity=".58" filter="url(#flash)"/>
+  <g opacity=".18" fill="none" stroke="#ff4e43" stroke-width="4">
+    <path d="M0 520q260-92 510 0t540 18 550-50"/>
+    <path d="M0 675q290-100 560 0t520 26 520-62"/>
+  </g>
+  <rect y="760" width="1600" height="240" fill="url(#base)" opacity=".82"/>
+</svg>

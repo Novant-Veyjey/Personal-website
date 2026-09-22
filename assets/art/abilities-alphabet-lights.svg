@@ -1,0 +1,47 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="1000" viewBox="0 0 1600 1000" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="room" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#08070a"/><stop offset=".42" stop-color="#241016"/><stop offset="1" stop-color="#050507"/></linearGradient>
+    <linearGradient id="wall" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#47352f"/><stop offset=".5" stop-color="#1e1719"/><stop offset="1" stop-color="#0a090b"/></linearGradient>
+    <radialGradient id="lamp"><stop stop-color="#fff6d4" stop-opacity=".82"/><stop offset=".36" stop-color="#ffcf75" stop-opacity=".34"/><stop offset="1" stop-color="#7b2b14" stop-opacity="0"/></radialGradient>
+    <filter id="blur"><feGaussianBlur stdDeviation="14"/></filter>
+    <filter id="grain"><feTurbulence type="fractalNoise" baseFrequency=".7" numOctaves="3" seed="9" result="n"/><feColorMatrix in="n" type="saturate" values="0" result="g"/><feComponentTransfer in="g"><feFuncA type="table" tableValues="0 .13"/></feComponentTransfer><feBlend in="SourceGraphic" mode="screen"/></filter>
+    <path id="wire" d="M0 175c235 126 509 70 740 186 207 104 465 76 860-17"/>
+    <path id="wire2" d="M0 274c274 105 541 46 770 151 207 95 492 97 830-24"/>
+    <path id="wire3" d="M0 365c239 84 512 47 748 140 223 89 498 102 852-22"/>
+  </defs>
+  <g filter="url(#grain)">
+    <rect width="1600" height="1000" fill="url(#room)"/>
+    <path d="M0 0h1600v760H0z" fill="url(#wall)"/>
+    <path d="M0 760h1600v240H0z" fill="#080608"/>
+    <g opacity=".22" stroke="#d4b9a2" stroke-width="3" fill="none">
+      <path d="M92 0v690M280 0v690M468 0v690M656 0v690M844 0v690M1032 0v690M1220 0v690M1408 0v690"/>
+      <path d="M0 138h1600M0 318h1600M0 498h1600M0 678h1600"/>
+    </g>
+    <ellipse cx="286" cy="680" rx="240" ry="190" fill="url(#lamp)" opacity=".62"/>
+    <ellipse cx="1310" cy="660" rx="220" ry="180" fill="url(#lamp)" opacity=".54"/>
+    <g fill="none" stroke="#fff2d2" stroke-width="4" opacity=".7">
+      <use href="#wire"/><use href="#wire2"/><use href="#wire3"/>
+      <path d="M20 0c106 224 168 378 86 680M1580 0c-114 224-171 381-94 680M456 0c50 252 43 430-20 680M1128 0c-41 253-34 428 20 680"/>
+    </g>
+    <g>
+      <circle cx="157" cy="233" r="10" fill="#ff3138"/><circle cx="268" cy="211" r="9" fill="#ffd24a"/><circle cx="386" cy="211" r="10" fill="#54d6ff"/><circle cx="512" cy="226" r="9" fill="#63ff85"/><circle cx="642" cy="271" r="10" fill="#ff4b9f"/><circle cx="784" cy="313" r="9" fill="#f5dd5b"/><circle cx="932" cy="330" r="10" fill="#65b7ff"/><circle cx="1082" cy="322" r="9" fill="#ff5f35"/><circle cx="1231" cy="291" r="10" fill="#a9ff61"/><circle cx="1381" cy="250" r="9" fill="#ff55c8"/><circle cx="1514" cy="212" r="10" fill="#55eaff"/>
+      <circle cx="80" cy="347" r="9" fill="#ffd143"/><circle cx="204" cy="335" r="10" fill="#69d8ff"/><circle cx="339" cy="335" r="9" fill="#ff4c4c"/><circle cx="480" cy="349" r="10" fill="#7bff71"/><circle cx="626" cy="392" r="9" fill="#f8ef68"/><circle cx="776" cy="438" r="10" fill="#ff4eb0"/><circle cx="934" cy="451" r="9" fill="#66beff"/><circle cx="1092" cy="434" r="10" fill="#ff743f"/><circle cx="1248" cy="394" r="9" fill="#9cff66"/><circle cx="1398" cy="341" r="10" fill="#ff5ed6"/><circle cx="1531" cy="312" r="9" fill="#54e9ff"/>
+      <circle cx="34" cy="458" r="9" fill="#61d7ff"/><circle cx="168" cy="444" r="10" fill="#ff4e42"/><circle cx="310" cy="445" r="9" fill="#ffe45a"/><circle cx="461" cy="457" r="10" fill="#63ec83"/><circle cx="619" cy="498" r="9" fill="#ff51b3"/><circle cx="786" cy="545" r="10" fill="#7ed7ff"/><circle cx="955" cy="555" r="9" fill="#ff7544"/><circle cx="1122" cy="532" r="10" fill="#9dff6b"/><circle cx="1282" cy="493" r="9" fill="#ff5ccd"/><circle cx="1430" cy="445" r="10" fill="#59e6ff"/><circle cx="1562" cy="412" r="9" fill="#ffd94c"/>
+    </g>
+    <g fill="#050405" stroke="#0b090a" stroke-width="2" transform="translate(0 34)">
+      <text x="332" y="286" font-family="Bradley Hand, Comic Sans MS, cursive" font-size="95" font-weight="700" letter-spacing="22">A B C D E F G H</text>
+      <text x="190" y="442" font-family="Bradley Hand, Comic Sans MS, cursive" font-size="95" font-weight="700" letter-spacing="22">I J K L M N O P Q R</text>
+      <text x="378" y="596" font-family="Bradley Hand, Comic Sans MS, cursive" font-size="95" font-weight="700" letter-spacing="22">S T U V W X Y Z</text>
+    </g>
+    <g fill="#070507">
+      <path d="M0 820h1600v180H0z"/>
+      <path d="M236 820h1128c-57 96-109 137-191 180H430c-86-37-146-84-194-180Z" fill="#171014"/>
+      <path d="M640 760h320v76H640z"/>
+    </g>
+    <g fill="#150f12" stroke="#342126" stroke-width="4">
+      <path d="M195 744h364v178H195z"/><path d="M1042 744h364v178h-364z"/>
+    </g>
+    <g fill="#d38d56" opacity=".72"><circle cx="255" cy="692" r="15"/><circle cx="1348" cy="688" r="15"/></g>
+    <rect x="0" y="0" width="1600" height="1000" fill="none" stroke="#e5232d" stroke-opacity=".14" stroke-width="14"/>
+  </g>
+</svg>

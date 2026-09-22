@@ -1,0 +1,23 @@
+.section--abilities {
+  position: relative;
+  background:
+    radial-gradient(ellipse at 50% 36%, rgba(128,3,18,.32), transparent 52%),
+    linear-gradient(180deg, rgba(3,2,4,.84), rgba(18,1,5,.9)),
+    url("../art/abilities-alphabet-lights.svg") center/cover fixed;
+  background-blend-mode: screen, multiply, normal;
+}
+.section--abilities::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  background:
+    radial-gradient(ellipse at 50% 42%, transparent 18%, rgba(4,1,3,.22) 55%, rgba(2,1,2,.78) 100%),
+    repeating-linear-gradient(0deg, transparent 0 4px, rgba(255,255,255,.025) 4px 5px);
+  mix-blend-mode: multiply;
+}
+.section--abilities .container { z-index: 2; }
+.section--abilities .section-head h2,
+.section--abilities .ability h3 { text-shadow: 0 0 8px rgba(255,255,255,.12), 0 0 28px rgba(229,35,45,.28); }
+.section--abilities .story-art--mind .story-art__media { box-shadow: 0 30px 90px rgba(0,0,0,.58), 0 0 52px rgba(229,35,45,.18); }

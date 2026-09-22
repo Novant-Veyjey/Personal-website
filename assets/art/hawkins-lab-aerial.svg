@@ -1,0 +1,49 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="900" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="ground" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#08090b"/><stop offset="1" stop-color="#020304"/></linearGradient>
+    <linearGradient id="roof" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#24282b"/><stop offset=".55" stop-color="#111417"/><stop offset="1" stop-color="#050608"/></linearGradient>
+    <filter id="grain"><feTurbulence type="fractalNoise" baseFrequency=".5" numOctaves="3" seed="6" result="n"/><feColorMatrix in="n" type="saturate" values="0" result="g"/><feComponentTransfer in="g"><feFuncA type="table" tableValues="0 .12"/></feComponentTransfer><feBlend in="SourceGraphic" mode="screen"/></filter>
+    <pattern id="rails" width="60" height="60" patternUnits="userSpaceOnUse"><path d="M60 0H0v60" fill="none" stroke="#596066" stroke-opacity=".2" stroke-width="1"/></pattern>
+  </defs>
+  <g filter="url(#grain)">
+    <rect width="1600" height="900" fill="url(#ground)"/>
+    <path d="M92 100h1416v700H92z" fill="#111416" stroke="#61676a" stroke-width="10"/>
+    <path d="M135 145h1330v610H135z" fill="url(#roof)" stroke="#7f8588" stroke-width="4"/>
+    <g fill="#171b1e" stroke="#737a7d" stroke-width="4">
+      <path d="M404 145h256v189H404zM940 145h256v189H940zM404 566h256v189H404zM940 566h256v189H940z"/>
+      <path d="M595 358h410v184H595z"/>
+    </g>
+    <g fill="none" stroke="#9ba2a5" stroke-width="5" opacity=".74">
+      <path d="M135 334h1330M135 566h1330M404 145v610M660 145v610M940 145v610M1196 145v610"/>
+    </g>
+    <g fill="url(#rails)"><path d="M135 145h1330v610H135z"/></g>
+    <g transform="translate(280 250)">
+      <ellipse rx="95" ry="44" fill="#b8b9b5" stroke="#646a6d" stroke-width="5"/>
+      <circle r="17" fill="#363b3e"/><path d="M0 0 76-38" stroke="#d7d7d1" stroke-width="6"/><path d="M-48 0h96" stroke="#6b7073" stroke-width="4"/>
+    </g>
+    <g transform="translate(1365 310) scale(.8)">
+      <ellipse rx="115" ry="52" fill="#bfc0ba" stroke="#676c70" stroke-width="5"/>
+      <circle r="20" fill="#34383b"/><path d="M0 0-94-45" stroke="#e0dfd8" stroke-width="7"/>
+    </g>
+    <g transform="translate(1300 670) scale(.66)">
+      <ellipse rx="130" ry="58" fill="#aeb0ac" stroke="#646a6d" stroke-width="5"/><circle r="22" fill="#35393c"/>
+    </g>
+    <g transform="translate(720 745)">
+      <ellipse rx="82" ry="38" fill="#949896" stroke="#53595c" stroke-width="4"/><circle r="14" fill="#282c2e"/>
+    </g>
+    <g fill="#c5c8c3">
+      <circle cx="560" cy="440" r="34"/><rect x="530" y="438" width="110" height="74" rx="5"/>
+      <circle cx="1045" cy="440" r="34"/><rect x="1014" y="438" width="110" height="74" rx="5"/>
+    </g>
+    <g fill="#050607" stroke="#181b1d" stroke-width="4">
+      <path d="M520 222h92v64h-92zM1050 240h94v64h-94zM512 670h96v58h-96zM1065 704h92v58h-92z"/>
+    </g>
+    <g stroke="#d8dbd7" stroke-width="4" opacity=".58">
+      <path d="M0 501h1600M800 0v900"/><circle cx="800" cy="501" r="17" fill="#08090b"/>
+    </g>
+    <text x="800" y="478" fill="#f2eee7" font-family="Bookman Old Style, Georgia, serif" font-size="76" font-weight="700" text-anchor="middle" letter-spacing="8" opacity=".94">HAWKINS NATIONAL LABORATORIES</text>
+    <text x="800" y="534" fill="#f2eee7" font-family="Songti SC, serif" font-size="35" text-anchor="middle" letter-spacing="5">霍金斯国家实验室</text>
+    <g fill="#e5232d" opacity=".65"><circle cx="488" cy="388" r="4"/><circle cx="1080" cy="390" r="3"/><circle cx="465" cy="642" r="3"/><circle cx="1122" cy="642" r="4"/></g>
+    <rect x="0" y="0" width="1600" height="900" fill="none" stroke="#e5232d" stroke-opacity=".13" stroke-width="12"/>
+  </g>
+</svg>

@@ -1,3 +1,16 @@
+(function swapStoryArt() {
+  'use strict';
+  var replacements = [
+    ['.story-art--gate img', 'assets/art/hawkins-lab.svg?v=20260922'],
+    ['.story-art--lab img', 'assets/art/hawkins-lab-aerial.svg?v=20260922'],
+    ['.story-art--mind img', 'assets/art/red-membrane.svg?v=20260922']
+  ];
+  replacements.forEach(function (entry) {
+    var image = document.querySelector(entry[0]);
+    if (image) image.src = entry[1];
+  });
+}());
+
 function initPosterSphere() {
   'use strict';
   var stage = document.getElementById('poster-sphere-stage');
@@ -108,7 +121,9 @@ function initPosterSphere() {
     pointer.x = event.clientX; pointer.y = event.clientY;
   }, { passive: true });
   stage.addEventListener('pointerdown', function (event) { pointer.active = true; pointer.x = event.clientX; pointer.y = event.clientY; stage.classList.add('is-dragging'); });
-  ['pointerup', 'pointercancel', 'pointerleave'].forEach(function (name) { stage.addEventListener(name, function () { pointer.active = false; stage.classList.remove('is-dragging'); }); });
+  ['pointerup', 'pointercancel', 'pointerleave'].forEach(function (name) {
+    stage.addEventListener(name, function () { pointer.active = false; stage.classList.remove('is-dragging'); });
+  });
   if (gsap && window.ScrollTrigger && !reduced) {
     gsap.registerPlugin(window.ScrollTrigger);
     gsap.fromTo(ball, { scale: .88, autoAlpha: .3 }, { scale: 1, autoAlpha: 1, duration: 1.2, ease: 'power3.out', scrollTrigger: { trigger: stage, start: 'top 75%', end: 'top 30%', scrub: 1 } });
