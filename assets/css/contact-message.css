@@ -1,7 +1,7 @@
 @import url("abilities-background.css");
 .story-art--message-trigger { cursor: pointer; }
-.story-art--message-trigger .story-art__media::before { content: "✦"; position: absolute; right: 18px; bottom: 18px; z-index: 4; display: grid; place-items: center; width: 34px; height: 34px; border: 1px solid rgba(255,255,255,.45); border-radius: 50%; background: rgba(7,7,9,.48); color: var(--red-bright); font: 16px/1 Georgia, serif; opacity: .8; transition: transform .3s var(--ease), background-color .3s ease, opacity .3s ease; }
-.story-art--message-trigger:hover .story-art__media::before, .story-art--message-trigger:focus-visible .story-art__media::before { opacity: 1; transform: scale(1.12); background: rgba(229,35,45,.2); }
+.story-art--message-trigger:not(.story-art--signal) .story-art__media::before { content: "✦"; position: absolute; right: 18px; bottom: 18px; z-index: 4; display: grid; place-items: center; width: 34px; height: 34px; border: 1px solid rgba(255,255,255,.45); border-radius: 50%; background: rgba(7,7,9,.48); color: var(--red-bright); font: 16px/1 Georgia, serif; opacity: .8; transition: transform .3s var(--ease), background-color .3s ease, opacity .3s ease; }
+.story-art--message-trigger:not(.story-art--signal):hover .story-art__media::before, .story-art--message-trigger:not(.story-art--signal):focus-visible .story-art__media::before { opacity: 1; transform: scale(1.12); background: rgba(229,35,45,.2); }
 .message-dialog { width: min(720px, calc(100vw - 32px)); max-width: none; max-height: min(90svh, 820px); padding: 0; border: 1px solid rgba(229,35,45,.56); background: #0b0b0e; color: #f2eee6; box-shadow: 0 34px 110px rgba(0,0,0,.75), 0 0 42px rgba(229,35,45,.14); }
 .message-dialog::backdrop { background: rgba(1,1,3,.84); backdrop-filter: blur(10px); }
 .message-dialog__surface { position: relative; display: grid; gap: 15px; max-height: min(90svh, 820px); overflow: auto; padding: 34px; }
@@ -34,4 +34,7 @@
 .message-board__reply-editor[hidden] { display: none; }
 .message-board__reply-send { justify-self: start; min-height: 34px; padding: 0 12px; border: 1px solid rgba(229,35,45,.58); background: rgba(174,9,20,.5); color: #fff; font: 700 9px/1 var(--mono); cursor: pointer; }
 .message-board__reply-send:hover { background: rgba(229,35,45,.78); }
+.message-dialog__surface.is-reply-mode > label, .message-dialog__surface.is-reply-mode .message-dialog__actions { display: none; }
+.message-dialog__surface.is-reply-mode .message-dialog__recent { border-left-color: #ff3b30; box-shadow: inset 0 0 34px rgba(229,35,45,.055); }
+.message-dialog__surface.is-reply-mode .message-board__item:first-child { border-color: rgba(229,35,45,.42); }
 @media (max-width: 560px) { .message-dialog__surface { padding: 28px 20px; } .message-dialog h2 { font-size: 30px; } .message-board__item > header, .message-board__reply > header { display: grid; } }

@@ -1,9 +1,10 @@
 (function swapStoryArt() {
   'use strict';
   var replacements = [
+    ['.story-art--signal img', 'assets/art/other-side-echo.png?v=20260922'],
     ['.story-art--gate img', 'assets/art/portal-forest.jpg?v=20260922c'],
     ['.story-art--lab img', 'assets/art/hawkins-lab.jpg?v=20260922b'],
-    ['.story-art--mind img', 'assets/art/red-membrane.svg?v=20260922']
+    ['.story-art--mind img', 'assets/art/mind-lair.jpg?v=20260922d']
   ];
   replacements.forEach(function (entry) {
     var image = document.querySelector(entry[0]);
@@ -58,13 +59,13 @@ function initPosterSphere() {
     var z2 = p.y * sp + z1 * cp;
     var depth = (z2 + 1) / 2;
     var front = 0.72 + depth * 0.44;
-    return { x: x1 * radius.x, y: -y1 * radius.y, z: z2 * radius.z, scale: front, opacity: 0.5 + depth * 0.5, depth: z2 };
+    return { x: x1 * radius.x, y: -y1 * radius.y, z: z2 * radius.z, scale: front, opacity: 0.66 + depth * 0.34, depth: z2 };
   }
   function stylePoster(poster, projected) {
     poster.style.transform = 'translate3d(' + projected.x.toFixed(1) + 'px,' + projected.y.toFixed(1) + 'px,' + projected.z.toFixed(1) + 'px) scale(' + projected.scale.toFixed(3) + ')';
     poster.style.opacity = projected.opacity.toFixed(3);
     poster.style.zIndex = String(Math.round((projected.depth + 1) * 100));
-    poster.style.filter = 'grayscale(.56) sepia(.84) saturate(' + (4.1 + projected.opacity * 1.35).toFixed(2) + ') hue-rotate(330deg) contrast(' + (1.08 + projected.opacity * .16).toFixed(2) + ') brightness(' + (1.08 + projected.opacity * .38).toFixed(2) + ')';
+    poster.style.filter = 'none';
   }
   function render() {
     posters.forEach(function (poster, index) { stylePoster(poster, project(points[slots[index]])); });

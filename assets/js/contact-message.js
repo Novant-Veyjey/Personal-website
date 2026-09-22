@@ -6,11 +6,14 @@
   var close = document.getElementById('message-close');
   var cancel = document.getElementById('message-cancel');
   var recent = document.getElementById('message-recent');
+  var title = document.getElementById('message-dialog-title');
   var hint = dialog ? dialog.querySelector('.message-dialog__hint') : null;
   var storageKey = 'upsideDownSharedMessages.v2';
   var apiUrl = window.MESSAGE_API_BASE || '/api/messages';
   var messages = [];
   var mode = 'local';
+  var currentMode = 'message';
+  var activeReplyId = null;
   var busy = false;
   if (!dialog || !form || !recent) return;
 
@@ -59,6 +62,21 @@
     busy = value;
     form.querySelectorAll('button, input, textarea').forEach(function (control) { control.disabled = value; });
   }
+  function setMode(nextMode) {
+    currentMode = nextMode === 'reply' ? 'reply' : 'message';
+    form.classList.toggle('is-reply-mode', currentMode === 'reply');
+    if (title) title.textContent = currentMode === 'reply' ? '回复另一端' : '写一条留言';
+    if (!hint) return;
+    if (currentMode === 'reply') {
+      hint.textContent = mode === 'cloud'
+        ? '选择一条留言，写下你的回复。所有访客都能看到这条回应。'
+        : '共享频道暂不可用，回复会先保存在这台设备中。';
+    } else {
+      hint.textContent = mode === 'cloud'
+        ? '留言与回复会同步到共享频道，所有访客都能看到。'
+        : '共享频道暂不可用，当前留言会先保存在这台设备中。';
+    }
+  }
   function render() {
     if (!messages.length) {
       recent.hidden = false;
@@ -70,11 +88,12 @@
       var replies = item.replies.length ? '<div class="message-board__replies">' + item.replies.map(function (reply) {
         return '<article class="message-board__reply"><header><b>' + escapeHtml(reply.name) + '</b><time>' + escapeHtml(new Date(reply.createdAt).toLocaleString()) + '</time></header><p>' + escapeHtml(reply.message) + '</p></article>';
       }).join('') + '</div>' : '';
-      return '<article class="message-board__item" data-thread="' + escapeHtml(item.id) + '">' +
+      var editorHidden = activeReplyId === item.id ? '' : ' hidden';
+      return '<article class="message-board__item" id="message-thread-' + escapeHtml(item.id) + '">' +
         '<header><b>' + escapeHtml(item.name) + '</b><time>' + escapeHtml(new Date(item.createdAt).toLocaleString()) + '</time></header>' +
         '<p>' + escapeHtml(item.message) + '</p>' + replies +
-        '<button class="message-board__reply-toggle" type="button" data-reply-toggle="' + escapeHtml(item.id) + '">回复</button>' +
-        '<div class="message-board__reply-editor" data-reply-editor="' + escapeHtml(item.id) + '" hidden>' +
+        '<button class="message-board__reply-toggle" type="button" data-reply-toggle="' + escapeHtml(item.id) + '">' + (activeReplyId === item.id ? '收起回复' : '回复') + '</button>' +
+        '<div class="message-board__reply-editor" data-reply-editor="' + escapeHtml(item.id) + '"' + editorHidden + '>' +
           '<input class="message-board__reply-name" maxlength="40" placeholder="你的名字" />' +
           '<textarea class="message-board__reply-text" rows="2" maxlength="500" placeholder="回复这条留言"></textarea>' +
           '<button class="message-board__reply-send" type="button" data-reply-send="' + escapeHtml(item.id) + '">发送回复 ↗</button>' +
@@ -89,13 +108,13 @@
   function load() {
     return request(apiUrl).then(function (result) {
       mode = 'cloud';
-      if (hint) hint.textContent = '留言与回复会同步到共享频道，所有访客都能看到。';
       applyResult(result);
+      setMode(currentMode);
     }).catch(function () {
       mode = 'local';
-      if (hint) hint.textContent = '共享频道暂不可用，当前留言会先保存在这台设备中。';
       messages = readLocal();
       render();
+      setMode(currentMode);
     });
   }
   function postMessage(data) {
@@ -103,11 +122,13 @@
     return request(apiUrl, { method: 'POST', body: JSON.stringify(data) }).then(function (result) {
       mode = 'cloud';
       applyResult(result);
+      setMode('message');
     }).catch(function () {
       var item = normalize(data);
       messages = [item].concat(messages);
       writeLocal(messages);
       render();
+      setMode('message');
       if (window.showSiteToast) window.showSiteToast('云端暂不可用，留言已保存在本机');
     }).finally(function () { setBusy(false); });
   }
@@ -115,27 +136,65 @@
     setBusy(true);
     return request(apiUrl + '/' + encodeURIComponent(id) + '/replies', { method: 'POST', body: JSON.stringify(data) }).then(function (result) {
       mode = 'cloud';
+      activeReplyId = null;
       applyResult(result);
+      setMode('reply');
     }).catch(function () {
       messages = messages.map(function (item) {
         if (item.id === id) item.replies = item.replies.concat([normalize(data)]);
         return item;
       });
+      activeReplyId = null;
       writeLocal(messages);
       render();
+      setMode('reply');
       if (window.showSiteToast) window.showSiteToast('云端暂不可用，回复已保存在本机');
     }).finally(function () { setBusy(false); });
   }
-  function open() {
-    dialog.showModal();
-    load();
+  function focusReply(id) {
+    activeReplyId = id;
+    render();
+    window.setTimeout(function () {
+      var editor = recent.querySelector('[data-reply-editor="' + id + '"]');
+      if (!editor) return;
+      editor.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      var input = editor.querySelector('.message-board__reply-name');
+      if (input) input.focus();
+    }, 80);
   }
-  function hide() { if (dialog.open) dialog.close(); }
+  function open(nextMode) {
+    setMode(nextMode);
+    activeReplyId = null;
+    if (typeof dialog.showModal === 'function') dialog.showModal();
+    else dialog.setAttribute('open', '');
+    load().then(function () {
+      if (currentMode === 'reply' && messages.length) {
+        focusReply(messages[0].id);
+      } else if (currentMode === 'message') {
+        window.setTimeout(function () {
+          var name = form.elements.name;
+          if (name) name.focus();
+        }, 80);
+      }
+    });
+  }
+  function hide() {
+    if (typeof dialog.close === 'function' && dialog.open) dialog.close();
+    else dialog.removeAttribute('open');
+    activeReplyId = null;
+  }
 
   document.querySelectorAll('[data-message-trigger]').forEach(function (trigger) {
-    trigger.addEventListener('click', open);
+    trigger.addEventListener('click', function (event) {
+      var rect = trigger.getBoundingClientRect();
+      var isBottomHalf = event.clientY > rect.top + rect.height / 2;
+      open(isBottomHalf ? 'reply' : 'message');
+    });
     trigger.addEventListener('keydown', function (event) {
-      if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); open(); }
+      if (event.key === 'Enter' || event.key === ' ') {
+        event.preventDefault();
+        open('message');
+      }
     });
   });
   if (close) close.addEventListener('click', hide);
@@ -143,7 +202,7 @@
   dialog.addEventListener('click', function (event) { if (event.target === dialog) hide(); });
   form.addEventListener('submit', function (event) {
     event.preventDefault();
-    if (busy) return;
+    if (busy || currentMode !== 'message') return;
     var data = new FormData(form);
     var item = { name: String(data.get('name') || '').trim(), message: String(data.get('message') || '').trim() };
     if (!item.name || !item.message) return;
@@ -155,8 +214,9 @@
   recent.addEventListener('click', function (event) {
     var toggle = event.target.closest('[data-reply-toggle]');
     if (toggle) {
-      var editor = recent.querySelector('[data-reply-editor="' + toggle.dataset.replyToggle + '"]');
-      if (editor) editor.hidden = !editor.hidden;
+      activeReplyId = activeReplyId === toggle.dataset.replyToggle ? null : toggle.dataset.replyToggle;
+      render();
+      if (activeReplyId) focusReply(activeReplyId);
       return;
     }
     var send = event.target.closest('[data-reply-send]');
