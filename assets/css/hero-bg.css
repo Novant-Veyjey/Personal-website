@@ -1,32 +1,53 @@
 /* ============================================================
-   首页背景：整体压暗并偏向暗红
+   首页背景 + 全站暗角：明暗与红色氛围
    ------------------------------------------------------------
-   两层一起动，才有"暗红"的厚度：
+   上一版 brightness 压到 .44、红面纱暗部又叠到 .86，
+   再加上全站暗角边缘 82% 的黑，三层一起把画面压死了，
+   底图的闪电几乎看不见。
 
-   1. .hero__storm —— 底图本体
-      · brightness 压到 .44，先把整体压暗
-      · sepia(.40) + hue-rotate(-16deg) 把色相从黄棕拉向红
-      · grayscale 降到 .10，留出红色的余地
+   这一版把明暗和颜色分开调：
+     · 亮度交给底图 filter —— 提到 .78，闪电和云层要看得到
+     · 红色交给红面纱 —— 浓度保持，但不再用黑色压死
+     · 底图上的横向压暗层同步减轻，避免左右两条黑边
+     · 全站暗角同步放松一档（见文件末尾）
 
-   2. .hero__red-veil —— 红色面纱（带 mix-blend-mode: multiply）
-      · 中心红光加浓到 .52，范围放大到 62%
-      · 上下压深的暗色同步加深
-
-   只用其中一层都会不对：只调 filter 会显得脏，
-   只加面纱则只是蒙了层红雾、不够沉。
+   注意 .hero__red-veil 带 mix-blend-mode: multiply，
+   它叠的每一分黑都会真的变黑，所以暗部 alpha 必须给得克制。
    ============================================================ */
 
+/* 底图：整体提亮，保留偏红 */
 .hero__storm {
-  filter: grayscale(.10) saturate(1.06) contrast(1.24)
-          brightness(.44) sepia(.40) hue-rotate(-16deg);
+  filter: grayscale(.06) saturate(1.18) contrast(1.12)
+          brightness(.78) sepia(.30) hue-rotate(-12deg);
 }
 
+/* 底图上的横向压暗层：减轻左右黑边 */
+.hero__storm::after {
+  background: linear-gradient(90deg,
+    rgba(8, 2, 5, .70),
+    rgba(14, 4, 8, .20) 46%,
+    rgba(8, 2, 5, .58));
+}
+
+/* 红面纱：红色加浓，暗部放松 */
 .hero__red-veil {
   background:
-    radial-gradient(62% 54% at 50% 54%, rgba(190, 8, 26, .52), transparent 76%),
+    radial-gradient(62% 54% at 50% 52%, rgba(224, 14, 36, .42), transparent 78%),
     linear-gradient(180deg,
-      rgba(14, 0, 3, .32) 0%,
-      rgba(34, 0, 7, .38) 34%,
-      rgba(14, 2, 7, .86) 78%,
-      #050102 100%);
+      rgba(26, 3, 8, .14) 0%,
+      rgba(58, 4, 14, .18) 36%,
+      rgba(22, 3, 9, .58) 80%,
+      #090103 100%);
+}
+
+/* ---- 全站暗角：放松一档 ----
+   原来边缘是 82% 的黑、纵向再叠 28% + 56%，
+   四角几乎完全糊死。这里统一减掉约三成，
+   保留电影感的收边，但让画面透气。 */
+.fx--vignette {
+  background:
+    radial-gradient(78% 74% at 50% 48%,
+      transparent 46%, rgba(0, 0, 0, .30) 78%, rgba(0, 0, 0, .62) 100%),
+    linear-gradient(180deg,
+      rgba(0, 0, 0, .18) 0%, transparent 18%, transparent 76%, rgba(0, 0, 0, .40) 100%);
 }

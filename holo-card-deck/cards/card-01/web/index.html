@@ -6,6 +6,16 @@
     <meta name="theme-color" content="#050507" />
     <link rel="icon" href="data:," />
     <title>SIGNAL · THE UPSIDE DOWN</title>
+    <script>
+      // 直接用 .../web（结尾没有斜杠）打开时，./style.css 会被解析到上一级目录，
+      // 导致样式、脚本、贴图全部 404。这里统一补上结尾斜杠再继续加载。
+      (function () {
+        var path = location.pathname;
+        if (/\/web$/.test(path)) {
+          location.replace(path + '/' + location.search + location.hash);
+        }
+      })();
+    </script>
     <link rel="stylesheet" href="./style.css" />
     <script defer src="./app.bundle.js"></script>
   </head>
@@ -41,7 +51,7 @@
     </header>
     <main>
       <section class="gallery" aria-label="卡片展台">
-        <a class="card-back" href="../../../../index.html#works" aria-label="返回选择卡片">← 返回选择卡片</a>
+        <a class="card-back" href="../../../../index.html#holo-vault" aria-label="返回选择卡片">← 返回选择卡片</a>
         <div
           class="stage"
           id="stage"

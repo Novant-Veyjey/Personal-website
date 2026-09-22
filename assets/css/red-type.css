@@ -1,0 +1,74 @@
+/* ============================================================
+   红色字型处理
+   ------------------------------------------------------------
+   覆盖 abilities-background.css 里的旧配色（该文件由
+   contact-message.css 通过 @import 引入，本文件在 index.html
+   里最后加载，用于覆盖它）。
+
+   1. 联络区大标题 SEND A / SIGNAL.
+      —— 内部填充统一改成红色（原来是米白 + 空心）
+
+   2. 联络海报 story-art--signal 的两行标语
+      —— 上行「CALLS FROM HAWKINS」：红边白字
+      —— 下行「A CRY FROM THE UPSIDE DOWN」：红字白边
+
+   注：-webkit-text-stroke 是「居中描边」，描边一半压在字里面，
+   所以想做干净的双色字，描边要比预期细一点。
+   ============================================================ */
+
+/* ---- 1. SEND A SIGNAL. —— 官方 Logo 那种空心红霓虹 ----
+   之前两行不统一：上行靠 0 0 2px 的白光渗进字心，看着是"粉红实心"；
+   下行没有白光，是空心红。
+   这里统一成一种：字心全透明，只留细红描边 + 三层递散的红辉光。
+   描边要细、辉光要散 —— 这是霓虹管的观感来源，粗描边会变成贴纸。 */
+.contact-inner h2 {
+  font-family: "ITC Benguiat", "Benguiat", "Playfair Display",
+               "Bookman Old Style", Georgia, serif;
+  font-weight: 700;
+  letter-spacing: -.03em;
+  color: transparent;
+  -webkit-text-stroke: clamp(1.4px, .13vw, 2.6px) #ff2d38;
+  paint-order: stroke fill;
+  text-shadow:
+    0 0 8px  rgba(255, 45, 56, .80),
+    0 0 22px rgba(229, 35, 45, .55),
+    0 0 52px rgba(190, 16, 30, .32);
+}
+
+.contact-inner h2 em {
+  color: transparent !important;      /* 压过 abilities-background 的 !important */
+  -webkit-text-stroke: clamp(1.4px, .13vw, 2.6px) #ff2d38;
+  text-shadow:
+    0 0 8px  rgba(255, 45, 56, .80),
+    0 0 22px rgba(229, 35, 45, .55),
+    0 0 52px rgba(190, 16, 30, .32);
+}
+
+/* ---- 2. 联络海报：整体压暗、红色转沉 ---- */
+
+/* 底图压暗偏红（原版 brightness .82 / sepia .08，太亮太灰） */
+.story-art--signal .story-art__media img {
+  filter: saturate(.80) contrast(1.18) brightness(.60)
+          sepia(.28) hue-rotate(-14deg);
+}
+
+/* ---- 两行标语：官方 Logo 那种空心红描边 ----
+   原来走的是「实心米白 + 粗红边」的贴纸风；
+   这里改成：字心透明，只留一圈红描边 + 红色辉光，
+   字体也从默认的 Times 换成高对比度衬线。
+   注：不要给 ::after 设 background —— 它同时是标语文字的载体，
+   加了背景会在字后面糊出一块渐变。底图压暗交给 img 的 filter。 */
+.story-art--signal .story-art__media::before,
+.story-art--signal .story-art__media::after {
+  font-family: "ITC Benguiat", "Benguiat", "Playfair Display",
+               "Bookman Old Style", Georgia, serif;
+  font-weight: 700;
+  letter-spacing: .012em;
+  color: transparent;                 /* 空心 */
+  -webkit-text-stroke: clamp(1.2px, .1vw, 2.1px) #ff2d38;
+  paint-order: stroke fill;
+  text-shadow:
+    0 0 6px rgba(255, 45, 56, .72),
+    0 0 20px rgba(229, 35, 45, .52),
+    0 0 46px rgba(190, 16, 30, .32);
+}

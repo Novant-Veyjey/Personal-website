@@ -7,6 +7,10 @@
   <meta name="description" content="一个怪奇物语风格的沉浸式个人主页模板。" />
   <title>YOUR NAME · THE UPSIDE DOWN</title>
   <script>document.documentElement.classList.add('js');</script>
+  <!-- 高对比度衬线：用于联络海报那两行标语，接近官方 Logo 的字形 -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="assets/css/stranger-base.css" />
   <link rel="stylesheet" href="assets/css/stranger-content.css" />
   <link rel="stylesheet" href="assets/css/stranger-contact.css" />
@@ -24,6 +28,10 @@
   <link rel="stylesheet" href="assets/css/hero-bg.css" />
   <!-- 修复：MIND LAIR 场景图被裁掉上下三成 -->
   <link rel="stylesheet" href="assets/css/scene-art-fit.css" />
+  <!-- 红色字型：联络标题内部全红 + 海报两行标语的描边反色 -->
+  <link rel="stylesheet" href="assets/css/red-type.css" />
+  <!-- 关于我区块：增加视觉层次 -->
+  <link rel="stylesheet" href="assets/css/profile-richer.css" />
   <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js" defer></script>
   <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js" defer></script>
 </head>
@@ -266,7 +274,7 @@
           </article>
         </div>
 
-        <div class="holo-vault reveal">
+        <div class="holo-vault reveal" id="holo-vault">
           <div class="holo-vault__head">
             <div>
               <p>HOLOGRAPHIC ARCHIVE / 001—006</p>
@@ -555,5 +563,6 @@
   <script src="assets/js/poster-manager.js?v=20260922e"></script>
   <script src="assets/js/poster-sphere.js"></script>
   <script src="assets/js/profile-editor.js?v=20260922e"></script>
+  <script src="assets/js/back-to-vault.js"></script>
 </body>
 </html>

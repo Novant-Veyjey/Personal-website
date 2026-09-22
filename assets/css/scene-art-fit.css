@@ -2,28 +2,52 @@
    修复：场景图「MIND LAIR · 把想象变成力量」显示不全
    ------------------------------------------------------------
    原图 assets/art/mind-lair.jpg 是 1260×945（比例 1.33，接近 4:3），
-   而它所在的 .story-art__media 是个宽幅格子（约 1.88）。
-   .story-art img 用的是 object-fit: cover，于是图片按宽度放大后
-   上下被裁掉了近三成，只剩中间那两行字母（IJKLMNOPQ / RSTUVWXYZ）。
+   而它所在的地方有三重限制会切掉内容：
 
-   做法：让这张图按自身比例撑开格子。
-   容器比例 = 原图比例时，cover 就等于「完整显示且铺满」，
-   既不会裁掉内容，也不会出现黑边。
+   1. .story-art__media 是个宽幅格子（约 1.88），
+      .story-art img 用的是 object-fit: cover
+      → 图片按宽度放大后上下被裁掉近三成
+
+   2. .story-art img 默认带 transform: scale(1.015)
+      —— 图片本身就比容器大 1.5%
+
+   3. .story-art:hover img 的 transform: scale(1.055)
+      —— 鼠标移上去再放大 5.5%，配合 .story-art 的
+      overflow: hidden，边缘继续被切
+
+   做法：让容器按原图比例撑开（比例一致时 cover 就等于完整显示），
+   同时把两处放大都关掉，只保留滤镜的悬停变化。
    ============================================================ */
 
-.story-art--mind img {
-  height: auto;              /* 覆盖 .story-art img 的 height:100% */
-  min-height: 0;             /* 覆盖 .story-art img 的 min-height:430px */
-  aspect-ratio: 1260 / 945;  /* 跟随原图比例撑开 */
-  object-fit: cover;         /* 比例一致时 = 完整显示 */
-  object-position: center;
+/* 容器跟随原图比例（align-self: start 避免被 grid 拉伸变形） */
+.story-art--mind .story-art__media {
+  align-self: start;
+  aspect-ratio: 1260 / 945;
+  min-height: 0;
 }
 
-/* 窄屏：压过 stranger-art.css 里 .story-art img 的 16 / 10 设定，
-   保持同一比例，图片依旧完整 */
+/* 图片铺满容器，不再溢出被裁 */
+.story-art--mind img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+  object-fit: cover;
+  object-position: center;
+  transform: none;             /* 关掉默认的 scale(1.015) */
+}
+
+/* 悬停只改滤镜，不再推近 */
+.story-art--mind:hover img {
+  transform: none;
+  filter: saturate(1.04) contrast(1.18) brightness(.96);
+}
+
+/* 窄屏单列时比例不变 */
 @media (max-width: 800px) {
-  .story-art--mind img {
+  .story-art--mind .story-art__media {
     aspect-ratio: 1260 / 945;
     min-height: 0;
   }
+  .story-art--mind img { min-height: 0; }
 }

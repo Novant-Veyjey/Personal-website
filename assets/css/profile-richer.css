@@ -1,0 +1,158 @@
+/* ============================================================
+   关于我区块：增加视觉层次
+   ------------------------------------------------------------
+   原来这里是：纯黑底 + 一个档案卡 + 一大段文字，
+   左边满、右边空，中间没有东西可看。
+
+   在不改 HTML 的前提下补四层：
+     1. 区块背景 —— 网格 + 两处红色光斑（原来是纯色 #050507）
+     2. 档案卡   —— 扫描纹理 + 内发光 + 呼吸感，像一块在运行的终端
+     3. 数据行   —— 悬停时左侧亮起红条
+     4. 右侧文字 —— 陈述句加竖向红条，简介段落自动编号，标签加符号
+
+   注意 .subject-card__portrait::after 已被 is-avatar 状态占用，
+   所以这里不用扫描线，改用 box-shadow 的呼吸动画，避免冲突。
+   ============================================================ */
+
+/* ---- 1. 区块背景 ---- */
+.section--profile {
+  position: relative;
+  background:
+    radial-gradient(56% 40% at 80% 10%, rgba(160, 8, 26, .22), transparent 70%),
+    radial-gradient(44% 36% at 10% 86%, rgba(120, 6, 18, .16), transparent 72%),
+    linear-gradient(180deg, #08080a 0%, #050507 58%, #070709 100%);
+}
+
+/* 网格底纹，用径向遮罩让四周淡出 */
+.section--profile::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background-image:
+    linear-gradient(rgba(255, 255, 255, .05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, .05) 1px, transparent 1px);
+  background-size: 88px 88px;
+  -webkit-mask-image: radial-gradient(72% 62% at 50% 42%, #000 8%, transparent 76%);
+  mask-image: radial-gradient(72% 62% at 50% 42%, #000 8%, transparent 76%);
+  opacity: .5;
+}
+
+.section--profile > .container { position: relative; z-index: 1; }
+
+/* ---- 2. 档案卡 ---- */
+.subject-card {
+  background:
+    linear-gradient(145deg, rgba(229, 35, 45, .08), transparent 42%),
+    repeating-linear-gradient(0deg, transparent 0 3px, rgba(255, 255, 255, .02) 3px 4px),
+    rgba(10, 10, 13, .94);
+  box-shadow:
+    0 38px 90px rgba(0, 0, 0, .58),
+    inset 0 0 0 1px rgba(255, 255, 255, .025),
+    inset 0 0 90px rgba(229, 35, 45, .06);
+  transition: border-color .5s ease, box-shadow .5s ease;
+}
+.subject-card:hover {
+  border-color: rgba(229, 35, 45, .58);
+  box-shadow:
+    0 44px 100px rgba(0, 0, 0, .62),
+    inset 0 0 0 1px rgba(255, 255, 255, .03),
+    inset 0 0 110px rgba(229, 35, 45, .1);
+}
+
+/* 头像区：红光呼吸，替代会冲突的扫描线伪元素 */
+.subject-card__portrait {
+  animation: portraitGlow 5.4s ease-in-out infinite;
+}
+@keyframes portraitGlow {
+  0%, 100% { box-shadow: inset 0 0 60px rgba(229, 35, 45, .10); }
+  50%      { box-shadow: inset 0 0 96px rgba(229, 35, 45, .24); }
+}
+
+/* ---- 3. 数据行 ---- */
+.subject-data > div {
+  position: relative;
+  transition: background-color .3s ease;
+}
+.subject-data > div::after {
+  content: "";
+  position: absolute;
+  left: -18px;
+  top: 11px;
+  bottom: 11px;
+  width: 2px;
+  background: var(--red-bright);
+  box-shadow: 0 0 12px rgba(229, 35, 45, .7);
+  opacity: 0;
+  transition: opacity .3s ease;
+}
+.subject-data > div:hover { background: rgba(229, 35, 45, .07); }
+.subject-data > div:hover::after { opacity: 1; }
+
+/* 引言上方加一条渐隐的红线 */
+.subject-card__note { position: relative; }
+.subject-card__note::before {
+  content: "";
+  display: block;
+  width: 38px;
+  height: 1px;
+  margin-bottom: 15px;
+  background: linear-gradient(90deg, var(--red-bright), transparent);
+}
+
+/* ---- 4. 右侧文字 ---- */
+/* 陈述句：左侧竖条 */
+.statement {
+  position: relative;
+  padding-left: clamp(20px, 2.2vw, 34px);
+}
+.statement::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: .14em;
+  bottom: .12em;
+  width: 2px;
+  background: linear-gradient(180deg, var(--red-bright) 0%, rgba(229, 35, 45, .5) 55%, transparent 100%);
+}
+
+/* 简介段落：自动编号 01 / 02 / 03 */
+.profile-copy__body { counter-reset: bio; }
+.profile-copy__body p {
+  position: relative;
+  padding-left: 34px;
+}
+.profile-copy__body p::before {
+  counter-increment: bio;
+  content: "0" counter(bio);
+  position: absolute;
+  left: 0;
+  top: 3px;
+  color: var(--red-bright);
+  font: 700 10px/1.6 var(--mono);
+  letter-spacing: .1em;
+  opacity: .85;
+}
+
+/* 标签：加符号 + 悬停抬升 */
+.tag-list span {
+  position: relative;
+  transition: border-color .3s ease, color .3s ease, transform .35s var(--ease), box-shadow .35s ease;
+}
+.tag-list span::before {
+  content: "▹";
+  margin-right: 7px;
+  color: var(--red-bright);
+  opacity: .75;
+}
+.tag-list span:hover {
+  transform: translateY(-3px);
+  border-color: rgba(229, 35, 45, .5);
+  color: #fff;
+  box-shadow: 0 12px 26px rgba(229, 35, 45, .16);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .subject-card__portrait { animation: none; }
+}
