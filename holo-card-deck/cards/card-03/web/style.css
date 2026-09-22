@@ -946,3 +946,29 @@ body {
 .stage {
   background-image: none !important;
 }
+/* Return to the card selection archive. */
+.card-back {
+  position: absolute;
+  top: clamp(18px, 3vw, 34px);
+  left: clamp(18px, 4vw, 54px);
+  z-index: 8;
+  display: inline-flex;
+  align-items: center;
+  min-height: 40px;
+  padding: 0 14px;
+  border: 1px solid rgba(229,35,45,.72);
+  background: rgba(7,4,7,.82);
+  color: #f2eee6;
+  font: 700 10px/1 "Cascadia Mono", Consolas, monospace;
+  letter-spacing: .1em;
+  text-decoration: none;
+  box-shadow: 0 10px 30px rgba(0,0,0,.38), 0 0 24px rgba(229,35,45,.12);
+  backdrop-filter: blur(8px);
+}
+.card-back:hover,
+.card-back:focus-visible {
+  border-color: #ff3b30;
+  background: rgba(132,5,18,.88);
+  color: #fff;
+  outline: none;
+}
