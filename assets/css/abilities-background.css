@@ -220,3 +220,18 @@
 .case-card__art--portal .art-label {
   display: none !important;
 }
+/* Project section banner. */
+.project-banner {
+  position: relative;
+  z-index: 2;
+  margin: 0 0 28px;
+  overflow: hidden;
+  border: 1px solid rgba(229,35,45,.38);
+  background: #050204;
+  box-shadow: 0 30px 90px rgba(0,0,0,.5), 0 0 42px rgba(229,35,45,.12);
+}
+.project-banner img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
