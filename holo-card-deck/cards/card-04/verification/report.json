@@ -1,0 +1,192 @@
+{
+  "target": "D:\\Users\\Voyager\\Desktop\\个人网站\\holo-card-deck\\cards\\card-04",
+  "base": "http://127.0.0.1:12870/",
+  "browser": "C:\\Program Files (x86)\\Microsoft\\Edge\\Application\\msedge.exe",
+  "passes": {
+    "desktop": {
+      "checks": [
+        {
+          "name": "viewer ready (WebGL path, not the CSS fallback)",
+          "pass": true,
+          "detail": "{\"ready\":true,\"fallback\":false,\"error\":null}"
+        },
+        {
+          "name": "card metadata rendered",
+          "pass": true,
+          "detail": "卡片 04 / HAWKINS PHOTO ARCHIVE / 04 / 05"
+        },
+        {
+          "name": "exported model reached the page",
+          "pass": true,
+          "detail": "./assets/card.glb"
+        },
+        {
+          "name": "image layers uploaded at one shared canvas",
+          "pass": true,
+          "detail": "{\"subject\":[1024,1536],\"background\":[1024,1536],\"text\":[1024,1536],\"line\":[1024,1536],\"effects\":[1024,1536]}"
+        },
+        {
+          "name": "page starts from card-config.json depths",
+          "pass": true,
+          "detail": "depth 0.42/0.42, bg -0.26/-0.26, fx 0.54, foil 0.78"
+        },
+        {
+          "name": "idle motion animates the card",
+          "pass": true,
+          "detail": "d20c29e80b9c0438 -> 7302197a036f87bf"
+        },
+        {
+          "name": "auto motion reports on",
+          "pass": true
+        },
+        {
+          "name": "drag turns the card both directions",
+          "pass": true,
+          "detail": "y -0.142 -> 0.640 / -0.644"
+        },
+        {
+          "name": "vertical drag tilts the card",
+          "pass": true,
+          "detail": "x -0.033 -> 0.319 / -0.355"
+        },
+        {
+          "name": "both tilt directions render differently",
+          "pass": true,
+          "detail": "922f0e29b414020c vs 70dd500c1bb193ee"
+        },
+        {
+          "name": "drag stops auto motion",
+          "pass": true
+        },
+        {
+          "name": "wheel zooms in and out",
+          "pass": true,
+          "detail": "1 -> 1.05 -> 0.82"
+        },
+        {
+          "name": "flip to the back works",
+          "pass": true,
+          "detail": "flipped=true"
+        },
+        {
+          "name": "view label follows the flip",
+          "pass": true
+        },
+        {
+          "name": "flip back to the front works",
+          "pass": true
+        },
+        {
+          "name": "reset returns to the study pose and un-flips",
+          "pass": true,
+          "detail": "rot [-0.034,-0.147,0] zoom=1 flipped=false"
+        },
+        {
+          "name": "keyboard arrows nudge the card",
+          "pass": true,
+          "detail": "[-0.093,-0.072,0]"
+        },
+        {
+          "name": "景深调整 panel toggles",
+          "pass": true,
+          "detail": "{\"before\":false,\"after\":true}"
+        },
+        {
+          "name": "画面比例: slider drives the uniform and the rendered frame",
+          "pass": true,
+          "detail": "uniform 1.12 -> 1.15 (control -> 1.15, readout 1.15), frame dbba6503b173bf6f -> e4d13213d16004d8"
+        },
+        {
+          "name": "画面景深: slider drives the uniform and the rendered frame",
+          "pass": true,
+          "detail": "uniform 0.42 -> 0 (control -> 0, readout 0.00), frame a2b5d559a2981ce4 -> 85228a4a3c45bbe6"
+        },
+        {
+          "name": "特效景深: slider drives the uniform and the rendered frame",
+          "pass": true,
+          "detail": "uniform 0.54 -> 0.3 (control -> 0.3, readout 0.30), frame 3cf3be924a15db36 -> 8bc8de9265052333"
+        },
+        {
+          "name": "底纹景深: slider drives the uniform and the rendered frame",
+          "pass": true,
+          "detail": "uniform -0.26 -> 0 (control -> 0, readout 0.00), frame 29154a8c9d72b9f7 -> c71f247aeac5d66e"
+        },
+        {
+          "name": "光泽 / 镭射: slider drives the uniform and the rendered frame",
+          "pass": true,
+          "detail": "uniform 0.78 -> 0.5 (control -> 0.5, readout 50%), frame 3c537d4faeb610d0 -> d68bf089cf40c070"
+        },
+        {
+          "name": "all four finishes switch the material",
+          "pass": true,
+          "detail": "珠光=0 银箔=1 烫金=3 原画=2"
+        },
+        {
+          "name": "no console errors or exceptions",
+          "pass": true,
+          "detail": "clean"
+        },
+        {
+          "name": "no failed asset requests",
+          "pass": true,
+          "detail": "clean"
+        },
+        {
+          "name": "screenshot button saves a card PNG at full resolution",
+          "pass": true,
+          "detail": "1400x1800px, 1588061 B as \"卡片 04-front.png\" (named as requested)"
+        }
+      ],
+      "consoleErrors": [],
+      "failedRequests": [],
+      "downloads": [
+        {
+          "name": "卡片 04-front.png",
+          "bytes": 1588061,
+          "png": true,
+          "size": "1400x1800px"
+        }
+      ],
+      "requestedDownloadName": "卡片 04-front.png"
+    },
+    "mobile": {
+      "checks": [
+        {
+          "name": "viewer ready at 390x844",
+          "pass": true,
+          "detail": "{\"ready\":true,\"fallback\":false,\"error\":null}"
+        },
+        {
+          "name": "narrow viewport has no horizontal overflow",
+          "pass": true,
+          "detail": "innerWidth=390 scrollWidth=390"
+        },
+        {
+          "name": "card still renders at the narrow width",
+          "pass": true,
+          "detail": "卡片 04, canvas 390x472"
+        },
+        {
+          "name": "reduced motion: auto motion off and shader clock pinned",
+          "pass": true,
+          "detail": "{\"match\":true,\"auto\":false,\"t\":0}"
+        },
+        {
+          "name": "reduced motion keeps the card still",
+          "pass": true,
+          "detail": "frame 42c6bccba4e3655c -> 42c6bccba4e3655c over 1.2s"
+        },
+        {
+          "name": "no console errors on mobile",
+          "pass": true,
+          "detail": "clean"
+        }
+      ]
+    }
+  },
+  "summary": {
+    "total": 33,
+    "passed": 33,
+    "failed": 0
+  }
+}

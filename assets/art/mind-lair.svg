@@ -1,0 +1,44 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="900" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <radialGradient id="void" cx=".5" cy=".46" r=".7"><stop offset="0" stop-color="#5f0713"/><stop offset=".3" stop-color="#260710"/><stop offset=".67" stop-color="#090608"/><stop offset="1" stop-color="#020304"/></radialGradient>
+    <radialGradient id="core"><stop offset="0" stop-color="#fff4e7"/><stop offset=".09" stop-color="#ff3b47"/><stop offset=".36" stop-color="#9f0616" stop-opacity=".5"/><stop offset="1" stop-color="#4f0009" stop-opacity="0"/></radialGradient>
+    <linearGradient id="fog" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ff94a0" stop-opacity="0"/><stop offset=".5" stop-color="#d16770" stop-opacity=".16"/><stop offset="1" stop-color="#8f2832" stop-opacity="0"/></linearGradient>
+    <filter id="blur"><feGaussianBlur stdDeviation="18"/></filter>
+    <filter id="soft"><feGaussianBlur stdDeviation="6"/></filter>
+    <filter id="grain"><feTurbulence type="fractalNoise" baseFrequency=".6" numOctaves="4" seed="32" result="n"/><feColorMatrix in="n" type="saturate" values="0" result="g"/><feComponentTransfer in="g"><feFuncA type="table" tableValues="0 .16"/></feComponentTransfer><feBlend in="SourceGraphic" mode="screen"/></filter>
+    <filter id="warp"><feTurbulence type="fractalNoise" baseFrequency=".01" numOctaves="2" seed="8" result="t"/><feDisplacementMap in="SourceGraphic" in2="t" scale="18"/></filter>
+  </defs>
+  <g filter="url(#grain)">
+    <rect width="1600" height="900" fill="url(#void)"/>
+    <ellipse cx="806" cy="405" rx="510" ry="360" fill="url(#core)" opacity=".72"/>
+    <g filter="url(#warp)" fill="#050507">
+      <path d="M0 0h290l-52 113 137 36-173 102 44 102-153 92 153 102-123 129 167 67v157H0Z"/>
+      <path d="M1600 0h-296l61 111-153 39 184 111-57 91 166 109-159 91 121 128-167 70v150h300Z"/>
+      <path d="M314 900c89-181 220-280 396-294 194-16 360 82 474 294Z"/>
+    </g>
+    <path d="M0 625c205-77 380-79 540-13 183 76 367 77 551 4 166-64 333-64 509 5v279H0Z" fill="#10090d" opacity=".82"/>
+    <ellipse cx="807" cy="575" rx="540" ry="74" fill="url(#fog)" filter="url(#soft)"/>
+    <g transform="translate(795 400)">
+      <ellipse cx="0" cy="35" rx="128" ry="176" fill="#070708" stroke="#72101a" stroke-width="5"/>
+      <ellipse cx="0" cy="35" rx="76" ry="108" fill="#17040a"/>
+      <path d="M-64 1c40 20 86 20 128 0M-70 55c44 28 95 28 140 0M-58 109c35 24 79 24 116 0" fill="none" stroke="#ff5960" stroke-width="3" opacity=".62"/>
+      <path d="M-178-91L-86-16M172-94L82-17M-196 108l104-75M197 111l-103-78" stroke="#050507" stroke-width="27" stroke-linecap="round"/>
+      <path d="M-92-27l-89-75M90-27l87-74M-102 100l-108 57M102 101l109 58" stroke="#030405" stroke-width="14" stroke-linecap="round"/>
+      <path d="M-122-48c-71-26-121-7-151 58M120-48c72-26 123-7 153 58" fill="none" stroke="#050507" stroke-width="22" stroke-linecap="round"/>
+    </g>
+    <g fill="#040506" stroke="#8c111c" stroke-width="2" opacity=".92">
+      <g transform="translate(397 257) rotate(-18)"><rect width="142" height="214" rx="4"/><path d="M18 20h106v38H18zm0 56h106v38H18zm0 56h106v38H18z"/></g>
+      <g transform="translate(1115 218) rotate(14)"><path d="M40 0h64l22 95-54 104L18 95Z"/><circle cx="72" cy="75" r="24"/></g>
+      <g transform="translate(665 103) rotate(-7)"><rect x="0" y="0" width="95" height="95" rx="4"/><rect x="18" y="18" width="59" height="59"/></g>
+      <g transform="translate(985 515) rotate(9)"><circle cx="60" cy="60" r="60"/><circle cx="60" cy="60" r="27" fill="#7b0d18"/></g>
+    </g>
+    <g fill="none" stroke="#e53843" opacity=".42">
+      <circle cx="397" cy="257" r="120"/><circle cx="1135" cy="250" r="96"/><circle cx="712" cy="151" r="72"/><circle cx="1035" cy="573" r="82"/>
+    </g>
+    <g fill="#ff2e3b" opacity=".72">
+      <circle cx="225" cy="210" r="3"/><circle cx="331" cy="480" r="2"/><circle cx="529" cy="181" r="2.4"/><circle cx="635" cy="610" r="2"/><circle cx="948" cy="167" r="2.8"/><circle cx="1218" cy="421" r="2"/><circle cx="1392" cy="282" r="2.5"/><circle cx="1338" cy="690" r="2"/><circle cx="294" cy="716" r="2.2"/>
+    </g>
+    <path d="M0 895c389-65 798-55 1600 8" fill="none" stroke="#ff323e" stroke-opacity=".22" stroke-width="4"/>
+    <path d="M0 843c305-43 623-42 955 3s471 43 645 25" fill="none" stroke="#ff3944" stroke-opacity=".08" stroke-width="14" filter="url(#soft)"/>
+  </g>
+</svg>

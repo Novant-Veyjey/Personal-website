@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#07070a" />
+  <meta name="description" content="Voyager 的个人档案、日常照片与 3D 镭射收藏卡。" />
+  <title>VOYAGER / PERSONAL SIGNAL</title>
+  <link rel="stylesheet" href="style.css" />
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js" defer></script>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js" defer></script>
+</head>
+<body>
+  <div class="grain" aria-hidden="true"></div><div class="vignette" aria-hidden="true"></div><div class="flash" id="flash" aria-hidden="true"></div>
+  <div class="scroll-progress"><i id="scroll-progress-bar"></i></div>
+  <header class="site-header">
+    <a class="brand" href="#top"><span>◉</span> SIGNAL <b>//</b> VOYAGER</a>
+    <nav aria-label="主导航"><a href="#profile">关于我</a><a href="#daily">日常</a><a href="#timeline">时间线</a><a href="#cards">镭射工坊</a></nav>
+    <div class="header-tools"><span class="live"><i></i> LIVE <strong id="clock">00:00:00</strong></span><button id="ambient-toggle" type="button" aria-pressed="false" title="切换氛围灯">灯光</button></div>
+  </header>
+
+  <main id="top">
+    <section class="hero" aria-labelledby="hero-title">
+      <div class="hero-image"><img src="../source/05.jpg" alt="户外日常合照" /></div><div class="hero-shade"></div><div class="hero-grid" aria-hidden="true"></div>
+      <div class="hero-copy"><p class="eyebrow">PERSONAL ARCHIVE / HAWKINS FREQUENCY</p><p class="file-no">SUBJECT FILE 001 · 1983—NOW</p><h1 id="hero-title">VOYAGER<em>IN THE UPSIDE DOWN</em></h1><p class="hero-intro">我把日常里的光、朋友的笑声和偶尔失真的瞬间收集起来，做成一个可以慢慢浏览的个人档案。</p><div class="hero-actions"><a class="button button-primary" href="#profile">进入我的档案 <span>↓</span></a><a class="button button-ghost" href="#daily">查看日常 <span>↗</span></a></div></div>
+      <div class="hero-status"><span>LOCATION</span><b>UNKNOWN / ONLINE</b><span>MOOD</span><b class="red">STRANGE BUT GOOD</b></div><a class="scroll-cue" href="#profile">SCROLL TO DESCEND <span>↓</span></a>
+    </section>
+
+    <section class="section profile" id="profile" aria-labelledby="profile-title"><div class="section-index">01 / PROFILE</div><div class="section-heading"><p class="eyebrow">CLASSIFIED DOSSIER</p><h2 id="profile-title">关于我<em>WHO I AM</em></h2></div><div class="profile-layout">
+      <article class="profile-card"><div class="profile-card-top"><span>SUBJECT PROFILE</span><b>NO. 011</b></div><div class="profile-portrait"><img src="../source/04.jpg" alt="个人生活照片" /><span>VOYAGER</span></div><dl><div><dt>NAME</dt><dd>Voyager</dd></div><div><dt>ROLE</dt><dd>日常记录者 / 创作者</dd></div><div><dt>BASE</dt><dd>在自己的频道里</dd></div><div><dt>STATUS</dt><dd class="online">ONLINE</dd></div></dl><p class="quote">“好奇心不是弱点，它是通向另一个世界的裂缝。”</p></article>
+      <div class="profile-story"><p class="lead">我喜欢把平凡的一天，整理成值得再次打开的东西。</p><p>这里是我的个人空间：记录正在发生的事，保存和重要的人一起度过的片段，也放一些我正在制作的实验。它不追求完美，只想让每一次回来看见的自己，都比上一次更清楚。</p><p>页面里的照片来自我的日常档案；下方的镭射工坊，则是把这些瞬间做成可以旋转、翻面和折射光线的收藏物。</p><div class="signal-tags"><span>CURIOUS</span><span>PHOTO</span><span>MEMORY</span><span>BUILDING</span></div></div>
+    </div></section>
+
+    <section class="section daily" id="daily" aria-labelledby="daily-title"><div class="section-index">02 / DAILY FILES</div><div class="section-heading"><div><p class="eyebrow">EVERYDAY TRANSMISSIONS</p><h2 id="daily-title">日常档案<em>RECENT SIGNALS</em></h2></div><p class="section-note">有些记忆没有大事件，只是某一天的光线刚好落在了正确的位置。</p></div><div class="filter-row" role="group" aria-label="日常档案筛选"><button class="filter active" data-filter="all">全部</button><button class="filter" data-filter="people">朋友</button><button class="filter" data-filter="moment">瞬间</button><button class="filter random-memory" id="random-memory">随机记忆 ↗</button></div>
+      <div class="daily-grid"><figure class="daily-feature daily-item" data-kind="people" data-memory="生日、朋友，还有被闪光灯短暂留住的一秒。"><img src="../source/01.jpg" alt="生日聚会的日常照片" loading="lazy" /><figcaption><span>FILE 001 / BIRTHDAY</span><strong>灯亮起来，大家都在场。</strong><small>生日、朋友，还有被闪光灯短暂留住的一秒。</small></figcaption></figure><div class="daily-side"><figure class="daily-item" data-kind="people" data-memory="一起走过的路，比目的地更值得记住。"><img src="../source/02.jpg" alt="两个人一起的日常照片" loading="lazy" /><figcaption><span>FILE 002 / TOGETHER</span><strong>一起走过的路</strong></figcaption></figure><figure class="daily-item" data-kind="moment" data-memory="今天遇到一点奇怪的东西。"><img src="../source/03.jpg" alt="奇异花朵与未知事物的照片" loading="lazy" /><figcaption><span>FILE 003 / STRANGE OBJECT</span><strong>今天遇到一点奇怪的东西</strong></figcaption></figure></div></div><div class="log-strip"><span>LOG / <b id="log-date">2026.09.22</b></span><p id="memory-line">正在收集新的照片、声音和故事。下一次信号会在这里出现。</p><b>● RECORDING</b></div>
+    </section>
+
+    <section class="section timeline" id="timeline" aria-labelledby="timeline-title"><div class="section-index">03 / TIMELINE</div><div class="section-heading"><div><p class="eyebrow">FIELD NOTES</p><h2 id="timeline-title">正在发生<em>STILL BECOMING</em></h2></div><p class="section-note">生活不是一条直线，更像一盘偶尔会闪一下的录像带。</p></div><div class="timeline-list"><article><span>01</span><div><small>NOW / CURRENT SIGNAL</small><h3>把日常做成自己的收藏</h3><p>持续记录照片、朋友和正在发生的微小变化。</p></div></article><article><span>02</span><div><small>RECENT / NEW FREQUENCY</small><h3>学习把想法变成可以触摸的页面</h3><p>让文字、影像、动画和交互共同讲一个故事。</p></div></article><article><span>03</span><div><small>NEXT / OPEN CHANNEL</small><h3>下一次信号，还没有名字</h3><p>但它会从一次散步、一张照片，或者一个奇怪的想法开始。</p></div></article></div></section>
+
+    <section class="section cards-section" id="cards" aria-labelledby="cards-title"><div class="section-index">04 / HOLOGRAPHIC WORKSHOP</div><div class="section-heading cards-heading"><div><p class="eyebrow">RuiC CARD ARCHIVE / BLENDER + THREE.JS</p><h2 id="cards-title">3D 镭射工坊<em>ONE PHOTO / ONE CARD</em></h2></div><a class="button button-primary" href="../cards/card-01/web/index.html">打开一张卡 <span>↗</span></a></div><p class="section-note wide-note">每一张照片对应一张独立的 3D 全息卡。拖动卡片、翻到背面，或者观察卡片边框的 26 个字母灯：它们先随机闪烁，之后进入 R → U → N 的规律节奏。</p><div class="card-grid">
+      <a class="archive-card" href="../cards/card-01/web/index.html"><img src="thumbs/card-01.png" alt="全息卡 01" loading="lazy" /><span class="archive-no">01 / 05</span><div><small>PHOTO ARCHIVE</small><h3>卡片 01</h3><p>OPEN 3D CARD ↗</p></div></a><a class="archive-card" href="../cards/card-02/web/index.html"><img src="thumbs/card-02.png" alt="全息卡 02" loading="lazy" /><span class="archive-no">02 / 05</span><div><small>PHOTO ARCHIVE</small><h3>卡片 02</h3><p>OPEN 3D CARD ↗</p></div></a><a class="archive-card" href="../cards/card-03/web/index.html"><img src="thumbs/card-03.png" alt="全息卡 03" loading="lazy" /><span class="archive-no">03 / 05</span><div><small>PHOTO ARCHIVE</small><h3>卡片 03</h3><p>OPEN 3D CARD ↗</p></div></a><a class="archive-card" href="../cards/card-04/web/index.html"><img src="thumbs/card-04.png" alt="全息卡 04" loading="lazy" /><span class="archive-no">04 / 05</span><div><small>PHOTO ARCHIVE</small><h3>卡片 04</h3><p>OPEN 3D CARD ↗</p></div></a><a class="archive-card" href="../cards/card-05/web/index.html"><img src="thumbs/card-05.png" alt="全息卡 05" loading="lazy" /><span class="archive-no">05 / 05</span><div><small>PHOTO ARCHIVE</small><h3>卡片 05</h3><p>OPEN 3D CARD ↗</p></div></a>
+    </div></section>
+  </main>
+  <footer class="site-footer"><span>THE UPSIDE DOWN / PERSONAL COLLECTION</span><span>© <span id="year">2026</span> VOYAGER</span><a href="#top">BACK TO TOP ↑</a></footer>
+  <dialog class="photo-modal" id="photo-modal"><button id="close-photo" type="button" aria-label="关闭照片">×</button><img id="modal-image" alt="放大的日常照片" /><p id="modal-caption"></p></dialog>
+  <script src="app.js"></script>
+</body>
+</html>

@@ -1,0 +1,5 @@
+optix7cache.db
+*.blend1
+Thumbs.db
+.DS_Store
+node_modules/

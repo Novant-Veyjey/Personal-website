@@ -1,0 +1,540 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#050507" />
+  <meta name="description" content="一个怪奇物语风格的沉浸式个人主页模板。" />
+  <title>YOUR NAME · THE UPSIDE DOWN</title>
+  <script>document.documentElement.classList.add('js');</script>
+  <link rel="stylesheet" href="assets/css/stranger-base.css" />
+  <link rel="stylesheet" href="assets/css/stranger-content.css" />
+  <link rel="stylesheet" href="assets/css/stranger-contact.css" />
+  <link rel="stylesheet" href="assets/css/stranger-art.css" />
+  <link rel="stylesheet" href="assets/css/stranger-profile.css" />
+  <link rel="stylesheet" href="assets/css/poster-sphere.css" />
+  <link rel="stylesheet" href="assets/css/contact-message.css" />
+  <link rel="stylesheet" href="assets/css/section-editor.css" />
+  <link rel="stylesheet" href="assets/css/poster-manager.css" />
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js" defer></script>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js" defer></script>
+</head>
+<body>
+  <a class="skip-link" href="#main">跳到主要内容</a>
+
+  <canvas id="spore-canvas" aria-hidden="true"></canvas>
+  <div class="fx fx--scanlines" aria-hidden="true"></div>
+  <div class="fx fx--grain" aria-hidden="true"></div>
+  <div class="fx fx--vignette" aria-hidden="true"></div>
+  <div class="flash" id="flash" aria-hidden="true"></div>
+  <div class="scroll-progress" aria-hidden="true"><i id="scroll-progress-bar"></i></div>
+
+  <header class="site-header" id="site-header">
+    <a class="brand" href="#top" aria-label="返回首页">
+      <span class="brand__mark" aria-hidden="true">◉</span>
+      <span class="brand__text">SIGNAL<span>//</span><span class="brand__name" data-profile-en>YOUR NAME</span></span>
+    </a>
+
+    <button class="nav-toggle" id="nav-toggle" type="button" aria-expanded="false" aria-controls="main-nav">
+      <span></span><span></span>
+      <span class="sr-only">打开导航</span>
+    </button>
+
+    <nav class="main-nav" id="main-nav" aria-label="主导航">
+      <a href="#profile">档案 <small>PROFILE</small></a>
+      <a href="#works">作品 <small>WORKS</small></a>
+      <a href="#abilities">能力 <small>ABILITIES</small></a>
+      <a href="#contact">联络 <small>CONTACT</small></a>
+    </nav>
+
+    <div class="header-status" aria-hidden="true">
+      <i></i><span>LIVE</span><b data-clock>00:00:00</b>
+    </div>
+  </header>
+
+  <main id="main">
+    <section class="hero" id="top" aria-labelledby="hero-title">
+      <div class="hero__storm" aria-hidden="true"></div>
+      <div class="hero__red-veil" aria-hidden="true"></div>
+      <div class="hero__grid" aria-hidden="true"></div>
+      <div class="hero__content">
+        <p class="eyebrow reveal" data-edit-field="hero-kicker">A PERSONAL ARCHIVE FROM THE UPSIDE DOWN</p>
+
+          <div class="hero__title-wrap section-edit-frame reveal" style="--delay: .08s" data-section-edit="hero" tabindex="0" role="button" aria-label="编辑首页内容">
+          <p class="hero__index">SUBJECT FILE · 001</p>
+          <h1 class="glitch-title" id="hero-title" data-text="YOUR NAME" data-edit-field="hero-title" data-profile-en>YOUR NAME</h1>
+          <p class="hero__cn" data-profile-one-line>你的名字 · 把脑海里的世界带到现实中来</p>
+        </div>
+
+        <p class="hero__intro reveal" style="--delay: .16s" data-edit-field="hero-lead">
+          我在风暴边缘收集灵感，用设计、代码与叙事搭建新的入口。
+          <span>向下滚动，进入我的颠倒世界。</span>
+        </p>
+
+        <div class="hero__actions">
+          <a class="btn btn--solid" href="#profile">
+            <span>进入档案</span><b aria-hidden="true">↓</b>
+          </a>
+          <a class="btn btn--ghost" href="#contact">
+            <span>发送信号</span><b aria-hidden="true">↗</b>
+          </a>
+        </div>
+      </div>
+
+      <div class="hero__telemetry" aria-label="页面状态">
+        <div><span>LOCATION</span><strong>HAWKINS, IN</strong></div>
+        <div><span>TIME PERIOD</span><strong>1983—NOW</strong></div>
+        <div><span>THREAT LEVEL</span><strong class="is-danger">STRANGE</strong></div>
+      </div>
+
+      <a class="scroll-cue" href="#profile" aria-label="向下滚动">
+        <span>SCROLL TO DESCEND</span><i></i>
+      </a>
+    </section>
+
+    <section class="poster-sphere" id="poster-sphere" aria-label="电影海报球体">
+      <div class="poster-sphere__stage" id="poster-sphere-stage">
+        <div class="poster-sphere__cloud" aria-hidden="true"></div>
+        <div class="poster-sphere__manager-frame" data-poster-manager tabindex="0" role="button" aria-label="管理球体海报" title="管理球体海报"><span>ARCHIVE FRAME</span><b>＋</b></div>
+        <div class="poster-sphere__ball" id="poster-sphere-ball">
+          <img class="poster" src="assets/posters/night-signal.svg" alt="科幻电影海报：夜间信号" />
+          <img class="poster" src="assets/posters/echo-room.svg" alt="科幻电影海报：回声房间" />
+          <img class="poster" src="assets/posters/after-rain.svg" alt="科幻电影海报：雨后" />
+          <img class="poster poster--landscape" src="assets/posters/red-frequency.svg" alt="科幻电影海报：红色频率" />
+          <img class="poster" src="assets/posters/low-tide.svg" alt="科幻电影海报：低潮" />
+          <img class="poster" src="assets/posters/the-long-way.svg" alt="科幻电影海报：远方" />
+          <img class="poster poster--landscape" src="assets/posters/sleepwalk.svg" alt="科幻电影海报：梦游" />
+          <img class="poster" src="assets/posters/blue-hour.svg" alt="科幻电影海报：蓝色时刻" />
+          <img class="poster" src="assets/posters/static-city.svg" alt="科幻电影海报：静电城市" />
+          <img class="poster poster--landscape" src="assets/posters/soft-focus.svg" alt="科幻电影海报：柔焦" />
+          <img class="poster poster--landscape" src="assets/posters/signal-bloom.svg" alt="科幻电影海报：信号绽放" />
+          <img class="poster poster--landscape" src="assets/posters/quiet-house.svg" alt="科幻电影海报：寂静屋" />
+          <img class="poster poster--landscape" src="assets/posters/orbit-days.svg" alt="科幻电影海报：轨道日" />
+          <img class="poster poster--landscape" src="assets/posters/last-frame.svg" alt="科幻电影海报：最后一帧" />
+          <img class="poster poster--landscape" src="assets/posters/warm-static.svg" alt="科幻电影海报：暖色静电" />
+          <img class="poster" src="assets/posters/void-cinema.svg" alt="科幻电影海报：虚空影院" />
+        </div>
+      </div>
+    </section>
+
+    <section class="section section--profile" id="profile" aria-labelledby="profile-title">
+      <div class="section__ghost" aria-hidden="true">01</div>
+      <div class="container">
+        <header class="section-head section-edit-frame reveal" data-section-edit="profile" tabindex="0" role="button" aria-label="编辑关于我区块">
+          <p class="section-kicker">CLASSIFIED DOSSIER</p>
+          <div>
+            <span class="section-index">01 / 04</span>
+            <h2 id="profile-title"><span data-edit-field="profile-title">关于我</span><br /><em data-edit-field="profile-subtitle">WHO AM I</em></h2>
+          </div>
+          <p class="section-lead" data-edit-field="profile-lead">一名在秩序和奇想之间工作的创造者。相信好的作品，应该像午夜电台一样让人停下来听完。</p>
+        </header>
+
+        <figure class="story-art story-art--gate reveal">
+          <div class="story-art__media">
+            <img src="assets/art/portal-forest.jpg" alt="夜色森林中通往异世界的红色裂缝插画" width="1600" height="900" loading="lazy" />
+            <span class="story-art__scan" aria-hidden="true"></span>
+          </div>
+          <figcaption class="story-art__caption">
+            <span>SCENE 01 / THE GATE</span>
+            <strong>门开在森林尽头</strong>
+            <small>每个故事，都是从一次不该回头的冒险开始。</small>
+          </figcaption>
+        </figure>
+        <div class="dossier">
+          <article class="subject-card reveal" aria-label="个人档案，点击编辑" data-profile-edit tabindex="0" role="button">
+            <div class="subject-card__top">
+              <p>SUBJECT PROFILE</p><span>NO. 011</span>
+            </div>
+            <div class="subject-card__portrait" aria-hidden="true">
+              <div class="portrait-orbit"></div>
+              <img class="subject-card__avatar" id="subject-avatar" alt="个人头像" hidden />
+              <strong data-profile-initials>YN</strong>
+              <span>UNKNOWN<br />ORIGIN</span>
+            </div>
+            <dl class="subject-data">
+              <div><dt>NAME</dt><dd data-profile-cn>你的名字</dd></div>
+              <div><dt>ROLE</dt><dd data-profile-role>职业 / 身份</dd></div>
+              <div><dt>BASE</dt><dd data-profile-location>城市 · 时区</dd></div>
+              <div><dt>STATUS</dt><dd class="is-online">ONLINE</dd></div>
+              <div id="profile-extra-data" class="profile-extra-data"></div>
+            </dl>
+            <p class="subject-card__note" data-profile-note>“好奇心不是弱点，它是通向我们世界的那道裂缝。”</p>
+          </article>
+
+          <div class="profile-copy">
+            <p class="statement reveal" data-profile-statement>我把复杂的问题拆开，再重新组装成清晰、有趣、有温度的体验。</p>
+            <div class="profile-copy__body reveal" style="--delay: .08s">
+              <p data-profile-bio="0">这里可以写你现在正在做什么、为什么做，以及你最在意的事情。建议写具体一点，让读者在十秒内记住你。</p>
+              <p data-profile-bio="1">第二段可以写你的经历、代表项目与擅长领域。不要堆砌标签，讲一个能证明能力的细节。</p>
+              <p data-profile-bio="2">第三段留给未来：你正在学习什么，下一步想去哪里，希望与怎样的人合作。</p>
+            </div>
+            <div class="tag-list reveal" id="profile-tags" style="--delay: .14s" aria-label="关键词">
+              <span>CREATIVE</span><span>CODE</span><span>DESIGN</span><span>STORY</span>
+            </div>
+            <p class="profile-edit-hint reveal" style="--delay: .18s">点击档案框修改资料 · 资料只保存在你的浏览器中</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div class="rift" aria-hidden="true">
+      <i></i><span>THE RIFT IS OPEN</span><i></i>
+    </div>
+
+    <section class="section section--works" id="works" aria-labelledby="works-title">
+      <div class="section__ghost" aria-hidden="true">02</div>
+      <div class="container">
+        <header class="section-head section-edit-frame reveal" data-section-edit="works" tabindex="0" role="button" aria-label="编辑作品区块">
+          <p class="section-kicker">CASE FILES</p>
+          <div>
+            <span class="section-index">02 / 04</span>
+            <h2 id="works-title"><span data-edit-field="works-title">精选作品</span><br /><em data-edit-field="works-subtitle">SELECTED WORKS</em></h2>
+          </div>
+          <p class="section-lead" data-edit-field="works-lead">每一个项目都是一次现场调查。把问题、判断与结果留下来，作品才会真正开口说话。</p>
+        </header>
+
+        <figure class="story-art story-art--lab reveal">
+          <div class="story-art__media">
+            <img src="assets/art/hawkins-lab.jpg" alt="红色警报下的秘密实验室走廊插画" width="1600" height="900" loading="lazy" />
+            <span class="story-art__scan" aria-hidden="true"></span>
+          </div>
+          <figcaption class="story-art__caption">
+            <span>SCENE 02 / THE LAB</span>
+            <strong>深入实验室现场</strong>
+            <small>每个作品，都是一次从线索到真相的调查。</small>
+          </figcaption>
+        </figure>
+        <div class="case-grid">
+          <article class="case-card case-card--wide reveal" data-project-edit="0" tabindex="0" role="button" aria-label="编辑项目一">
+            <div class="case-card__meta"><span>CASE 001</span><b>FEATURED</b></div>
+            <div class="case-card__art case-card__art--portal" aria-hidden="true">
+              <div class="portal"><i></i></div>
+              <span class="art-label">DIMENSION / 01</span>
+            </div>
+            <div class="case-card__body">
+              <p class="case-card__type" data-project-field="type">数字体验 · 2026</p>
+              <h3 data-project-field="title">项目名称一</h3>
+              <p data-project-field="description">一句话说明项目解决了什么问题，以及你创造了怎样不同寻常的体验。</p>
+              <a href="#contact" aria-label="查看项目名称一" data-project-field="linkText">查看案例 <span>↗</span></a>
+            </div>
+          </article>
+
+          <article class="case-card reveal" data-project-edit="1" tabindex="0" role="button" aria-label="编辑项目二" style="--delay: .08s">
+            <div class="case-card__meta"><span>CASE 002</span><b>BUILD</b></div>
+            <div class="case-card__art case-card__art--pulse" aria-hidden="true">
+              <span class="pulse-ring"></span><span class="pulse-ring"></span><i>011</i>
+            </div>
+            <div class="case-card__body">
+              <p class="case-card__type" data-project-field="type">品牌 / 产品 · 2025</p>
+              <h3 data-project-field="title">项目名称二</h3>
+              <p data-project-field="description">用一条结果数据或关键洞察，证明这个项目为什么值得被看见。</p>
+              <a href="#contact" aria-label="查看项目名称二" data-project-field="linkText">查看案例 <span>↗</span></a>
+            </div>
+          </article>
+
+          <article class="case-card reveal" data-project-edit="2" tabindex="0" role="button" aria-label="编辑项目三" style="--delay: .16s">
+            <div class="case-card__meta"><span>CASE 003</span><b>EXPERIMENT</b></div>
+            <div class="case-card__art case-card__art--signal" aria-hidden="true">
+              <div class="signal-lines"><i></i><i></i><i></i><i></i><i></i></div>
+              <span>NO SIGNAL / FIND ME</span>
+            </div>
+            <div class="case-card__body">
+              <p class="case-card__type" data-project-field="type">实验 / 个人项目 · 2025</p>
+              <h3 data-project-field="title">项目名称三</h3>
+              <p data-project-field="description">留下一个没有标准答案的问题，以及你在探索过程中得到的答案。</p>
+              <a href="#contact" aria-label="查看项目名称三" data-project-field="linkText">查看案例 <span>↗</span></a>
+            </div>
+          </article>
+        </div>
+
+        <div class="holo-vault reveal">
+          <div class="holo-vault__head">
+            <div>
+              <p>HOLOGRAPHIC ARCHIVE / 001—006</p>
+              <h3>全息收藏档案</h3>
+            </div>
+            <span>把四个故事节点压进三层景深里。移动鼠标，卡面会像旧时代的镭射收藏卡一样折射红光。</span>
+            <span class="holo-open holo-open--static">五张照片档案 / 点击直接查看</span>
+          </div>
+          <div class="holo-grid holo-grid--five">
+          <a class="holo-card" href="holo-card-deck/cards/card-01/web/index.html">
+            <img class="holo-card__layer holo-card__layer--back" src="holo-card-deck/web/thumbs/card-01.png" alt="" loading="lazy" />
+            <img class="holo-card__layer holo-card__layer--subject" src="holo-card-deck/web/thumbs/card-01.png" alt="照片档案 01 全息卡" loading="lazy" />
+            <span class="holo-card__layer holo-card__layer--effects" aria-hidden="true"></span>
+            <span class="holo-card__layer holo-card__layer--foil" aria-hidden="true"></span>
+            <span class="holo-card__badge">01 / 05</span>
+            <div class="holo-card__copy"><small>RuiC 3D / BLENDER</small><h4>01 / FRIENDS</h4><p>Friends don’t lie</p></div>
+          </a>
+          <a class="holo-card" href="holo-card-deck/cards/card-02/web/index.html">
+            <img class="holo-card__layer holo-card__layer--back" src="holo-card-deck/web/thumbs/card-02.png" alt="" loading="lazy" />
+            <img class="holo-card__layer holo-card__layer--subject" src="holo-card-deck/web/thumbs/card-02.png" alt="照片档案 02 全息卡" loading="lazy" />
+            <span class="holo-card__layer holo-card__layer--effects" aria-hidden="true"></span>
+            <span class="holo-card__layer holo-card__layer--foil" aria-hidden="true"></span>
+            <span class="holo-card__badge">02 / 05</span>
+            <div class="holo-card__copy"><small>RuiC 3D / BLENDER</small><h4>02 / MORNING</h4><p>Mornings are for coffee and contemplation.</p></div>
+          </a>
+          <a class="holo-card" href="holo-card-deck/cards/card-03/web/index.html">
+            <img class="holo-card__layer holo-card__layer--back" src="holo-card-deck/web/thumbs/card-03.png" alt="" loading="lazy" />
+            <img class="holo-card__layer holo-card__layer--subject" src="holo-card-deck/web/thumbs/card-03.png" alt="照片档案 03 全息卡" loading="lazy" />
+            <span class="holo-card__layer holo-card__layer--effects" aria-hidden="true"></span>
+            <span class="holo-card__layer holo-card__layer--foil" aria-hidden="true"></span>
+            <span class="holo-card__badge">03 / 05</span>
+            <div class="holo-card__copy"><small>RuiC 3D / BLENDER</small><h4>03 / FEAR</h4><p>It feeds on fear</p></div>
+          </a>
+          <a class="holo-card" href="holo-card-deck/cards/card-04/web/index.html">
+            <img class="holo-card__layer holo-card__layer--back" src="holo-card-deck/web/thumbs/card-04.png" alt="" loading="lazy" />
+            <img class="holo-card__layer holo-card__layer--subject" src="holo-card-deck/web/thumbs/card-04.png" alt="照片档案 04 全息卡" loading="lazy" />
+            <span class="holo-card__layer holo-card__layer--effects" aria-hidden="true"></span>
+            <span class="holo-card__layer holo-card__layer--foil" aria-hidden="true"></span>
+            <span class="holo-card__badge">04 / 05</span>
+            <div class="holo-card__copy"><small>RuiC 3D / BLENDER</small><h4>04 / 353 DAYS</h4><p>I called you every night. Every night for 353 days.</p></div>
+          </a>
+          <a class="holo-card" href="holo-card-deck/cards/card-05/web/index.html">
+            <img class="holo-card__layer holo-card__layer--back" src="holo-card-deck/web/thumbs/card-05.png" alt="" loading="lazy" />
+            <img class="holo-card__layer holo-card__layer--subject" src="holo-card-deck/web/thumbs/card-05.png" alt="照片档案 05 全息卡" loading="lazy" />
+            <span class="holo-card__layer holo-card__layer--effects" aria-hidden="true"></span>
+            <span class="holo-card__layer holo-card__layer--foil" aria-hidden="true"></span>
+            <span class="holo-card__badge">05 / 05</span>
+            <div class="holo-card__copy"><small>RuiC 3D / BLENDER</small><h4>05 / HEART</h4><p>You’re the heart.</p></div>
+          </a>        </div>
+      </div>
+    </section>
+
+    <section class="section section--abilities" id="abilities" aria-labelledby="abilities-title">
+      <div class="section__ghost" aria-hidden="true">03</div>
+      <div class="container">
+        <header class="section-head section-edit-frame reveal" data-section-edit="abilities" tabindex="0" role="button" aria-label="编辑能力区块">
+          <p class="section-kicker">STRANGE ABILITIES</p>
+          <div>
+            <span class="section-index">03 / 04</span>
+            <h2 id="abilities-title"><span data-edit-field="abilities-title">我的能力</span><br /><em data-edit-field="abilities-subtitle">WHAT I DO</em></h2>
+          </div>
+          <p class="section-lead" data-edit-field="abilities-lead">不是一份长长的工具清单，而是我面对未知问题时，最常调用的四种能力。</p>
+        </header>
+
+        <figure class="story-art story-art--mind reveal">
+          <div class="story-art__media">
+            <img src="assets/art/mind-lair.jpg" alt="漂浮着物体与红色能量的异世界洞穴插画" width="1600" height="900" loading="lazy" />
+            <span class="story-art__scan" aria-hidden="true"></span>
+          </div>
+          <figcaption class="story-art__caption">
+            <span>SCENE 03 / MIND LAIR</span>
+            <strong>把想象变成力量</strong>
+            <small>灵感看不见，但可以训练、组织，并真正做出来。</small>
+          </figcaption>
+        </figure>
+        <div class="ability-board">
+          <article class="ability reveal" data-ability-edit="0" tabindex="0" role="button" aria-label="编辑发现问题能力">
+            <span class="ability__no">01</span>
+            <div class="ability__icon" aria-hidden="true">⌁</div>
+            <h3 data-ability-field="title">发现问题</h3>
+            <p data-ability-field="description">从噪声里找到真正的信号，把模糊需求翻译成清晰问题。</p>
+            <div class="ability__tags" data-ability-field="tags"><span>RESEARCH</span><span>INSIGHT</span></div>
+          </article>
+          <article class="ability reveal" data-ability-edit="1" tabindex="0" role="button" aria-label="编辑建立系统能力" style="--delay: .06s">
+            <span class="ability__no">02</span>
+            <div class="ability__icon" aria-hidden="true">◇</div>
+            <h3 data-ability-field="title">建立系统</h3>
+            <p data-ability-field="description">把灵感组织成结构，让设计、内容与技术彼此咬合。</p>
+            <div class="ability__tags" data-ability-field="tags"><span>DESIGN</span><span>SYSTEM</span></div>
+          </article>
+          <article class="ability reveal" data-ability-edit="2" tabindex="0" role="button" aria-label="编辑把它做出来能力" style="--delay: .12s">
+            <span class="ability__no">03</span>
+            <div class="ability__icon" aria-hidden="true">≋</div>
+            <h3 data-ability-field="title">把它做出来</h3>
+            <p data-ability-field="description">从第一张草图到最后一处细节，亲手把想法推出实验室。</p>
+            <div class="ability__tags" data-ability-field="tags"><span>BUILD</span><span>MOTION</span></div>
+          </article>
+          <article class="ability reveal" data-ability-edit="3" tabindex="0" role="button" aria-label="编辑持续进化能力" style="--delay: .18s">
+            <span class="ability__no">04</span>
+            <div class="ability__icon" aria-hidden="true">∞</div>
+            <h3 data-ability-field="title">持续进化</h3>
+            <p data-ability-field="description">复盘结果，快速调整，让每次发布都成为下一次进化的样本。</p>
+            <div class="ability__tags" data-ability-field="tags"><span>ITERATE</span><span>LEARN</span></div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section section--contact" id="contact" aria-labelledby="contact-title">
+      <div class="section__ghost" aria-hidden="true">04</div>
+      <div class="contact-storm" aria-hidden="true"></div>
+      <div class="container contact-inner">
+        <figure class="story-art story-art--signal story-art--message-trigger reveal" data-message-trigger="true" tabindex="0" role="button" aria-label="点击联系图片写留言">
+          <div class="story-art__media">
+            <img src="assets/art/signal-station.jpg" alt="山顶天线和手电筒信号下的儿童剪影插画" width="1600" height="900" loading="lazy" />
+            <span class="story-art__scan" aria-hidden="true"></span>
+          </div>
+          <figcaption class="story-art__caption">
+            <span>SCENE 04 / OPEN CHANNEL</span>
+            <strong>等待另一端回应</strong>
+            <small>无论你在哪座城市，频道六始终开放。</small>
+          </figcaption>
+        </figure>
+        <p class="section-kicker reveal">OPEN CHANNEL</p>
+        <p class="contact-small reveal">如果你也正在做一件有点奇怪、但很酷的事情</p>
+        <h2 id="contact-title" class="section-edit-frame reveal" data-section-edit="contact" tabindex="0" role="button" aria-label="编辑联络区块"><span data-edit-field="contact-title">SEND A</span><br /><em data-edit-field="contact-subtitle">SIGNAL.</em></h2>
+        <p class="contact-copy reveal" data-edit-field="contact-lead">欢迎交流合作、项目机会，或者只是分享一个奇怪的想法。信号收到后，我会尽快回应。</p>
+
+        <div class="contact-actions reveal">
+          <button class="copy-mail" id="copy-mail" type="button" data-mail="you@example.com">
+            <span id="contact-email">you@example.com</span><b>点击复制</b>
+          </button>
+          <a class="contact-link" id="contact-github" href="https://github.com/yourname" target="_blank" rel="noreferrer"><span class="contact-link__label">GITHUB</span> <b>↗</b></a>
+          <a class="contact-link" id="contact-wechat" href="#" aria-label="微信二维码占位"><span class="contact-link__label">WECHAT</span> <b>↗</b></a>
+        </div>
+
+        <footer class="site-footer">
+          <p>© <span id="year">2026</span> <span data-profile-en>YOUR NAME</span> · BUILT IN THE UPSIDE DOWN</p>
+          <a href="#top">BACK TO TOP ↑</a>
+        </footer>
+      </div>
+    </section>
+  </main>
+
+  <div class="profile-modal" id="profile-modal" aria-hidden="true">
+    <div class="profile-modal__scrim" data-profile-close></div>
+    <section class="profile-modal__panel" role="dialog" aria-modal="true" aria-labelledby="profile-editor-title">
+      <header class="profile-modal__head">
+        <div><p>SUBJECT DATABASE / LOCAL ONLY</p><h2 id="profile-editor-title">编辑我的资料</h2></div>
+        <button class="profile-modal__close" type="button" data-profile-close aria-label="关闭编辑器">×</button>
+      </header>
+      <form class="profile-form" id="profile-form">
+        <div class="profile-form__grid">
+          <div class="profile-avatar-field">
+            <div class="profile-avatar-preview" id="profile-avatar-preview">YN</div>
+            <label class="profile-file-btn">上传头像<input id="profile-avatar-input" type="file" accept="image/png,image/jpeg,image/webp" /></label>
+            <button id="profile-avatar-remove" type="button">移除头像</button>
+            <small>图片会压缩后保存在浏览器中</small>
+          </div>
+          <div class="profile-fields">
+            <label><span>中文姓名</span><input name="cnName" type="text" maxlength="24" required /></label>
+            <label><span>英文姓名 / 标题</span><input name="enName" type="text" maxlength="32" required /></label>
+            <label><span>职业 / 身份</span><input name="role" type="text" maxlength="40" /></label>
+            <label><span>城市 · 时区</span><input name="location" type="text" maxlength="40" /></label>
+            <label><span>姓名缩写</span><input name="initials" type="text" maxlength="3" /></label>
+            <label><span>一句话介绍</span><input name="oneLine" type="text" maxlength="64" /></label>
+          </div>
+        </div>
+
+        <label class="profile-field-wide"><span>个人主张 / 首句</span><textarea name="statement" rows="2" maxlength="120"></textarea></label>
+        <div class="profile-form__grid profile-form__grid--bio">
+          <label><span>简介 01</span><textarea name="bio0" rows="3" maxlength="220"></textarea></label>
+          <label><span>简介 02</span><textarea name="bio1" rows="3" maxlength="220"></textarea></label>
+          <label><span>简介 03</span><textarea name="bio2" rows="3" maxlength="220"></textarea></label>
+        </div>
+        <div class="profile-form__grid">
+          <label><span>标签，用逗号分隔</span><input name="tags" type="text" maxlength="100" /></label>
+          <label><span>邮箱</span><input name="email" type="email" maxlength="80" /></label>
+          <label><span>GitHub 地址</span><input name="github" type="url" maxlength="160" /></label>
+          <label><span>微信号</span><input name="wechat" type="text" maxlength="40" /></label>
+        </div>
+        <label class="profile-field-wide"><span>档案卡引言</span><input name="note" type="text" maxlength="100" /></label>
+
+        <fieldset class="profile-extra-editor">
+          <legend>自定义资料项</legend>
+          <div id="profile-extra-fields"></div>
+          <button class="profile-add-extra" id="profile-add-extra" type="button">＋ 添加一项资料</button>
+        </fieldset>
+
+        <footer class="profile-form__actions">
+          <button class="profile-reset" id="profile-reset" type="button">恢复默认</button>
+          <button class="profile-save" type="submit">保存并更新页面 <span>↗</span></button>
+        </footer>
+      </form>
+    </section>
+  </div>
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  <dialog class="message-dialog" id="message-dialog" aria-labelledby="message-dialog-title">
+    <form class="message-dialog__surface" id="message-form">
+      <button class="message-dialog__close" id="message-close" type="button" aria-label="关闭留言窗口">×</button>
+      <p class="message-dialog__kicker">OPEN CHANNEL / LOCAL MESSAGE</p>
+      <h2 id="message-dialog-title">写一条留言</h2>
+      <p class="message-dialog__hint">把想说的话留在频道里，只会保存在这台设备的浏览器中。</p>
+      <label><span>你的名字</span><input name="name" type="text" maxlength="40" autocomplete="name" required /></label>
+      <label><span>留言内容</span><textarea name="message" rows="5" maxlength="500" required></textarea></label>
+      <div class="message-dialog__actions">
+        <button class="message-dialog__save" type="submit">保存留言 <span>↗</span></button>
+        <button class="message-dialog__cancel" id="message-cancel" type="button">取消</button>
+      </div>
+      <div class="message-dialog__recent" id="message-recent" hidden></div>
+    </form>
+  </dialog>
+  <dialog class="section-editor-dialog" id="section-editor" aria-labelledby="section-editor-title">
+    <form class="section-editor__surface" id="section-editor-form">
+      <button class="section-editor__close" id="section-editor-close" type="button" aria-label="关闭区块编辑器">×</button>
+      <p class="section-editor__kicker">LOCAL CONTENT CONTROL</p>
+      <h2 id="section-editor-title">编辑区块</h2>
+      <input name="sectionKey" type="hidden" />
+      <label><span>主标题</span><input name="title" type="text" maxlength="80" required /></label>
+      <label><span>英文标题 / 标签</span><input name="subtitle" type="text" maxlength="100" /></label>
+      <label><span>介绍文字</span><textarea name="lead" rows="4" maxlength="320"></textarea></label>
+      <label><span>新增补充内容</span><textarea name="extra" rows="3" maxlength="260" placeholder="可以写当前区块的新备注或更新内容"></textarea></label>
+      <div class="section-editor__actions">
+        <button class="section-editor__reset" id="section-editor-reset" type="button">恢复默认</button>
+        <button class="section-editor__save" type="submit">保存区块 <span>↗</span></button>
+      </div>
+    </form>
+  </dialog>
+  <dialog class="ability-editor-dialog" id="ability-editor" aria-labelledby="ability-editor-title">
+    <form class="ability-editor__surface" id="ability-editor-form">
+      <button class="ability-editor__close" id="ability-editor-close" type="button" aria-label="关闭能力编辑器">×</button>
+      <p class="ability-editor__kicker">LOCAL ABILITY CONTROL</p>
+      <h2 id="ability-editor-title">编辑能力</h2>
+      <input name="abilityKey" type="hidden" />
+      <label><span>能力标题</span><input name="title" type="text" maxlength="50" required /></label>
+      <label><span>说明文字</span><textarea name="description" rows="4" maxlength="240" required></textarea></label>
+      <label><span>标签，用逗号分隔</span><input name="tags" type="text" maxlength="80" placeholder="RESEARCH, INSIGHT" /></label>
+      <label><span>图标字符</span><input name="icon" type="text" maxlength="3" /></label>
+      <div class="ability-editor__actions">
+        <button class="ability-editor__reset" id="ability-editor-reset" type="button">恢复默认</button>
+        <button class="ability-editor__save" type="submit">保存能力 <span>↗</span></button>
+      </div>
+    </form>
+  </dialog>
+  <dialog class="project-editor-dialog" id="project-editor" aria-labelledby="project-editor-title">
+    <form class="project-editor__surface" id="project-editor-form">
+      <button class="project-editor__close" id="project-editor-close" type="button" aria-label="关闭项目编辑器">×</button>
+      <p class="project-editor__kicker">LOCAL CASE FILE CONTROL</p>
+      <h2 id="project-editor-title">编辑项目</h2>
+      <input name="projectKey" type="hidden" />
+      <label><span>项目类型 / 年份</span><input name="type" type="text" maxlength="60" required /></label>
+      <label><span>项目名称</span><input name="title" type="text" maxlength="60" required /></label>
+      <label><span>项目说明</span><textarea name="description" rows="4" maxlength="240" required></textarea></label>
+      <label><span>链接文字</span><input name="linkText" type="text" maxlength="40" /></label>
+      <div class="project-editor__actions">
+        <button class="project-editor__reset" id="project-editor-reset" type="button">恢复默认</button>
+        <button class="project-editor__save" type="submit">保存项目 <span>↗</span></button>
+      </div>
+    </form>
+  </dialog>
+  <dialog class="poster-manager-dialog" id="poster-manager" aria-labelledby="poster-manager-title">
+    <form class="poster-manager__surface" id="poster-manager-form">
+      <button class="poster-manager__close" id="poster-manager-close" type="button" aria-label="关闭海报管理器">×</button>
+      <p class="poster-manager__kicker">ARCHIVE FRAME / LOCAL ONLY</p>
+      <h2 id="poster-manager-title">管理球体海报</h2>
+      <p class="poster-manager__hint">上传你的科幻电影封面，点击列表中的替换或删除即可立即更新球体。图片只保存在当前浏览器。</p>
+      <label class="poster-manager__upload"><span>添加图片</span><input id="poster-manager-input" type="file" accept="image/png,image/jpeg,image/webp" multiple /></label>
+      <div class="poster-manager__list" id="poster-manager-list"></div>
+      <button class="poster-manager__done" id="poster-manager-done" type="button">完成 <span>↗</span></button>
+    </form>
+  </dialog>
+  <dialog class="poster-preview-dialog" id="poster-preview" aria-labelledby="poster-preview-title">
+    <div class="poster-preview__surface">
+      <button class="poster-preview__close" id="poster-preview-close" type="button" aria-label="关闭海报预览">×</button>
+      <p class="poster-preview__kicker">SIGNAL FRAME / SELECTED IMAGE</p>
+      <h2 id="poster-preview-title">科幻海报</h2>
+      <img id="poster-preview-image" alt="海报预览" />
+      <button class="poster-preview__edit" id="poster-preview-edit" type="button">修改这张 <span>↗</span></button>
+    </div>
+  </dialog>
+  <script src="assets/js/stranger.js"></script>
+  <script src="assets/js/contact-message.js"></script>
+  <script src="assets/js/section-editor.js"></script>
+  <script src="assets/js/ability-editor.js"></script>
+  <script src="assets/js/project-editor.js"></script>
+  <script src="assets/js/poster-manager.js"></script>
+  <script src="assets/js/poster-sphere.js"></script>
+  <script src="assets/js/profile-editor.js"></script>
+</body>
+</html>

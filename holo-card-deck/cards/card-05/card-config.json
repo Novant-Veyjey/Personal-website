@@ -1,0 +1,33 @@
+{
+  "title": "05 / HEART",
+  "subtitle": "HAWKINS PHOTO ARCHIVE",
+  "technique": "闪光显影",
+  "tagline": "You’re the heart.",
+  "edition": "05 / 05",
+  "collection": "颠倒世界 / 个人全息典藏",
+  "description": "单张照片制作的可交互 3D 全息收藏卡，包含独立 Blender 工程。",
+  "font": "C:/Windows/Fonts/msyhbd.ttc",
+  "assets": {
+    "model": "./assets/card.glb",
+    "subject": "./assets/subject.png",
+    "background": "./assets/background.png",
+    "text": "./assets/text.png",
+    "lineart": "./assets/lineart.png",
+    "effects": "./assets/effects.png"
+  },
+  "parameters": {
+    "subjectScale": 1.12,
+    "subjectDepth": 0.18,
+    "backgroundDepth": -0.26,
+    "effectsScale": 1.04,
+    "effectsDepth": 0.54,
+    "foil": 0.78
+  },
+  "safeArea": {
+    "scale": 1.12,
+    "offset": [
+      -0.05,
+      -0.07
+    ]
+  }
+}

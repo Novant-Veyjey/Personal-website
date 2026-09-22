@@ -1,0 +1,93 @@
+{
+  "blender": "5.2.2 LTS",
+  "language": "zh_HANS",
+  "interface_translation": true,
+  "config": "C:\\Users\\Voyager\\AppData\\Roaming\\Blender Foundation\\Blender\\5.2\\config",
+  "render_engine": "CYCLES",
+  "device": "GPU",
+  "images": {
+    "subject": {
+      "size": [
+        1024,
+        1536
+      ],
+      "channels": 4,
+      "packed": true
+    },
+    "text": {
+      "size": [
+        1024,
+        1536
+      ],
+      "channels": 4,
+      "packed": true
+    },
+    "background": {
+      "size": [
+        1024,
+        1536
+      ],
+      "channels": 4,
+      "packed": true
+    },
+    "lineart": {
+      "size": [
+        1024,
+        1536
+      ],
+      "channels": 4,
+      "packed": true
+    },
+    "effects": {
+      "size": [
+        1024,
+        1536
+      ],
+      "channels": 4,
+      "packed": true
+    }
+  },
+  "planes": {
+    "主体平面 · 完整视差合成": {
+      "rotation_degrees": [
+        90.0,
+        0.0,
+        0.0
+      ],
+      "mode": "OBJECT"
+    },
+    "文字平面 · Alpha PNG": {
+      "rotation_degrees": [
+        90.0,
+        0.0,
+        0.0
+      ],
+      "mode": "OBJECT"
+    },
+    "背景平面 · 已在主体材质合成": {
+      "rotation_degrees": [
+        90.0,
+        0.0,
+        0.0
+      ],
+      "mode": "OBJECT"
+    }
+  },
+  "parameters": {
+    "主体缩放": 1.12,
+    "主体深度": 0.18,
+    "背景深度": -0.26,
+    "特效缩放": 1.04,
+    "特效深度": 0.54
+  },
+  "effects_layer": true,
+  "source_mode": "composite",
+  "relief_layers": {},
+  "frames": [
+    1,
+    25,
+    49,
+    73,
+    96
+  ]
+}

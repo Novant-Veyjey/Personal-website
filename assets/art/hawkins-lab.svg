@@ -1,0 +1,58 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="900" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="wall" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#121317"/><stop offset="1" stop-color="#050609"/></linearGradient>
+    <radialGradient id="doorGlow" cx=".5" cy=".5" r=".5"><stop offset="0" stop-color="#fff4ee" stop-opacity=".96"/><stop offset=".08" stop-color="#ff4a4c" stop-opacity=".82"/><stop offset=".38" stop-color="#a70a19" stop-opacity=".34"/><stop offset="1" stop-color="#510008" stop-opacity="0"/></radialGradient>
+    <linearGradient id="floor" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#36383d"/><stop offset=".35" stop-color="#17191d"/><stop offset="1" stop-color="#050607"/></linearGradient>
+    <linearGradient id="redwall" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#39000a"/><stop offset="1" stop-color="#090509"/></linearGradient>
+    <filter id="glow"><feGaussianBlur stdDeviation="12"/></filter>
+    <filter id="soft"><feGaussianBlur stdDeviation="4"/></filter>
+    <filter id="grain"><feTurbulence type="fractalNoise" baseFrequency=".72" numOctaves="3" seed="24" result="n"/><feColorMatrix in="n" type="saturate" values="0" result="g"/><feComponentTransfer in="g"><feFuncA type="table" tableValues="0 .14"/></feComponentTransfer><feBlend in="SourceGraphic" mode="screen"/></filter>
+    <pattern id="tile" width="80" height="80" patternUnits="userSpaceOnUse"><path d="M80 0H0v80" fill="none" stroke="#8b8f95" stroke-opacity=".18" stroke-width="1"/></pattern>
+  </defs>
+  <g filter="url(#grain)">
+    <rect width="1600" height="900" fill="#050608"/>
+    <path d="M0 0h1600v900H0z" fill="url(#wall)"/>
+    <path d="M0 0h475l295 312v276L475 900H0Z" fill="#0a0c10"/>
+    <path d="M1600 0h-492l-289 312v276l289 312h492Z" fill="#080a0d"/>
+    <path d="M475 0l295 312H0Z" fill="#14151a"/>
+    <path d="M1125 0l-289 312h764Z" fill="#111216"/>
+    <path d="M0 900l475-312h650l475 312Z" fill="url(#floor)"/>
+    <path d="M0 900l475-312h650l475 312Z" fill="url(#tile)"/>
+    <path d="M0 0h475l295 312H0Z" fill="url(#redwall)" opacity=".3"/>
+    <path d="M1600 0h-492l-289 312h781Z" fill="url(#redwall)" opacity=".22"/>
+    <path d="M475 0v312h650V0M475 900V588h650v312" fill="none" stroke="#272a30" stroke-width="5"/>
+    <g stroke="#16181d" stroke-width="3" opacity=".92">
+      <path d="M168 0v302M282 0v318M392 0v330M1210 0v326M1331 0v318M1450 0v292"/>
+      <path d="M504 50h546M494 126h565M485 216h578"/>
+      <path d="M0 510l496-198M0 590l503-240M1600 488l-492-176M1600 582l-496-232"/>
+    </g>
+    <g fill="#24272c" stroke="#06070a" stroke-width="7">
+      <rect x="115" y="116" width="182" height="245" rx="3"/><rect x="1320" y="92" width="170" height="256" rx="3"/>
+    </g>
+    <g fill="#4d5157" opacity=".5"><rect x="131" y="128" width="150" height="95" rx="2"/><rect x="1337" y="105" width="136" height="89" rx="2"/></g>
+    <path d="M223 361v95M316 352v111M1304 350v92M1414 348v107" stroke="#7e101a" stroke-width="6"/>
+    <g transform="translate(737 335)">
+      <rect width="174" height="265" rx="3" fill="#050507" stroke="#4b1116" stroke-width="4"/>
+      <rect x="12" y="13" width="150" height="213" fill="#0b080b" stroke="#2b1518"/>
+      <circle cx="87" cy="119" r="58" fill="url(#doorGlow)"/>
+      <ellipse cx="87" cy="119" rx="30" ry="45" fill="#010102" stroke="#ff3039" stroke-width="3" stroke-opacity=".5"/>
+      <path d="M64 95c8-13 38-16 48 2M58 124c17 9 42 9 58-2M66 152c11 12 33 13 45 0" fill="none" stroke="#ff5559" stroke-width="2"/>
+      <text x="87" y="253" fill="#d9d3cc" font-family="Bookman Old Style, Georgia, serif" font-size="18" font-weight="700" text-anchor="middle" letter-spacing="4">011</text>
+    </g>
+    <ellipse cx="824" cy="410" rx="230" ry="230" fill="#ff2632" opacity=".13" filter="url(#glow)"/>
+    <g fill="#030405">
+      <path d="M783 314c-28 62-33 105-13 157 22 55 18 109-2 160l101 2c-26-58-24-112 2-165 22-45 10-103-24-154Z"/>
+      <path d="M791 330c-47 30-73 76-77 139 21-36 50-65 88-87M861 331c49 31 77 79 81 143-23-38-53-68-92-89"/>
+      <path d="M777 461c-19 45-10 83 26 115M874 459c22 46 13 86-24 120" fill="none" stroke="#030405" stroke-width="14"/>
+    </g>
+    <g fill="#0a0b0d" stroke="#16191d" stroke-width="4">
+      <path d="M512 188c109-44 194-68 278-76M1152 174c-87-37-166-54-251-60" fill="none"/>
+      <path d="M554 126c25 84 24 163-3 238M660 96c44 96 50 195 17 293M1038 92c-43 91-51 180-22 268M1160 120c-26 84-27 169 2 252M983 80c9 88 3 180-18 274" fill="none" stroke="#0c0d0f" stroke-width="9" stroke-linecap="round"/>
+    </g>
+    <g fill="#ff3943" opacity=".7"><circle cx="542" cy="198" r="2.5"/><circle cx="658" cy="178" r="2"/><circle cx="1048" cy="181" r="2.6"/><circle cx="1134" cy="211" r="1.8"/><circle cx="811" cy="99" r="2.2"/></g>
+    <g opacity=".55" font-family="Courier New, monospace" font-size="12" letter-spacing="3" fill="#75818c">
+      <text x="152" y="300">CAM 03</text><text x="1344" y="292">ENERGY 88%</text><text x="715" y="818">RESTRICTED / LEVEL 5</text>
+    </g>
+    <rect x="0" y="0" width="1600" height="900" fill="none" stroke="#ff303a" stroke-opacity=".12" stroke-width="14"/>
+  </g>
+</svg>
