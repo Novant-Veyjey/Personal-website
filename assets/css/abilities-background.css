@@ -189,3 +189,17 @@
 
 #hero-title::before,
 #hero-title::after { display: none; }
+
+/* Red outline treatment for all large section slogans. */
+.section-head h2,
+.contact-inner h2 {
+  -webkit-text-stroke: 1.35px #e5232d;
+  paint-order: stroke fill;
+  text-shadow: 0 0 14px rgba(229,35,45,.28), 0 0 34px rgba(229,35,45,.12);
+}
+.section-head h2 em,
+.contact-inner h2 em {
+  color: transparent !important;
+  -webkit-text-stroke: 1.55px #ff3b30;
+  text-shadow: 0 0 18px rgba(229,35,45,.34), 0 0 40px rgba(229,35,45,.14);
+}
