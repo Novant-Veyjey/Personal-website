@@ -212,3 +212,11 @@
   paint-order: stroke fill;
   text-shadow: 0 0 14px rgba(229,35,45,.25), 0 0 30px rgba(229,35,45,.12);
 }
+/* Project 01 uses the supplied Stranger Things key art. */
+.case-card__art--portal {
+  background: url("../art/project-01-stranger-things.jpg") center/cover no-repeat !important;
+}
+.case-card__art--portal .portal,
+.case-card__art--portal .art-label {
+  display: none !important;
+}
