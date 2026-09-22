@@ -11,9 +11,21 @@
   var previewTitle = document.getElementById('poster-preview-title');
   var previewClose = document.getElementById('poster-preview-close');
   var previewEdit = document.getElementById('poster-preview-edit');
+  var previewSurface = preview ? preview.querySelector('.poster-preview__surface') : null;
+  var previewBack = null;
   var storageKey = 'upsideDownPosterImages.v1';
   if (!dialog || !list) return;
   var items = [];
+
+  if (previewSurface) {
+    previewBack = document.createElement('button');
+    previewBack.type = 'button';
+    previewBack.className = 'poster-preview__back';
+    previewBack.textContent = '← 返回选择图片';
+    previewBack.setAttribute('aria-label', '返回选择图片');
+    previewBack.style.cssText = 'position:absolute;left:18px;top:18px;z-index:3;display:inline-flex;align-items:center;min-height:38px;padding:0 13px;border:1px solid rgba(229,35,45,.62);background:rgba(9,8,12,.88);color:#f2eee6;font:700 9px/1 "Cascadia Mono",Consolas,monospace;letter-spacing:.12em;cursor:pointer;';
+    previewSurface.insertBefore(previewBack, previewSurface.firstChild);
+  }
 
   function load() {
     if (window.posterSphere && window.posterSphere.getImages) return window.posterSphere.getImages();
@@ -90,10 +102,49 @@
   if (done) done.addEventListener('click', hide);
   dialog.addEventListener('click', function (event) { if (event.target === dialog) hide(); });
   if (previewClose) previewClose.addEventListener('click', function () { if (preview.open) preview.close(); });
+  if (previewBack) previewBack.addEventListener('click', function () { if (preview.open) preview.close(); });
   if (preview) preview.addEventListener('click', function (event) { if (event.target === preview) preview.close(); });
   if (previewEdit) previewEdit.addEventListener('click', function () {
     var index = Number(preview && preview.dataset.index);
     if (preview && preview.open) preview.close();
     open(index);
   });
+}());
+
+(function ensureWelcomeTitle() {
+  'use strict';
+  var element = document.getElementById('hero-title');
+  if (!element) return;
+
+  function profileName() {
+    try {
+      var data = JSON.parse(localStorage.getItem('upsideDownProfile.v1') || '{}');
+      var en = String(data.enName || '').trim();
+      var cn = String(data.cnName || '').trim();
+      if (en && en.toUpperCase() !== 'YOUR NAME') return en;
+      if (cn && cn !== '你的名字') return cn;
+    } catch (error) {}
+    return '';
+  }
+
+  function apply() {
+    if (!element || element.querySelector('.hero-title__welcome')) return;
+    var name = profileName();
+    if (!name) return;
+    var welcome = document.createElement('span');
+    var nameLine = document.createElement('span');
+    var suffix = document.createElement('span');
+    welcome.className = 'hero-title__welcome';
+    nameLine.className = 'hero-title__name';
+    suffix.className = 'hero-title__suffix';
+    welcome.textContent = 'WELCOME';
+    nameLine.textContent = name;
+    suffix.textContent = 'TO THE UPSIDE DOWN';
+    element.replaceChildren(welcome, nameLine, suffix);
+    element.setAttribute('data-text', 'WELCOME ' + name + ' TO THE UPSIDE DOWN');
+    document.title = 'WELCOME ' + name + ' TO THE UPSIDE DOWN';
+  }
+
+  new MutationObserver(apply).observe(element, { childList: true, subtree: true, characterData: true });
+  apply();
 }());
