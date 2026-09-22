@@ -205,34 +205,45 @@ document.documentElement.classList.add('js');
       canvas.style.width = width + 'px';
       canvas.style.height = height + 'px';
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-      var count = width < 700 ? 34 : 68;
+      var count = width < 700 ? 54 : 112;
       spores = Array.from({ length: count }, function () { return createSpore(true); });
     }
     function createSpore(randomY) {
+      var kinds = [
+        { color: 'rgba(239,224,201,', glow: 'rgba(239,224,201,.42)', blur: 6 },
+        { color: 'rgba(174,190,202,', glow: 'rgba(174,190,202,.32)', blur: 5 },
+        { color: 'rgba(229,35,45,', glow: 'rgba(229,35,45,.5)', blur: 10 }
+      ];
+      var roll = Math.random();
+      var kind = roll < .66 ? kinds[0] : (roll < .86 ? kinds[1] : kinds[2]);
       return {
         x: Math.random() * width,
         y: randomY ? Math.random() * height : height + 12,
-        r: 0.5 + Math.random() * 1.7,
-        vx: -0.08 + Math.random() * 0.16,
-        vy: -(0.12 + Math.random() * 0.32),
+        r: 0.35 + Math.random() * 1.45,
+        vx: -0.06 + Math.random() * 0.12,
+        vy: -(0.06 + Math.random() * 0.26),
         phase: Math.random() * Math.PI * 2,
-        drift: 0.08 + Math.random() * 0.22,
-        alpha: 0.12 + Math.random() * 0.38
+        drift: 0.08 + Math.random() * 0.24,
+        alpha: 0.1 + Math.random() * 0.36,
+        color: kind.color,
+        glow: kind.glow,
+        blur: kind.blur
       };
     }
     function drawSpores(now) {
       var delta = Math.min(2.6, (now - lastTime) / 16.67);
       lastTime = now;
       ctx.clearRect(0, 0, width, height);
-      ctx.shadowColor = '#e5232d';
-      ctx.shadowBlur = 8;
       spores.forEach(function (p, index) {
         p.phase += 0.01 * delta;
         p.x += (p.vx + Math.sin(p.phase) * p.drift) * delta;
         p.y += p.vy * delta;
         if (p.y < -18 || p.x < -24 || p.x > width + 24) spores[index] = createSpore(false);
+        ctx.shadowColor = p.glow;
+        ctx.shadowBlur = p.blur;
+        var twinkle = .78 + .22 * Math.sin(p.phase * 1.7);
+        ctx.fillStyle = p.color + (p.alpha * twinkle).toFixed(3) + ')';
         ctx.beginPath();
-        ctx.fillStyle = 'rgba(235,48,58,' + p.alpha + ')';
         ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
         ctx.fill();
       });
