@@ -31344,7 +31344,7 @@ async function init() {
   try {
     renderer = new WebGLRenderer({
       antialias: true,
-      alpha: false,
+      alpha: true,
       preserveDrawingBuffer: true,
       powerPreference: "high-performance"
     });
@@ -31352,7 +31352,7 @@ async function init() {
     try {
       renderer = new WebGLRenderer({
         antialias: true,
-        alpha: false,
+        alpha: true,
         preserveDrawingBuffer: true,
         powerPreference: "default",
         failIfMajorPerformanceCaveat: false
@@ -31362,7 +31362,7 @@ async function init() {
       return;
     }
   }
-  renderer.setClearColor(config.appearance?.background || "#fafafa", 1);
+  renderer.setClearColor(0x000000, 0);
   renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
   renderer.outputColorSpace = SRGBColorSpace;
   renderer.toneMapping = NoToneMapping;

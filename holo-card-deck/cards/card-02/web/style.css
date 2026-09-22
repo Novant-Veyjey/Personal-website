@@ -931,3 +931,18 @@ dialog { border-color: rgba(229,35,45,.5); background: #09090c; color: #f2eee7; 
 dialog::backdrop { background: rgba(1,1,3,.84); backdrop-filter: blur(8px); }
 .notice { border-color: rgba(229,35,45,.6); background: rgba(9,8,11,.95); color: #fff; }
 @media (max-width: 760px) { .parameter-panel { background: rgba(9,8,11,.94); } }
+
+/* Shared upside-down stage background supplied by the personal site. */
+body {
+  background: url("../../../../assets/art/card-stage-upside-down.jpg") center/cover fixed !important;
+  background-color: #050204 !important;
+}
+.gallery,
+.stage,
+.stage canvas {
+  background: transparent !important;
+  background-color: transparent !important;
+}
+.stage {
+  background-image: none !important;
+}

@@ -85,8 +85,7 @@
     var hasEnglish = en && en.toUpperCase() !== 'YOUR NAME';
     var hasChinese = cn && cn !== '你的名字';
     if (!hasEnglish && !hasChinese) return 'YOUR NAME';
-    var name = hasEnglish ? en : cn;
-    return /[\u3400-\u9fff]/.test(name) ? name + ' 的颠倒世界' : name + "'s Inverted Universe";
+    return 'WELCOME ' + (hasEnglish ? en : cn) + ' TO THE UPSIDE DOWN';
   }
 
   function renderHeroTitle(element, data) {
@@ -97,10 +96,11 @@
       element.setAttribute('data-text', text);
       return;
     }
-    var name = text.replace(/(?:'s Inverted Universe|\s的颠倒世界)$/, '');
-    var suffix = text.slice(name.length);
-    element.innerHTML = '<span class="hero-title__name">' + escapeHtml(name) + '</span><span class="hero-title__suffix">' + escapeHtml(suffix) + '</span>';
-    element.setAttribute('data-text', name);
+        var en = clean(data.enName, '');
+    var cn = clean(data.cnName, '');
+    var name = en && en.toUpperCase() !== 'YOUR NAME' ? en : cn;
+    element.innerHTML = '<span class="hero-title__welcome">WELCOME</span><span class="hero-title__name">' + escapeHtml(name) + '</span><span class="hero-title__suffix">TO THE UPSIDE DOWN</span>';
+    element.setAttribute('data-text', text);
   }
 
   function applyProfile(data) {
@@ -173,7 +173,7 @@
       wechat.title = '微信号：' + data.wechat;
     }
 
-    document.title = heroTitleText(data) + ' · THE UPSIDE DOWN';
+    document.title = heroTitleText(data);
     if (avatarPreview) {
       avatarPreview.textContent = data.initials || makeInitials(data);
       avatarPreview.style.backgroundImage = data.avatar ? 'url("' + data.avatar + '")' : '';
