@@ -1,0 +1,29 @@
+/* ============================================================
+   修复：场景图「MIND LAIR · 把想象变成力量」显示不全
+   ------------------------------------------------------------
+   原图 assets/art/mind-lair.jpg 是 1260×945（比例 1.33，接近 4:3），
+   而它所在的 .story-art__media 是个宽幅格子（约 1.88）。
+   .story-art img 用的是 object-fit: cover，于是图片按宽度放大后
+   上下被裁掉了近三成，只剩中间那两行字母（IJKLMNOPQ / RSTUVWXYZ）。
+
+   做法：让这张图按自身比例撑开格子。
+   容器比例 = 原图比例时，cover 就等于「完整显示且铺满」，
+   既不会裁掉内容，也不会出现黑边。
+   ============================================================ */
+
+.story-art--mind img {
+  height: auto;              /* 覆盖 .story-art img 的 height:100% */
+  min-height: 0;             /* 覆盖 .story-art img 的 min-height:430px */
+  aspect-ratio: 1260 / 945;  /* 跟随原图比例撑开 */
+  object-fit: cover;         /* 比例一致时 = 完整显示 */
+  object-position: center;
+}
+
+/* 窄屏：压过 stranger-art.css 里 .story-art img 的 16 / 10 设定，
+   保持同一比例，图片依旧完整 */
+@media (max-width: 800px) {
+  .story-art--mind img {
+    aspect-ratio: 1260 / 945;
+    min-height: 0;
+  }
+}

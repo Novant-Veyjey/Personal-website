@@ -1,0 +1,71 @@
+/* ============================================================
+   首页大标题 #hero-title
+   ------------------------------------------------------------
+   profile-editor.js 在改过名字后，会把标题换成三段：
+
+     <span class="hero-title__welcome">WELCOME</span>
+     <span class="hero-title__name">你的名字</span>
+     <span class="hero-title__suffix">TO THE UPSIDE DOWN</span>
+
+   排布要求：
+     第一行「欢迎」        —— 红色小字
+     第二行「用户名」      —— 最大最亮，主角
+     第三行「来到颠倒世界」—— 红色小字
+   上下两行压小写红字，中间那行突出。
+
+   注：这套样式原本写在 abilities-background.css 里，
+   但那个文件没有被引进 index.html，所以在这里补齐。
+   ============================================================ */
+
+/* 三行纵向排布 */
+.glitch-title {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: clamp(6px, .9vw, 14px);
+}
+
+/* 第一行：欢迎 —— 红色小字 */
+.hero-title__welcome {
+  display: block;
+  color: #d8202c;
+  font: 700 clamp(12px, 1.15vw, 18px)/1 var(--mono);
+  letter-spacing: .34em;
+  text-indent: .34em;          /* 补偿尾部字距，保证真正居中 */
+  -webkit-text-stroke: 0;
+  text-shadow: 0 0 18px rgba(229, 35, 45, .55);
+}
+
+/* 第二行：用户名 —— 继承大标题字号，最亮 */
+.hero-title__name {
+  display: block;
+  color: #f4efe7;
+  line-height: .88;
+}
+
+/* 第三行：来到颠倒世界 —— 红色小字，斜体衬线 */
+.hero-title__suffix {
+  display: block;
+  color: #d8202c;
+  font: italic 500 clamp(14px, 1.45vw, 24px)/1.15 var(--serif);
+  letter-spacing: .04em;
+  -webkit-text-stroke: 0;
+  text-shadow: 0 0 20px rgba(229, 35, 45, .5);
+}
+
+/* 分成三行后，单行文本的故障重影会错位，直接关掉 */
+.glitch-title:has(.hero-title__name)::before,
+.glitch-title:has(.hero-title__name)::after {
+  display: none;
+}
+
+@media (max-width: 900px) {
+  .hero-title__welcome {
+    font-size: clamp(11px, 3.2vw, 15px);
+    letter-spacing: .26em;
+    text-indent: .26em;
+  }
+  .hero-title__suffix {
+    font-size: clamp(13px, 3.6vw, 19px);
+  }
+}

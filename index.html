@@ -16,6 +16,14 @@
   <link rel="stylesheet" href="assets/css/contact-message.css" />
   <link rel="stylesheet" href="assets/css/section-editor.css" />
   <link rel="stylesheet" href="assets/css/poster-manager.css" />
+  <!-- 修复：作品卡图片显示不全（必须放在其它样式表之后） -->
+  <link rel="stylesheet" href="assets/css/case-art-fix.css" />
+  <!-- 首页大标题「WELCOME 名字 TO THE UPSIDE DOWN」三段排版 -->
+  <link rel="stylesheet" href="assets/css/hero-title.css" />
+  <!-- 首页背景压暗偏红 -->
+  <link rel="stylesheet" href="assets/css/hero-bg.css" />
+  <!-- 修复：MIND LAIR 场景图被裁掉上下三成 -->
+  <link rel="stylesheet" href="assets/css/scene-art-fit.css" />
   <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js" defer></script>
   <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js" defer></script>
 </head>
@@ -92,31 +100,6 @@
       </a>
     </section>
 
-    <section class="poster-sphere" id="poster-sphere" aria-label="电影海报球体">
-      <div class="poster-sphere__stage" id="poster-sphere-stage">
-        <div class="poster-sphere__cloud" aria-hidden="true"></div>
-        <div class="poster-sphere__manager-frame" data-poster-manager tabindex="0" role="button" aria-label="管理球体海报" title="管理球体海报"><span>ARCHIVE FRAME</span><b>＋</b></div>
-        <div class="poster-sphere__ball" id="poster-sphere-ball">
-          <img class="poster" src="assets/posters/night-signal.svg" alt="科幻电影海报：夜间信号" />
-          <img class="poster" src="assets/posters/echo-room.svg" alt="科幻电影海报：回声房间" />
-          <img class="poster" src="assets/posters/after-rain.svg" alt="科幻电影海报：雨后" />
-          <img class="poster poster--landscape" src="assets/posters/red-frequency.svg" alt="科幻电影海报：红色频率" />
-          <img class="poster" src="assets/posters/low-tide.svg" alt="科幻电影海报：低潮" />
-          <img class="poster" src="assets/posters/the-long-way.svg" alt="科幻电影海报：远方" />
-          <img class="poster poster--landscape" src="assets/posters/sleepwalk.svg" alt="科幻电影海报：梦游" />
-          <img class="poster" src="assets/posters/blue-hour.svg" alt="科幻电影海报：蓝色时刻" />
-          <img class="poster" src="assets/posters/static-city.svg" alt="科幻电影海报：静电城市" />
-          <img class="poster poster--landscape" src="assets/posters/soft-focus.svg" alt="科幻电影海报：柔焦" />
-          <img class="poster poster--landscape" src="assets/posters/signal-bloom.svg" alt="科幻电影海报：信号绽放" />
-          <img class="poster poster--landscape" src="assets/posters/quiet-house.svg" alt="科幻电影海报：寂静屋" />
-          <img class="poster poster--landscape" src="assets/posters/orbit-days.svg" alt="科幻电影海报：轨道日" />
-          <img class="poster poster--landscape" src="assets/posters/last-frame.svg" alt="科幻电影海报：最后一帧" />
-          <img class="poster poster--landscape" src="assets/posters/warm-static.svg" alt="科幻电影海报：暖色静电" />
-          <img class="poster" src="assets/posters/void-cinema.svg" alt="科幻电影海报：虚空影院" />
-        </div>
-      </div>
-    </section>
-
     <section class="section section--profile" id="profile" aria-labelledby="profile-title">
       <div class="section__ghost" aria-hidden="true">01</div>
       <div class="container">
@@ -177,6 +160,31 @@
       </div>
     </section>
 
+    <section class="poster-sphere" id="poster-sphere" aria-label="电影海报球体">
+      <div class="poster-sphere__stage" id="poster-sphere-stage">
+        <div class="poster-sphere__cloud" aria-hidden="true"></div>
+        <div class="poster-sphere__manager-frame" data-poster-manager tabindex="0" role="button" aria-label="管理球体海报" title="管理球体海报"><span>ARCHIVE FRAME</span><b>＋</b></div>
+        <div class="poster-sphere__ball" id="poster-sphere-ball">
+          <img class="poster" src="assets/posters/night-signal.svg" alt="科幻电影海报：夜间信号" />
+          <img class="poster" src="assets/posters/echo-room.svg" alt="科幻电影海报：回声房间" />
+          <img class="poster" src="assets/posters/after-rain.svg" alt="科幻电影海报：雨后" />
+          <img class="poster poster--landscape" src="assets/posters/red-frequency.svg" alt="科幻电影海报：红色频率" />
+          <img class="poster" src="assets/posters/low-tide.svg" alt="科幻电影海报：低潮" />
+          <img class="poster" src="assets/posters/the-long-way.svg" alt="科幻电影海报：远方" />
+          <img class="poster poster--landscape" src="assets/posters/sleepwalk.svg" alt="科幻电影海报：梦游" />
+          <img class="poster" src="assets/posters/blue-hour.svg" alt="科幻电影海报：蓝色时刻" />
+          <img class="poster" src="assets/posters/static-city.svg" alt="科幻电影海报：静电城市" />
+          <img class="poster poster--landscape" src="assets/posters/soft-focus.svg" alt="科幻电影海报：柔焦" />
+          <img class="poster poster--landscape" src="assets/posters/signal-bloom.svg" alt="科幻电影海报：信号绽放" />
+          <img class="poster poster--landscape" src="assets/posters/quiet-house.svg" alt="科幻电影海报：寂静屋" />
+          <img class="poster poster--landscape" src="assets/posters/orbit-days.svg" alt="科幻电影海报：轨道日" />
+          <img class="poster poster--landscape" src="assets/posters/last-frame.svg" alt="科幻电影海报：最后一帧" />
+          <img class="poster poster--landscape" src="assets/posters/warm-static.svg" alt="科幻电影海报：暖色静电" />
+          <img class="poster" src="assets/posters/void-cinema.svg" alt="科幻电影海报：虚空影院" />
+        </div>
+      </div>
+    </section>
+
     <div class="rift" aria-hidden="true">
       <i></i><span>THE RIFT IS OPEN</span><i></i>
     </div>
@@ -206,54 +214,54 @@
         </figure>
                 <figure class="project-banner reveal"><img src="assets/art/project-01-stranger-things.jpg" alt="Stranger Things 项目主视觉" loading="lazy"></figure>
         <div class="case-grid">
-          <article class="case-card reveal" data-project-edit="0" tabindex="0" role="button" aria-label="编辑任务一">
+          <article class="case-card reveal" data-project-edit="0" tabindex="0" role="button" aria-label="编辑第一章">
             <div class="case-card__meta"><span>TASK 001</span><b>PROJECT</b></div>
-            <div class="case-card__art"><img src="assets/art/projects/project-01.jpg" alt="怪奇物语任务一" loading="lazy"></div>
+            <div class="case-card__art"><img src="assets/art/projects/project-01.jpg" alt="怪奇物语第一章" loading="lazy"></div>
             <div class="case-card__body">
               <p class="case-card__type" data-project-field="type">视觉企划 · 2026</p>
-              <h3 data-project-field="title">任务一</h3>
+              <h3 data-project-field="title">第一章</h3>
               <p data-project-field="description">把第一个故事变成可以观看、点击和继续探索的视觉体验。</p>
-              <a href="#contact" aria-label="查看任务一" data-project-field="linkText">查看任务 <span>↗</span></a>
+              <a href="#contact" aria-label="查看第一章" data-project-field="linkText">查看章节 <span>↗</span></a>
             </div>
           </article>
-          <article class="case-card reveal" data-project-edit="1" tabindex="0" role="button" aria-label="编辑任务二">
+          <article class="case-card reveal" data-project-edit="1" tabindex="0" role="button" aria-label="编辑第二章">
             <div class="case-card__meta"><span>TASK 002</span><b>PROJECT</b></div>
-            <div class="case-card__art"><img src="assets/art/projects/project-02.jpg" alt="怪奇物语任务二" loading="lazy"></div>
+            <div class="case-card__art"><img src="assets/art/projects/project-02.jpg" alt="怪奇物语第二章" loading="lazy"></div>
             <div class="case-card__body">
               <p class="case-card__type" data-project-field="type">影像叙事 · 2026</p>
-              <h3 data-project-field="title">任务二</h3>
+              <h3 data-project-field="title">第二章</h3>
               <p data-project-field="description">用画面组织线索，让每一层信息都有继续往下看的理由。</p>
-              <a href="#contact" aria-label="查看任务二" data-project-field="linkText">查看任务 <span>↗</span></a>
+              <a href="#contact" aria-label="查看第二章" data-project-field="linkText">查看章节 <span>↗</span></a>
             </div>
           </article>
-          <article class="case-card reveal" data-project-edit="2" tabindex="0" role="button" aria-label="编辑任务三">
+          <article class="case-card reveal" data-project-edit="2" tabindex="0" role="button" aria-label="编辑第三章">
             <div class="case-card__meta"><span>TASK 003</span><b>PROJECT</b></div>
-            <div class="case-card__art"><img src="assets/art/projects/project-03.jpg" alt="怪奇物语任务三" loading="lazy"></div>
+            <div class="case-card__art"><img src="assets/art/projects/project-03.jpg" alt="怪奇物语第三章" loading="lazy"></div>
             <div class="case-card__body">
               <p class="case-card__type" data-project-field="type">交互实验 · 2026</p>
-              <h3 data-project-field="title">任务三</h3>
+              <h3 data-project-field="title">第三章</h3>
               <p data-project-field="description">把一个模糊的想法做成可以亲手操作的界面和动效。</p>
-              <a href="#contact" aria-label="查看任务三" data-project-field="linkText">查看任务 <span>↗</span></a>
+              <a href="#contact" aria-label="查看第三章" data-project-field="linkText">查看章节 <span>↗</span></a>
             </div>
           </article>
-          <article class="case-card reveal" data-project-edit="3" tabindex="0" role="button" aria-label="编辑任务四">
+          <article class="case-card reveal" data-project-edit="3" tabindex="0" role="button" aria-label="编辑第四章">
             <div class="case-card__meta"><span>TASK 004</span><b>PROJECT</b></div>
-            <div class="case-card__art"><img src="assets/art/projects/project-04.jpg" alt="怪奇物语任务四" loading="lazy"></div>
+            <div class="case-card__art"><img src="assets/art/projects/project-04.jpg" alt="怪奇物语第四章" loading="lazy"></div>
             <div class="case-card__body">
               <p class="case-card__type" data-project-field="type">视觉系统 · 2026</p>
-              <h3 data-project-field="title">任务四</h3>
+              <h3 data-project-field="title">第四章</h3>
               <p data-project-field="description">把零散素材整理成统一、清晰、有力量感的视觉语言。</p>
-              <a href="#contact" aria-label="查看任务四" data-project-field="linkText">查看任务 <span>↗</span></a>
+              <a href="#contact" aria-label="查看第四章" data-project-field="linkText">查看章节 <span>↗</span></a>
             </div>
           </article>
-          <article class="case-card reveal" data-project-edit="4" tabindex="0" role="button" aria-label="编辑任务五">
+          <article class="case-card reveal" data-project-edit="4" tabindex="0" role="button" aria-label="编辑第五章">
             <div class="case-card__meta"><span>TASK 005</span><b>PROJECT</b></div>
-            <div class="case-card__art"><img src="assets/art/projects/project-05.jpg" alt="怪奇物语任务五" loading="lazy"></div>
+            <div class="case-card__art"><img src="assets/art/projects/project-05.jpg" alt="怪奇物语第五章" loading="lazy"></div>
             <div class="case-card__body">
               <p class="case-card__type" data-project-field="type">最终发布 · 2026</p>
-              <h3 data-project-field="title">任务五</h3>
+              <h3 data-project-field="title">第五章</h3>
               <p data-project-field="description">完成最后一轮检查，让整个故事从想法变成真正可用的作品。</p>
-              <a href="#contact" aria-label="查看任务五" data-project-field="linkText">查看任务 <span>↗</span></a>
+              <a href="#contact" aria-label="查看第五章" data-project-field="linkText">查看章节 <span>↗</span></a>
             </div>
           </article>
         </div>

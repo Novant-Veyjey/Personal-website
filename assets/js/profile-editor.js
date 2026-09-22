@@ -321,4 +321,18 @@
   });
 
   applyProfile(state);
+
+  /* 兜底：首页大标题统一由这里的姓名驱动。
+     section-editor / poster-manager 也可能去写 #hero-title（会把三段
+     结构用纯文本覆盖掉），所以在所有脚本跑完之后再校正一次，
+     保证最终一定是「WELCOME <名字> TO THE UPSIDE DOWN」。 */
+  function enforceHeroTitle() {
+    renderHeroTitle($('#hero-title'), state);
+  }
+  if (document.readyState === 'complete') {
+    enforceHeroTitle();
+  } else {
+    window.addEventListener('load', enforceHeroTitle);
+    setTimeout(enforceHeroTitle, 0);
+  }
 })();

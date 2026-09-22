@@ -52,9 +52,16 @@
 .rift i:last-child { transform:rotate(180deg); }
 .rift span { flex:none; }
 
-.case-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:22px; }
+.case-grid { display:grid; grid-template-columns:repeat(6,minmax(0,1fr)); gap:22px; }
+/* 上排两张各占一半，下排三张各占三分之一 */
+.case-card { grid-column:span 3; }
+.case-card:nth-child(n+3) { grid-column:span 2; }
 .case-card { position:relative; display:flex; flex-direction:column; min-height:610px; overflow:hidden; border:1px solid rgba(255,255,255,.1); background:linear-gradient(150deg,rgba(255,255,255,.035),transparent 40%),#0b0b0e; transition:transform .5s var(--ease),border-color .5s ease,box-shadow .5s ease; }
 .case-card--wide { grid-column:1/-1; min-height:650px; }
+/* 下排三张更窄：文字区改单列，标题收小一档 */
+.case-card:nth-child(n+3) .case-card__body { grid-template-columns:1fr; padding:22px 20px 24px; }
+.case-card:nth-child(n+3) .case-card__body a { grid-column:1; grid-row:auto; justify-self:start; }
+.case-card:nth-child(n+3) h3 { font-size:clamp(22px,2.1vw,32px); }
 .case-card:hover { transform:translateY(-8px); border-color:rgba(229,35,45,.44); box-shadow:0 34px 80px rgba(0,0,0,.48),0 0 32px rgba(229,35,45,.06); }
 .case-card__meta { display:flex; justify-content:space-between; padding:18px 20px; border-bottom:1px solid rgba(255,255,255,.08); color:var(--muted-2); font:600 8px/1 var(--mono); letter-spacing:.16em; }
 .case-card__meta b { color:var(--red-bright); font-weight:600; }

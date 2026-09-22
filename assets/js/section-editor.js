@@ -7,7 +7,9 @@
   var reset = document.getElementById('section-editor-reset');
   var storageKey = 'upsideDownSections.v1';
   var configs = {
-    hero: { section: '#top', title: '[data-edit-field="hero-title"]', subtitle: '[data-edit-field="hero-kicker"]', lead: '[data-edit-field="hero-lead"]', name: '首页' },
+    // 首页大标题由 profile-editor 统一按「WELCOME 名字 TO THE UPSIDE DOWN」生成，
+    // 这里不再接管 hero-title，否则会把它的三段结构用纯文本覆盖掉。
+    hero: { section: '#top', title: null, subtitle: '[data-edit-field="hero-kicker"]', lead: '[data-edit-field="hero-lead"]', name: '首页' },
     profile: { section: '#profile', title: '[data-edit-field="profile-title"]', subtitle: '[data-edit-field="profile-subtitle"]', lead: '[data-edit-field="profile-lead"]', name: '关于我' },
     works: { section: '#works', title: '[data-edit-field="works-title"]', subtitle: '[data-edit-field="works-subtitle"]', lead: '[data-edit-field="works-lead"]', name: '作品' },
     abilities: { section: '#abilities', title: '[data-edit-field="abilities-title"]', subtitle: '[data-edit-field="abilities-subtitle"]', lead: '[data-edit-field="abilities-lead"]', name: '能力' },
@@ -30,9 +32,9 @@
     if (!config) return;
     var section = document.querySelector(config.section);
     if (!section) return;
-    setField(field(config.section, config.title), data.title);
-    setField(field(config.section, config.subtitle), data.subtitle);
-    setField(field(config.section, config.lead), data.lead);
+    if (config.title) setField(field(config.section, config.title), data.title);
+    if (config.subtitle) setField(field(config.section, config.subtitle), data.subtitle);
+    if (config.lead) setField(field(config.section, config.lead), data.lead);
     var currentNote = note(config.section);
     if (data.extra) {
       if (!currentNote) {
@@ -51,9 +53,16 @@
   var saved = readStore();
   Object.keys(saved).forEach(function (key) { if (configs[key]) apply(key, Object.assign({}, defaults[key], saved[key])); });
 
+  var titleInput = form.elements.title;
+  var titleRow = titleInput ? titleInput.closest('label') : null;
+
   function open(key) {
     var config = configs[key];
     if (!config) return;
+    // 没有主标题字段的区块（首页大标题由档案姓名驱动），把这一栏藏起来，
+    // 免得用户填了却看不到任何变化
+    if (titleRow) titleRow.hidden = !config.title;
+    if (titleInput) titleInput.required = !!config.title;
     var current = { title: value(field(config.section, config.title)), subtitle: value(field(config.section, config.subtitle)), lead: value(field(config.section, config.lead)), extra: value(note(config.section)) };
     form.elements.sectionKey.value = key;
     form.elements.title.value = current.title;
@@ -71,7 +80,7 @@
     event.preventDefault();
     var key = form.elements.sectionKey.value;
     var data = { title: form.elements.title.value.trim(), subtitle: form.elements.subtitle.value.trim(), lead: form.elements.lead.value.trim(), extra: form.elements.extra.value.trim() };
-    if (!data.title) return;
+    if (configs[key] && configs[key].title && !data.title) return;
     var store = readStore();
     store[key] = data;
     writeStore(store);
