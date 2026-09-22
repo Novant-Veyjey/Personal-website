@@ -1,8 +1,8 @@
 (function swapStoryArt() {
   'use strict';
   var replacements = [
-    ['.story-art--gate img', 'assets/art/hawkins-lab.svg?v=20260922'],
-    ['.story-art--lab img', 'assets/art/hawkins-lab-aerial.svg?v=20260922'],
+    ['.story-art--gate img', 'assets/art/portal-forest.jpg?v=20260922c'],
+    ['.story-art--lab img', 'assets/art/hawkins-lab.jpg?v=20260922b'],
     ['.story-art--mind img', 'assets/art/red-membrane.svg?v=20260922']
   ];
   replacements.forEach(function (entry) {

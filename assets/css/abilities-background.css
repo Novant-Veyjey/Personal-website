@@ -1,10 +1,8 @@
 .section--abilities {
   position: relative;
   background:
-    radial-gradient(ellipse at 50% 36%, rgba(128,3,18,.32), transparent 52%),
-    linear-gradient(180deg, rgba(3,2,4,.84), rgba(18,1,5,.9)),
-    url("../art/abilities-alphabet-lights.svg") center/cover fixed;
-  background-blend-mode: screen, multiply, normal;
+    radial-gradient(ellipse at 50% 34%, rgba(137,4,22,.3), transparent 54%),
+    linear-gradient(180deg, #080204, #160107 52%, #050204);
 }
 .section--abilities::after {
   content: "";
@@ -20,7 +18,29 @@
 .section--abilities .container { z-index: 2; }
 .section--abilities .section-head h2,
 .section--abilities .ability h3 { text-shadow: 0 0 8px rgba(255,255,255,.12), 0 0 28px rgba(229,35,45,.28); }
-.section--abilities .story-art--mind .story-art__media { box-shadow: 0 30px 90px rgba(0,0,0,.58), 0 0 52px rgba(229,35,45,.18); }
+
+.story-art--mind .story-art__media {
+  border-color: rgba(229,35,45,.38);
+  background: #050204;
+  box-shadow: 0 30px 90px rgba(0,0,0,.58), 0 0 52px rgba(229,35,45,.18);
+}
+.story-art--mind .story-art__media img {
+  object-fit: contain;
+  background: #050204;
+  filter: saturate(.58) sepia(.3) hue-rotate(-14deg) contrast(1.2) brightness(.76);
+}
+.story-art--mind .story-art__media::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  pointer-events: none;
+  background:
+    radial-gradient(ellipse at 50% 40%, rgba(255,38,45,.12), transparent 42%),
+    linear-gradient(180deg, rgba(8,0,2,.34), rgba(86,0,12,.28) 58%, rgba(4,0,1,.58)),
+    repeating-linear-gradient(0deg, transparent 0 4px, rgba(255,255,255,.035) 4px 5px);
+  mix-blend-mode: multiply;
+}
 
 #hero-title {
   display: flex;
