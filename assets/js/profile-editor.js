@@ -42,6 +42,12 @@
     return value || (fallback == null ? '' : fallback);
   }
 
+  function escapeHtml(value) {
+    return String(value || '').replace(/[&<>"']/g, function (char) {
+      return ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[char];
+    });
+  }
+
   function normalize(data) {
     var next = Object.assign({}, DEFAULTS, data || {});
     next.tags = clean(next.tags, DEFAULTS.tags);
@@ -73,12 +79,37 @@
     toastTimer = setTimeout(function () { toastEl.classList.remove('is-on'); }, 2400);
   }
 
+  function heroTitleText(data) {
+    var en = clean(data.enName, '');
+    var cn = clean(data.cnName, '');
+    var hasEnglish = en && en.toUpperCase() !== 'YOUR NAME';
+    var hasChinese = cn && cn !== '你的名字';
+    if (!hasEnglish && !hasChinese) return 'YOUR NAME';
+    var name = hasEnglish ? en : cn;
+    return /[\u3400-\u9fff]/.test(name) ? name + ' 的颠倒世界' : name + "'s Inverted Universe";
+  }
+
+  function renderHeroTitle(element, data) {
+    if (!element) return;
+    var text = heroTitleText(data);
+    if (text === 'YOUR NAME') {
+      element.textContent = text;
+      element.setAttribute('data-text', text);
+      return;
+    }
+    var name = text.replace(/(?:'s Inverted Universe|\s的颠倒世界)$/, '');
+    var suffix = text.slice(name.length);
+    element.innerHTML = '<span class="hero-title__name">' + escapeHtml(name) + '</span><span class="hero-title__suffix">' + escapeHtml(suffix) + '</span>';
+    element.setAttribute('data-text', name);
+  }
+
   function applyProfile(data) {
     data = normalize(data);
     $$('[data-profile-en]').forEach(function (el) {
+      if (el.id === 'hero-title') return;
       el.textContent = data.enName;
-      if (el.hasAttribute('data-text')) el.setAttribute('data-text', data.enName);
     });
+    renderHeroTitle($('#hero-title'), data);
     $$('[data-profile-cn]').forEach(function (el) { el.textContent = data.cnName; });
     $$('[data-profile-role]').forEach(function (el) { el.textContent = data.role; });
     $$('[data-profile-location]').forEach(function (el) { el.textContent = data.location; });
@@ -142,7 +173,7 @@
       wechat.title = '微信号：' + data.wechat;
     }
 
-    document.title = data.enName + ' · THE UPSIDE DOWN';
+    document.title = heroTitleText(data) + ' · THE UPSIDE DOWN';
     if (avatarPreview) {
       avatarPreview.textContent = data.initials || makeInitials(data);
       avatarPreview.style.backgroundImage = data.avatar ? 'url("' + data.avatar + '")' : '';

@@ -21,3 +21,25 @@
 .section--abilities .section-head h2,
 .section--abilities .ability h3 { text-shadow: 0 0 8px rgba(255,255,255,.12), 0 0 28px rgba(229,35,45,.28); }
 .section--abilities .story-art--mind .story-art__media { box-shadow: 0 30px 90px rgba(0,0,0,.58), 0 0 52px rgba(229,35,45,.18); }
+
+#hero-title {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: .06em;
+}
+.hero-title__name {
+  display: block;
+  color: #f4efe7;
+}
+.hero-title__suffix {
+  display: block;
+  color: #e5232d;
+  font: italic 500 .46em/1 var(--serif);
+  letter-spacing: .035em;
+  -webkit-text-stroke: 0;
+  text-shadow: 0 0 12px rgba(229,35,45,.48), 0 0 34px rgba(229,35,45,.22);
+}
+@media (max-width: 700px) {
+  .hero-title__suffix { font-size: .52em; letter-spacing: .02em; }
+}
