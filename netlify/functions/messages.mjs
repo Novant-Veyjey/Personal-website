@@ -47,6 +47,20 @@ async function writeBoard(list) {
   await store.set(KEY, JSON.stringify(list.slice(0, 200)));
 }
 
+// Blobs 写后读有短暂一致性延迟，回复时按 id 查找失败则小幅重试，避免刚发完留言立刻回复时 404 掉回本地
+async function findTarget(id, attempts) {
+  let messages = await readBoard();
+  let target = messages.find((m) => m.id === id);
+  let attempt = 0;
+  while (!target && attempt < (attempts || 5)) {
+    await new Promise((resolve) => setTimeout(resolve, 300));
+    messages = await readBoard();
+    target = messages.find((m) => m.id === id);
+    attempt++;
+  }
+  return { messages, target };
+}
+
 export default async (request) => {
   const url = new URL(request.url);
   const tail = (url.pathname.split('/messages').pop() || '').replace(/^\//, '');
@@ -79,8 +93,9 @@ export default async (request) => {
     const replyMatch = tail.match(/^([^/]+)\/replies$/);
     if (replyMatch) {
       const id = decodeURIComponent(replyMatch[1]);
-      const messages = await readBoard();
-      const target = messages.find((m) => m.id === id);
+      const found = await findTarget(id, 5);
+      const messages = found.messages;
+      const target = found.target;
       if (!target) return json({ error: 'NOT_FOUND' }, 404);
       target.replies = Array.isArray(target.replies) ? target.replies : [];
       target.replies.push(normalizeReply(body));
