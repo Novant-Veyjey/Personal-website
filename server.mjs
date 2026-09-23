@@ -15,6 +15,7 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 import { handleApi } from './netlify/functions/lib/api.mjs';
+import { canonicalPath } from './netlify/functions/lib/respond.mjs';
 import { readKey, writeKey } from './netlify/functions/lib/store.mjs';
 
 const root = path.dirname(fileURLToPath(import.meta.url));
@@ -98,22 +99,25 @@ http.createServer(async (request, response) => {
   try {
     const urlPath = decodeURIComponent(new URL(request.url, 'http://localhost').pathname);
 
-    if (urlPath.startsWith('/api/auth')) {
+    /* 两种路径都吃：/api/auth/xxx 与 /.netlify/functions/auth/xxx
+       （线上 /api 重写不生效时，前端会自动改走后者） */
+    if (urlPath.startsWith('/api/auth') || urlPath.startsWith('/.netlify/functions/auth')) {
       const body = request.method === 'POST' ? await readBody(request) : {};
       const result = await handleApi({
         method: request.method,
-        pathname: urlPath,
+        pathname: canonicalPath(urlPath, 'auth'),
         body,
         cookie: request.headers.cookie || '',
       });
       return sendJson(response, result.status, result.json, result.setCookie);
     }
 
-    if (urlPath === '/api/messages' || urlPath.startsWith('/api/messages/')) {
+    if (urlPath === '/api/messages' || urlPath.startsWith('/api/messages/')
+      || urlPath.startsWith('/.netlify/functions/messages')) {
       const body = request.method === 'POST' ? await readBody(request) : {};
       const result = await handleApi({
         method: request.method,
-        pathname: urlPath,
+        pathname: canonicalPath(urlPath, 'messages'),
         body,
         cookie: request.headers.cookie || '',
       });

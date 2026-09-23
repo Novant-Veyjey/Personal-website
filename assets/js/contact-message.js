@@ -37,7 +37,11 @@
   function currentUser() { var a = auth(); return a ? a.getUser() : null; }
   function openAuth() { var a = auth(); if (a) a.open(); }
   function toast(text) { if (window.showSiteToast) window.showSiteToast(text); }
+  /* 接口调用统一走 auth.js 暴露的方法：它会先试 /api/xxx，
+     404 时自动改走 /.netlify/functions/xxx（函数直连路径）。 */
   function api(path, options) {
+    var a = auth();
+    if (a && a.api) return a.api(path, options);
     return fetch(path, Object.assign({
       headers: { 'Content-Type': 'application/json' },
       cache: 'no-store'

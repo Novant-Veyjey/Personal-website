@@ -28,11 +28,26 @@
   var user = null;
   var listeners = [];
 
-  function api(path, options) {
+  /* 接口地址：优先 /api/xxx（本地 server.mjs 与生效的重写都吃这个），
+     若返回 404（这个站点的 Netlify 重写一直没生效，见仓库里 /api/profile 那次修复）
+     就自动改走 Netlify 函数的直连路径 /.netlify/functions/xxx。 */
+  function functionPath(path) {
+    return String(path).replace(/^\/api\//, '/.netlify/functions/');
+  }
+  function rawFetch(path, options) {
     return fetch(path, Object.assign({
       headers: { 'Content-Type': 'application/json' },
       cache: 'no-store'
-    }, options || {})).then(function (res) {
+    }, options || {}));
+  }
+  function api(path, options) {
+    return rawFetch(path, options).then(function (res) {
+      if (res.status === 404) {
+        var alt = functionPath(path);
+        if (alt !== path) return rawFetch(alt, options);
+      }
+      return res;
+    }).then(function (res) {
       return res.json().catch(function () { return {}; }).then(function (data) {
         return { ok: res.ok, status: res.status, data: data };
       });
@@ -173,12 +188,13 @@
   setMode('login');
   refresh();
 
-  /* 给留言板用的公开接口 */
+  /* 给留言板用的公开接口（含同一套接口地址回退逻辑） */
   window.SiteAuth = {
     getUser: function () { return user; },
     refresh: refresh,
     onChange: function (cb) { if (typeof cb === 'function') listeners.push(cb); },
     open: openDialog,
-    networkMessage: networkMessage
+    networkMessage: networkMessage,
+    api: api
   };
 })();
