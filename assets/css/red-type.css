@@ -72,3 +72,14 @@
     0 0 20px rgba(229, 35, 45, .52),
     0 0 46px rgba(190, 16, 30, .32);
 }
+
+/* 上行 CALLS FROM HAWKINS：比下行淡一档
+   —— 描边收细、红色转沉、辉光减弱，避免它抢过下面那行 */
+.story-art--signal .story-art__media::before {
+  -webkit-text-stroke-width: clamp(1.1px, .09vw, 1.9px);
+  -webkit-text-stroke-color: #cf2b33;
+  text-shadow:
+    0 0 6px  rgba(220, 40, 50, .55),
+    0 0 20px rgba(200, 28, 38, .38),
+    0 0 46px rgba(160, 18, 28, .22);
+}
