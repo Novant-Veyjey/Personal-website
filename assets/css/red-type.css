@@ -83,3 +83,11 @@
     0 0 20px rgba(200, 28, 38, .38),
     0 0 46px rgba(160, 18, 28, .22);
 }
+
+/* 下行 A CRY FROM THE UPSIDE DOWN：贴右
+   —— 两个伪元素都是「拉满宽度」的盒子（left/right 都有值），
+      默认 text-align:left 会让它停在左边；改成右对齐后，
+      上行贴左、下行贴右，两行形成对角呼应。 */
+.story-art--signal .story-art__media::after {
+  text-align: right;
+}

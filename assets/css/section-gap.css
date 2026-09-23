@@ -1,0 +1,16 @@
+/* ============================================================
+   压缩「能力」区块与「联络」区块之间的空档
+   ------------------------------------------------------------
+   这段黑空档是四层间距叠出来的，实测在 1280 宽下共 421px：
+     1. .section--abilities 的底内边距  ~87px（默认 clamp(110px,15vw,210px)）
+     2. .section--contact   的顶内边距  115px
+     3. .contact-inner      的顶内边距  150px ← 最大的一层
+     4. .story-art（联络海报）自身的上边距 40px
+   这里逐层收紧到合计约 113px：既把黑空档补掉，又留够高度避开吸顶导航
+   （点导航「联络」跳过来时，海报顶部不会被导航压住）。
+   （本文件在多数样式表之后加载，可直接覆盖。）
+   ============================================================ */
+.section--abilities { padding-bottom: clamp(24px, 3.2vw, 48px); }
+.section--contact { padding-top: clamp(28px, 3.6vw, 52px); }
+.section--contact .contact-inner { padding-top: 0; }
+.section--contact .story-art { margin-top: clamp(16px, 2vw, 28px); }

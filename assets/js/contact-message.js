@@ -1,3 +1,14 @@
+/* ============================================================
+   留言板（联络区海报的上半＝发布 / 下半＝回复）
+   ------------------------------------------------------------
+   后端：本站自带的 /api/messages（Netlify Function，本地由 server.mjs 提供）
+     GET  /api/messages                所有人可读（含未登录访客）
+     POST /api/messages                登录后才能发
+     POST /api/messages/:id/replies    登录后才能回复
+   · 作者名一律由服务端按登录账号写入，前端传什么都不作数（防冒充）
+   · 未登录点「发布 / 回复」→ 自动弹出登录窗
+   · 云端读不到时如实报错，不会偷偷存到本机骗人
+   ============================================================ */
 (function () {
   'use strict';
 
@@ -8,97 +19,78 @@
   var recent = document.getElementById('message-recent');
   var title = document.getElementById('message-dialog-title');
   var hint = dialog ? dialog.querySelector('.message-dialog__hint') : null;
-  var storageKey = 'upsideDownSharedMessages.v2';
-  var apiUrl = window.MESSAGE_API_BASE || '/api/messages';
-  var messages = [];
-  var mode = 'local';     // 存储模式：cloud（云端同步）/ local（仅本机）
-  var view = 'publish';   // 视图模式：publish（只发布）/ reply（只回复）
-  var activeReplyId = null;
-  var busy = false;
   if (!dialog || !form || !recent) return;
 
+  var messages = [];
+  var view = 'publish';   // publish（只发布）/ reply（只回复）
+  var activeReplyId = null;
+  var busy = false;
+  var backendDown = '';
+
+  /* ---------- 工具 ---------- */
   function escapeHtml(value) {
     return String(value || '').replace(/[&<>"']/g, function (char) {
       return ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[char];
     });
   }
-  function normalize(item) {
-    return {
-      id: item.id || String(Date.now()) + Math.random().toString(16).slice(2),
-      name: String(item.name || '匿名信号').slice(0, 40),
-      message: String(item.message || '').slice(0, 500),
-      createdAt: item.createdAt || new Date().toISOString(),
-      replies: Array.isArray(item.replies) ? item.replies.map(function (reply) {
-        return {
-          id: reply.id || String(Date.now()) + Math.random().toString(16).slice(2),
-          name: String(reply.name || '匿名信号').slice(0, 40),
-          message: String(reply.message || '').slice(0, 500),
-          createdAt: reply.createdAt || new Date().toISOString()
-        };
-      }) : []
-    };
-  }
-  function readLocal() {
-    try {
-      var saved = JSON.parse(localStorage.getItem(storageKey) || '[]');
-      return Array.isArray(saved) ? saved.map(normalize) : [];
-    } catch (error) {
-      return [];
-    }
-  }
-  function writeLocal(next) {
-    try { localStorage.setItem(storageKey, JSON.stringify(next.slice(0, 50))); } catch (error) {}
-  }
-  function request(url, options) {
-    return fetch(url, Object.assign({
+  function auth() { return window.SiteAuth || null; }
+  function currentUser() { var a = auth(); return a ? a.getUser() : null; }
+  function openAuth() { var a = auth(); if (a) a.open(); }
+  function toast(text) { if (window.showSiteToast) window.showSiteToast(text); }
+  function api(path, options) {
+    return fetch(path, Object.assign({
       headers: { 'Content-Type': 'application/json' },
       cache: 'no-store'
-    }, options || {})).then(function (response) {
-      if (!response.ok) throw new Error('Message API ' + response.status);
-      return response.json();
+    }, options || {})).then(function (res) {
+      return res.json().catch(function () { return {}; }).then(function (data) {
+        return { ok: res.ok, status: res.status, data: data };
+      });
     });
   }
-  function setBusy(value) {
-    busy = value;
-    form.querySelectorAll('button, input, textarea').forEach(function (control) { control.disabled = value; });
-    recent.querySelectorAll('button, input, textarea').forEach(function (control) { control.disabled = value; });
+  function networkMessage(error) {
+    var a = auth();
+    return a && a.networkMessage ? a.networkMessage(error) : ('连不上服务器（' + ((error && error.message) || '未知错误') + '）');
   }
+
+  /* ---------- 发布区（随登录态变化） ---------- */
   function syncHint() {
     if (!hint) return;
     if (view === 'reply') {
-      hint.textContent = mode === 'cloud'
-        ? '点任意一条留言下的「回复」跟帖，所有访客都能看到。'
-        : '共享频道暂不可用，回复会先保存在这台设备中。';
+      hint.textContent = currentUser()
+        ? '点任意留言下的「回复」跟帖，所有访客都能看到。'
+        : '留言和回复对所有人公开；登录后才能跟帖。';
     } else {
-      hint.textContent = mode === 'cloud'
-        ? '留言会同步到共享频道，所有访客都能看到。'
-        : '共享频道暂不可用，当前留言会先保存在这台设备中。';
+      hint.textContent = currentUser()
+        ? '以「' + (currentUser().name || '账号') + '」身份发布，所有访客都能看到。'
+        : '留言和回复对所有人公开；登录后才能发布。';
     }
   }
-
-  /* 发布 / 回复 是两个互斥视图：
-     - 发布：只显示发布表单，不显示留言列表
-     - 回复：只显示留言列表（顶部红框）；发布表单由 CSS 的
-       .is-reply-mode 隐藏，列表自然就顶到最上面了
-     这里只根据 view 切换，绝不会被异步加载结果改回去。 */
-  function setView(next) {
-    view = next === 'reply' ? 'reply' : 'publish';
-    var isReply = view === 'reply';
-    form.classList.toggle('is-reply-mode', isReply);
-    if (title) title.textContent = isReply ? '回复' : '发布';
-    recent.hidden = !isReply;
+  function syncIdentity() {
+    /* 作者由账号决定，所以「你的称呼」这一行直接隐藏 */
+    var nameLabel = null;
+    form.querySelectorAll('label').forEach(function (label) {
+      if (label.querySelector('input[name="name"]')) nameLabel = label;
+    });
+    if (nameLabel) nameLabel.style.display = 'none';
+    var nameInput = form.elements.name;
+    if (nameInput) { nameInput.disabled = true; nameInput.required = false; }
+    var submit = form.querySelector('.message-dialog__save');
+    if (submit) submit.disabled = busy;
     syncHint();
-    render();
   }
 
-  /* 渲染留言列表（含发布人、时间、内容与回复框） */
+  /* ---------- 渲染 ---------- */
   function render() {
+    if (backendDown) {
+      recent.innerHTML = '<p class="message-board__empty">' + escapeHtml(backendDown) + '<br />请确认后端可用（本地：node server.mjs；线上：已部署 Netlify Functions）。</p>';
+      return;
+    }
     if (!messages.length) {
-      recent.innerHTML = '<p class="message-board__empty">频道里还没有留言，等第一条信号出现。</p>';
+      recent.innerHTML = '<p class="message-board__empty">频道里还没有留言，登录后发出第一条信号。</p>';
       return;
     }
     recent.innerHTML = messages.slice(0, 30).map(function (item) {
-      var replies = item.replies.length ? '<div class="message-board__replies">' + item.replies.map(function (reply) {
+      var replies = item.replies && item.replies.length ? '<div class="message-board__replies">' + item.replies.map(function (reply) {
         return '<article class="message-board__reply"><header><b>' + escapeHtml(reply.name) + '</b><time>' + escapeHtml(new Date(reply.createdAt).toLocaleString()) + '</time></header><p>' + escapeHtml(reply.message) + '</p></article>';
       }).join('') + '</div>' : '';
       var editorHidden = activeReplyId === item.id ? '' : ' hidden';
@@ -107,62 +99,60 @@
         '<p>' + escapeHtml(item.message) + '</p>' + replies +
         '<button class="message-board__reply-toggle" type="button" data-reply-toggle="' + escapeHtml(item.id) + '">' + (activeReplyId === item.id ? '收起回复' : '回复') + '</button>' +
         '<div class="message-board__reply-editor" data-reply-editor="' + escapeHtml(item.id) + '"' + editorHidden + '>' +
-          '<input class="message-board__reply-name" maxlength="40" placeholder="你的称呼" />' +
           '<textarea class="message-board__reply-text" rows="2" maxlength="500" placeholder="回复这条留言"></textarea>' +
           '<button class="message-board__reply-send" type="button" data-reply-send="' + escapeHtml(item.id) + '">发送回复 ↗</button>' +
         '</div>' +
       '</article>';
     }).join('');
   }
-  function applyResult(result) {
-    if (result && Array.isArray(result.messages)) messages = result.messages.map(normalize);
-    render();
+  function setBusy(value) {
+    busy = value;
+    form.querySelectorAll('button, input, textarea').forEach(function (control) { control.disabled = value; });
+    recent.querySelectorAll('button, input, textarea').forEach(function (control) { control.disabled = value; });
+    syncIdentity();
   }
-  /* 加载数据只负责取数据，不改视图，避免把用户切好的视图顶回去 */
+
+  /* ---------- 拉取 / 发布 / 回复 ---------- */
   function load() {
-    return request(apiUrl).then(function (result) {
-      mode = 'cloud';
-      applyResult(result);
-      syncHint();
-    }).catch(function () {
-      mode = 'local';
-      messages = readLocal();
+    return api('/api/messages').then(function (res) {
+      if (!res.ok) throw new Error((res.data && res.data.error) || ('HTTP ' + res.status));
+      backendDown = '';
+      messages = Array.isArray(res.data.messages) ? res.data.messages : [];
       render();
-      syncHint();
+    }).catch(function (error) {
+      backendDown = '留言板暂时读不到：' + networkMessage(error);
+      messages = [];
+      render();
     });
   }
-  function postMessage(data) {
+  function postMessage(content) {
+    if (!currentUser()) { openAuth(); return Promise.resolve(); }
     setBusy(true);
-    return request(apiUrl, { method: 'POST', body: JSON.stringify(data) }).then(function (result) {
-      mode = 'cloud';
-      applyResult(result);
-      syncHint();
-    }).catch(function () {
-      var item = normalize(data);
-      messages = [item].concat(messages);
-      writeLocal(messages);
+    return api('/api/messages', { method: 'POST', body: JSON.stringify({ message: content }) }).then(function (res) {
+      if (!res.ok) throw new Error((res.data && res.data.error) || '发布失败');
+      backendDown = '';
+      messages = res.data.messages || messages;
       render();
-      syncHint();
-      if (window.showSiteToast) window.showSiteToast('云端暂不可用，留言已保存在本机');
+      toast('留言已发布，所有访客可见');
+    }).catch(function (error) {
+      toast('发布失败：' + ((error && error.message) || '未知错误'));
     }).finally(function () { setBusy(false); });
   }
-  function postReply(id, data) {
+  function postReply(id, content) {
+    if (!currentUser()) { openAuth(); return Promise.resolve(); }
     setBusy(true);
-    return request(apiUrl + '/' + encodeURIComponent(id) + '/replies', { method: 'POST', body: JSON.stringify(data) }).then(function (result) {
-      mode = 'cloud';
+    return api('/api/messages/' + encodeURIComponent(id) + '/replies', {
+      method: 'POST',
+      body: JSON.stringify({ message: content })
+    }).then(function (res) {
+      if (!res.ok) throw new Error((res.data && res.data.error) || '回复失败');
+      backendDown = '';
+      messages = res.data.messages || messages;
       activeReplyId = null;
-      applyResult(result);
-      syncHint();
-    }).catch(function () {
-      messages = messages.map(function (item) {
-        if (item.id === id) item.replies = item.replies.concat([normalize(data)]);
-        return item;
-      });
-      activeReplyId = null;
-      writeLocal(messages);
       render();
-      syncHint();
-      if (window.showSiteToast) window.showSiteToast('云端暂不可用，回复已保存在本机');
+      toast('回复已发布，所有访客可见');
+    }).catch(function (error) {
+      toast('回复失败：' + ((error && error.message) || '未知错误'));
     }).finally(function () { setBusy(false); });
   }
   function focusReply(id) {
@@ -172,9 +162,20 @@
       var editor = recent.querySelector('[data-reply-editor="' + id + '"]');
       if (!editor) return;
       editor.scrollIntoView({ behavior: 'smooth', block: 'center' });
-      var input = editor.querySelector('.message-board__reply-name');
-      if (input) input.focus();
+      var box = editor.querySelector('.message-board__reply-text');
+      if (box) box.focus();
     }, 80);
+  }
+
+  /* ---------- 视图切换 ---------- */
+  function setView(next) {
+    view = next === 'reply' ? 'reply' : 'publish';
+    var isReply = view === 'reply';
+    form.classList.toggle('is-reply-mode', isReply);
+    if (title) title.textContent = isReply ? '回复' : '发布';
+    recent.hidden = !isReply;
+    syncIdentity();
+    render();
   }
   function open(next) {
     setView(next);
@@ -184,10 +185,7 @@
     else dialog.setAttribute('open', '');
     load().then(function () {
       if (view !== 'publish') return;
-      window.setTimeout(function () {
-        var name = form.elements.name;
-        if (name) name.focus();
-      }, 80);
+      window.setTimeout(function () { form.elements.message.focus(); }, 80);
     });
   }
   function hide() {
@@ -213,20 +211,20 @@
   if (close) close.addEventListener('click', hide);
   if (cancel) cancel.addEventListener('click', hide);
   dialog.addEventListener('click', function (event) { if (event.target === dialog) hide(); });
+
   form.addEventListener('submit', function (event) {
     event.preventDefault();
     if (busy || view !== 'publish') return;
-    var data = new FormData(form);
-    var item = { name: String(data.get('name') || '').trim(), message: String(data.get('message') || '').trim() };
-    if (!item.name || !item.message) return;
-    postMessage(item).then(function () {
-      form.reset();
-      if (window.showSiteToast) window.showSiteToast(mode === 'cloud' ? '留言已同步到共享频道' : '留言已保存到本机');
-    });
+    if (!currentUser()) { openAuth(); return; }
+    var content = String(form.elements.message.value || '').trim();
+    if (!content) { form.elements.message.focus(); return; }
+    postMessage(content).then(function () { form.reset(); });
   });
+
   recent.addEventListener('click', function (event) {
     var toggle = event.target.closest('[data-reply-toggle]');
     if (toggle) {
+      if (!currentUser()) { openAuth(); return; }
       activeReplyId = activeReplyId === toggle.dataset.replyToggle ? null : toggle.dataset.replyToggle;
       render();
       if (activeReplyId) focusReply(activeReplyId);
@@ -237,12 +235,18 @@
     var id = send.dataset.replySend;
     var box = recent.querySelector('[data-reply-editor="' + id + '"]');
     if (!box) return;
-    var name = box.querySelector('.message-board__reply-name').value.trim();
-    var message = box.querySelector('.message-board__reply-text').value.trim();
-    if (!name || !message) return;
-    postReply(id, { name: name, message: message }).then(function () {
-      if (window.showSiteToast) window.showSiteToast(mode === 'cloud' ? '回复已同步到共享频道' : '回复已保存到本机');
-    });
+    var content = String(box.querySelector('.message-board__reply-text').value || '').trim();
+    if (!content) return;
+    postReply(id, content);
   });
-  load();
+
+  /* 登录态变化：更新提示与作者身份，并顺手刷新一次列表 */
+  if (auth()) {
+    auth().onChange(function () {
+      syncIdentity();
+      if (dialog.open) load();
+    });
+    if (auth().getUser()) load();
+  }
+  setView('publish');
 }());

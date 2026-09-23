@@ -19,10 +19,17 @@
    同时把两处放大都关掉，只保留滤镜的悬停变化。
    ============================================================ */
 
-/* 容器跟随原图比例（align-self: start 避免被 grid 拉伸变形） */
+/* 容器跟随原图比例（align-self: start 避免被 grid 拉伸变形）。
+   关键：abilities-background.css 把媒体设成了 position:absolute + inset:0，
+   绝对定位下 aspect-ratio 会被忽略（高度被上下钉死），
+   所以这里必须把定位改回 relative，比例才能真正生效。 */
+.story-art--mind { min-height: 0; }
 .story-art--mind .story-art__media {
+  position: relative;
+  inset: auto;
+  width: 100%;
   align-self: start;
-  aspect-ratio: 1260 / 945;
+  aspect-ratio: 1280 / 704;
   min-height: 0;
 }
 
@@ -43,11 +50,41 @@
   filter: saturate(1.04) contrast(1.18) brightness(.96);
 }
 
-/* 窄屏单列时比例不变 */
+/* 窄屏单列时比例不变（跟随视频比例） */
 @media (max-width: 800px) {
   .story-art--mind .story-art__media {
-    aspect-ratio: 1260 / 945;
+    aspect-ratio: 1280 / 704;
     min-height: 0;
   }
   .story-art--mind img { min-height: 0; }
+}
+
+/* ============================================================
+   MIND LAIR 换成视频：assets/art/mind-lair.mp4
+   静态 img 垫底作回退，视频绝对定位铺满整个媒体区（object-fit: cover）。
+   要求：直接用原片，不加任何滤镜／调色／叠加。
+   ============================================================ */
+.story-art--mind .story-art__video {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  display: block;
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+  object-fit: cover;
+  object-position: center;
+  transform: none;
+  filter: none;
+}
+
+/* 去掉压在画面上的两层：abilities-background.css 给 .story-art--mind 加的
+   红黑 multiply 渐变遮罩（::after）与扫描线层（.story-art__scan）。
+   本文件在其之后加载，同名选择器以源码顺序取胜。 */
+.story-art--mind .story-art__media::after { display: none; }
+.story-art--mind .story-art__scan { display: none; }
+
+/* 减少动效：不播视频，退回静态图 */
+@media (prefers-reduced-motion: reduce) {
+  .story-art--mind .story-art__video { display: none; }
 }

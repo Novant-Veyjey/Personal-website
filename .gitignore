@@ -4,5 +4,6 @@ Thumbs.db
 .DS_Store
 node_modules/
 .netlify/
+netlify/.data/
 serve.log
 .codebuddy/

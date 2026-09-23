@@ -27,13 +27,19 @@
   <!-- 首页背景压暗偏红 -->
   <link rel="stylesheet" href="assets/css/hero-bg.css" />
   <!-- 修复：MIND LAIR 场景图被裁掉上下三成 -->
-  <link rel="stylesheet" href="assets/css/scene-art-fit.css" />
+  <link rel="stylesheet" href="assets/css/scene-art-fit.css?v=20260923c" />
   <!-- 红色字型：联络标题内部全红 + 海报两行标语的描边反色 -->
-  <link rel="stylesheet" href="assets/css/red-type.css" />
+  <link rel="stylesheet" href="assets/css/red-type.css?v=20260923a" />
   <!-- 关于我区块：增加视觉层次 -->
   <link rel="stylesheet" href="assets/css/profile-richer.css" />
   <!-- 联系海报：上下两半独立响应鼠标（务必最后加载以覆盖旧规则） -->
-  <link rel="stylesheet" href="assets/css/story-art-split.css?v=20260923e" />
+  <link rel="stylesheet" href="assets/css/story-art-split.css?v=20260923j" />
+  <!-- 登录 / 注册系统 -->
+  <link rel="stylesheet" href="assets/css/auth.css" />
+  <!-- 压缩能力区与联络区之间的空档（务必最后加载以覆盖旧规则） -->
+  <link rel="stylesheet" href="assets/css/section-gap.css?v=20260923b" />
+  <!-- 能力卡片下方的拼贴照片墙 -->
+  <link rel="stylesheet" href="assets/css/photo-wall.css?v=20260923b" />
   <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js" defer></script>
   <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js" defer></script>
 </head>
@@ -65,8 +71,12 @@
       <a href="#contact">联络 <small>CONTACT</small></a>
     </nav>
 
-    <div class="header-status" aria-hidden="true">
-      <i></i><span>LIVE</span><b data-clock>00:00:00</b>
+    <div class="header-right">
+      <div class="header-status" aria-hidden="true">
+        <i></i><span>LIVE</span><b data-clock>00:00:00</b>
+      </div>
+      <button class="auth-trigger" id="auth-trigger" type="button">登录 / 注册</button>
+      <div class="header-account" id="header-account" hidden></div>
     </div>
   </header>
 
@@ -359,7 +369,9 @@
 
         <figure class="story-art story-art--mind reveal">
           <div class="story-art__media">
+            <!-- 静态图垫底：视频加载前/减少动效时的回退 -->
             <img src="assets/art/mind-lair.jpg" alt="漂浮着物体与红色能量的异世界洞穴插画" width="1600" height="900" loading="lazy" />
+            <video class="story-art__video" src="assets/art/mind-lair.mp4" autoplay muted loop playsinline preload="metadata" aria-hidden="true"></video>
             <span class="story-art__scan" aria-hidden="true"></span>
           </div>
           <figcaption class="story-art__caption">
@@ -398,6 +410,11 @@
             <div class="ability__tags" data-ability-field="tags"><span>ITERATE</span><span>LEARN</span></div>
           </article>
         </div>
+
+        <!-- 照片墙：能力卡片下方的生活档案带 -->
+        <figure class="photo-wall reveal">
+          <img src="assets/art/photo-wall.jpg" alt="朋友与家人的生活照片拼贴墙" width="2400" height="960" loading="lazy" />
+        </figure>
       </div>
     </section>
 
@@ -579,16 +596,37 @@
       <button class="poster-preview__edit" id="poster-preview-edit" type="button">修改这张 <span>↗</span></button>
     </div>
   </dialog>
+  <dialog class="auth-dialog" id="auth-dialog" aria-labelledby="auth-title">
+    <form class="auth-dialog__surface" id="auth-form">
+      <button class="auth-dialog__close" id="auth-close" type="button" aria-label="关闭登录窗口">×</button>
+      <p class="auth-dialog__kicker">THE UPSIDE DOWN / ACCESS</p>
+      <h2 id="auth-title">登录</h2>
+      <div class="auth-tabs" role="tablist">
+        <button type="button" data-auth-tab="login" class="is-active" role="tab">登录</button>
+        <button type="button" data-auth-tab="register" role="tab">注册</button>
+      </div>
+      <label><span>昵称（也是登录账号）</span><input name="name" type="text" minlength="2" maxlength="20" autocomplete="username" required /></label>
+      <label><span>密码（至少 6 位）</span><input name="password" type="password" minlength="6" autocomplete="current-password" required /></label>
+      <p class="auth-message" id="auth-message" role="alert"></p>
+      <div class="auth-dialog__actions">
+        <button class="auth-submit" type="submit" id="auth-submit">登录 <span>↗</span></button>
+      </div>
+      <p class="auth-hint">昵称就是你的账号，用它登录；留言里显示的也是这个名字。留言与回复对所有访客公开。</p>
+    </form>
+  </dialog>
   <!-- 常驻编辑入口：修改名字 / 资料（之前只有档案卡可点，很难发现） -->
   <button class="profile-fab" id="open-profile-editor-fab" type="button" title="修改我的名字与个人资料"><span>◉</span>编辑名字 / 资料</button>
   <script src="assets/js/stranger.js"></script>
-  <script src="assets/js/contact-message.js?v=20260923c"></script>
   <script src="assets/js/section-editor.js?v=20260923a"></script>
   <script src="assets/js/ability-editor.js"></script>
   <script src="assets/js/project-editor.js"></script>
   <script src="assets/js/poster-manager.js?v=20260923a"></script>
-  <script src="assets/js/poster-sphere.js"></script>
+  <script src="assets/js/poster-sphere.js?v=20260923a"></script>
   <script src="assets/js/profile-editor.js?v=20260923b"></script>
   <script src="assets/js/back-to-vault.js"></script>
+  <!-- 账号系统 + 留言板：都走本站自带后端（/api/auth、/api/messages），不依赖任何第三方服务 -->
+  <script src="assets/js/auth.js?v=20260923c"></script>
+  <!-- auth.js 先加载：留言板要复用它的登录态与弹窗 -->
+  <script src="assets/js/contact-message.js?v=20260923f"></script>
 </body>
 </html>

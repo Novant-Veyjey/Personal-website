@@ -1,0 +1,49 @@
+/* ============================================================
+   照片墙 / PHOTO WALL
+   ------------------------------------------------------------
+   位置：能力区块内、四张能力卡片下方的一条拼贴照片带，
+        用来填掉卡片与联络区之间那段纯黑空档。
+   素材：assets/art/photo-wall.jpg（原图 4096×1636，网页版 2400×959）
+   调性：只做很轻的整体压暗 + 一点点暖调，保留原图颜色，
+        不套能力区那套暗红滤镜，也不加扫描线。
+   ============================================================ */
+
+.photo-wall {
+  position: relative;
+  aspect-ratio: 2400 / 959;
+  margin: clamp(36px, 5vw, 70px) 0 0;
+  overflow: hidden;
+  border: 1px solid rgba(229, 35, 45, .26);
+  background: #070709;
+  box-shadow: 0 34px 90px rgba(0, 0, 0, .52);
+}
+
+.photo-wall img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  /* 轻微压暗调：降一点亮度与饱和度，轻微暖色，颜色整体保留 */
+  filter: saturate(.94) contrast(1.05) brightness(.88) sepia(.06);
+}
+
+/* 极淡的压暗与底部红晕，让照片带融进深色页面 */
+.photo-wall::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    linear-gradient(180deg, rgba(10, 5, 7, .14), rgba(8, 4, 6, .3)),
+    radial-gradient(ellipse at 50% 118%, rgba(229, 35, 45, .1), transparent 58%);
+}
+
+/* 窄屏：2.5:1 会太扁，改成 16:9 裁切，照片看得清 */
+@media (max-width: 800px) {
+  .photo-wall { aspect-ratio: 16 / 9; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .photo-wall::after { background: linear-gradient(180deg, rgba(10, 5, 7, .14), rgba(8, 4, 6, .3)); }
+}

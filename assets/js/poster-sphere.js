@@ -6,9 +6,13 @@
     ['.story-art--lab img', 'assets/art/hawkins-lab.jpg?v=20260922b'],
     ['.story-art--mind img', 'assets/art/mind-lair.jpg?v=20260922d']
   ];
+  /* 必须用 querySelectorAll：联络海报被拆成上下两个裁切窗，
+     每个窗里各有一份 <img>，只换第一份会让下半张留在旧图上
+     （结果是下半窗显示另一张方图的边缘，看着像残留碎片）。 */
   replacements.forEach(function (entry) {
-    var image = document.querySelector(entry[0]);
-    if (image) image.src = entry[1];
+    document.querySelectorAll(entry[0]).forEach(function (image) {
+      image.src = entry[1];
+    });
   });
 }());
 
