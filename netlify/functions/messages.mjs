@@ -1,83 +1,93 @@
-import { getStore } from "@netlify/blobs";
+import { getStore } from '@netlify/blobs';
 
-const STORE_NAME = "upside-down-message-board";
-const PREFIX = "messages/";
+const STORE_NAME = 'signal-messages';
+const KEY = 'board';
 
-function response(body, status = 200) {
+function json(body, status = 200) {
   return new Response(JSON.stringify(body), {
     status,
     headers: {
-      "content-type": "application/json; charset=utf-8",
-      "cache-control": "no-store",
-      "access-control-allow-origin": "*",
-      "access-control-allow-headers": "content-type",
-      "access-control-allow-methods": "GET,POST,OPTIONS"
-    }
+      'Content-Type': 'application/json',
+      'Access-Control-Allow-Origin': '*',
+      'Access-Control-Allow-Headers': 'Content-Type',
+      'Cache-Control': 'no-store',
+    },
   });
 }
 
-function clean(value, maxLength) {
-  return String(value || "").replace(/\s+/g, " ").trim().slice(0, maxLength);
+function normalizeMessage(input) {
+  const data = input || {};
+  return {
+    id: typeof data.id === 'string' && data.id ? data.id : (Date.now().toString(36) + Math.random().toString(36).slice(2, 8)),
+    name: (String(data.name || '').trim().slice(0, 40)) || '匿名信号',
+    message: String(data.message || '').trim().slice(0, 500),
+    createdAt: new Date().toISOString(),
+    replies: [],
+  };
 }
 
-async function readBody(request) {
-  try {
-    return await request.json();
-  } catch {
-    return {};
-  }
+function normalizeReply(input) {
+  const data = input || {};
+  return {
+    id: Date.now().toString(36) + Math.random().toString(36).slice(2, 8),
+    name: (String(data.name || '').trim().slice(0, 40)) || '匿名信号',
+    message: String(data.message || '').trim().slice(0, 500),
+    createdAt: new Date().toISOString(),
+  };
 }
 
-async function listMessages(store) {
-  const { blobs } = await store.list({ prefix: PREFIX });
-  const messages = await Promise.all(blobs.map(({ key }) => store.get(key, { type: "json" })));
-  return messages.filter(Boolean).sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
-}
-
-export default async function handler(request) {
-  if (request.method === "OPTIONS") return response({ ok: true });
-
-  const url = new URL(request.url);
-  const replyMatch = url.pathname.match(/\/messages\/([^/]+)\/replies\/?$/);
+async function readBoard() {
   const store = getStore(STORE_NAME);
-
-  try {
-    if (request.method === "GET") {
-      return response({ messages: await listMessages(store), mode: "cloud" });
-    }
-    if (request.method !== "POST") return response({ error: "Method not allowed" }, 405);
-
-    const body = await readBody(request);
-    const name = clean(body.name, 40);
-    const message = clean(body.message, 500);
-    if (!name || !message) return response({ error: "Name and message are required" }, 400);
-
-    if (replyMatch) {
-      const key = PREFIX + decodeURIComponent(replyMatch[1]);
-      const thread = await store.get(key, { type: "json" });
-      if (!thread) return response({ error: "Message not found" }, 404);
-      thread.replies = Array.isArray(thread.replies) ? thread.replies : [];
-      thread.replies.push({
-        id: crypto.randomUUID(),
-        name,
-        message,
-        createdAt: new Date().toISOString()
-      });
-      await store.setJSON(key, thread);
-      return response({ message: thread, messages: await listMessages(store) }, 201);
-    }
-
-    const thread = {
-      id: crypto.randomUUID(),
-      name,
-      message,
-      createdAt: new Date().toISOString(),
-      replies: []
-    };
-    await store.setJSON(PREFIX + thread.id, thread);
-    return response({ message: thread, messages: await listMessages(store) }, 201);
-  } catch (error) {
-    console.error("message-api-error", error);
-    return response({ error: "Message service unavailable" }, 503);
-  }
+  const raw = await store.get(KEY, { type: 'json' });
+  return Array.isArray(raw) ? raw : [];
 }
+
+async function writeBoard(list) {
+  const store = getStore(STORE_NAME);
+  await store.set(KEY, JSON.stringify(list.slice(0, 200)));
+}
+
+export default async (request) => {
+  const url = new URL(request.url);
+  const tail = url.pathname.replace(/^\/\.netlify\/functions\/messages/, '').replace(/^\//, '');
+
+  if (request.method === 'OPTIONS') {
+    return new Response(null, {
+      headers: {
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Methods': 'GET,POST,OPTIONS',
+        'Access-Control-Allow-Headers': 'Content-Type',
+      },
+    });
+  }
+
+  if (request.method === 'GET') {
+    const messages = await readBoard();
+    return json({ messages });
+  }
+
+  if (request.method === 'POST') {
+    let body = {};
+    try { body = await request.json(); } catch (_) {}
+
+    const replyMatch = tail.match(/^([^/]+)\/replies$/);
+    if (replyMatch) {
+      const id = decodeURIComponent(replyMatch[1]);
+      const messages = await readBoard();
+      const target = messages.find((m) => m.id === id);
+      if (!target) return json({ error: 'NOT_FOUND' }, 404);
+      target.replies = Array.isArray(target.replies) ? target.replies : [];
+      target.replies.push(normalizeReply(body));
+      await writeBoard(messages);
+      return json({ messages });
+    }
+
+    const item = normalizeMessage(body);
+    const messages = await readBoard();
+    messages.unshift(item);
+    await writeBoard(messages);
+    return json({ messages });
+  }
+
+  return json({ error: 'METHOD_NOT_ALLOWED' }, 405);
+};
