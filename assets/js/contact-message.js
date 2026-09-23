@@ -76,16 +76,18 @@
     });
     var saveButton = form.querySelector('.message-dialog__save');
     if (saveButton) saveButton.hidden = isReply;
-    if (!hint) return;
-    if (isReply) {
-      hint.textContent = mode === 'cloud'
-        ? '选择下方一条留言进行回复，所有访客都能看到。'
-        : '共享频道暂不可用，回复会先保存在这台设备中。';
-    } else {
-      hint.textContent = mode === 'cloud'
-        ? '留言会同步到共享频道，所有访客都能看到。'
-        : '共享频道暂不可用，当前留言会先保存在这台设备中。';
+    if (hint) {
+      if (isReply) {
+        hint.textContent = mode === 'cloud'
+          ? '选择下方一条留言进行回复，所有访客都能看到。'
+          : '共享频道暂不可用，回复会先保存在这台设备中。';
+      } else {
+        hint.textContent = mode === 'cloud'
+          ? '留言会同步到共享频道，所有访客都能看到。'
+          : '共享频道暂不可用，当前留言会先保存在这台设备中。';
+      }
     }
+    render();
   }
   function render() {
     if (currentMode === 'message') {
