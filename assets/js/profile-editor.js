@@ -90,6 +90,16 @@
     return 'WELCOME ' + (hasEnglish ? en : cn) + ' TO THE UPSIDE DOWN';
   }
 
+  /* 页面上要显示的名字：优先中文名，其次英文名；
+     两者都还是默认占位值就返回空（不显示“你的名字”这类占位文字）。 */
+  function displayName(data) {
+    var cn = clean(data.cnName);
+    var en = clean(data.enName);
+    if (cn && cn !== DEFAULTS.cnName) return cn;
+    if (en && en.toUpperCase() !== 'YOUR NAME') return en;
+    return '';
+  }
+
   function renderHeroTitle(element, data) {
     if (!element) return;
     var text = heroTitleText(data);
@@ -112,11 +122,16 @@
       el.textContent = data.enName;
     });
     renderHeroTitle($('#hero-title'), data);
-    $$('[data-profile-cn]').forEach(function (el) { el.textContent = data.cnName; });
+    // 没有自定义姓名时不留“你的名字”占位文字，显示中划线
+    var shownName = displayName(data);
+    $$('[data-profile-cn]').forEach(function (el) { el.textContent = shownName || '——'; });
     $$('[data-profile-role]').forEach(function (el) { el.textContent = data.role; });
     $$('[data-profile-location]').forEach(function (el) { el.textContent = data.location; });
     $$('[data-profile-initials]').forEach(function (el) { el.textContent = data.initials || makeInitials(data); });
-    $$('[data-profile-one-line]').forEach(function (el) { el.textContent = data.cnName + ' · ' + data.oneLine; });
+    // 一句话介绍：有名字才前缀名字，否则只显示这句话（不再出现“你的名字”）
+    $$('[data-profile-one-line]').forEach(function (el) {
+      el.textContent = shownName ? shownName + ' · ' + data.oneLine : data.oneLine;
+    });
     $$('[data-profile-statement]').forEach(function (el) { el.textContent = data.statement; });
     $$('[data-profile-note]').forEach(function (el) { el.textContent = '“' + data.note.replace(/^“|”$/g, '') + '”'; });
     $$('[data-profile-bio]').forEach(function (el) { el.textContent = data['bio' + el.dataset.profileBio] || ''; });
