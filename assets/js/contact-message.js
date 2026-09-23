@@ -12,7 +12,6 @@
   var apiUrl = window.MESSAGE_API_BASE || '/api/messages';
   var messages = [];
   var mode = 'local';
-  var currentMode = 'message';
   var activeReplyId = null;
   var busy = false;
   if (!dialog || !form || !recent) return;
@@ -61,41 +60,21 @@
   function setBusy(value) {
     busy = value;
     form.querySelectorAll('button, input, textarea').forEach(function (control) { control.disabled = value; });
+    recent.querySelectorAll('button, input, textarea').forEach(function (control) { control.disabled = value; });
   }
-  function setMode(nextMode) {
-    currentMode = nextMode === 'reply' ? 'reply' : 'message';
-    var isReply = currentMode === 'reply';
-    form.classList.toggle('is-reply-mode', isReply);
-    if (title) title.textContent = isReply ? '回复留言' : '写一条留言';
-    // 上面只能发布、下面只能回复：回复模式隐藏发布表单，发布模式隐藏留言列表
-    ['name', 'message'].forEach(function (key) {
-      var field = form.elements[key];
-      if (!field) return;
-      var wrap = field.closest('label') || field;
-      wrap.hidden = isReply;
-    });
-    var saveButton = form.querySelector('.message-dialog__save');
-    if (saveButton) saveButton.hidden = isReply;
+  /* 顶部发布表单常驻，底部频道常驻：不再有互斥的发布/回复模式。
+     这里只更新提示文案与标题，表单字段始终可见。 */
+  function syncView() {
+    if (title) title.textContent = '发布 & 回复';
     if (hint) {
-      if (isReply) {
-        hint.textContent = mode === 'cloud'
-          ? '选择下方一条留言进行回复，所有访客都能看到。'
-          : '共享频道暂不可用，回复会先保存在这台设备中。';
-      } else {
-        hint.textContent = mode === 'cloud'
-          ? '留言会同步到共享频道，所有访客都能看到。'
-          : '共享频道暂不可用，当前留言会先保存在这台设备中。';
-      }
+      hint.textContent = mode === 'cloud'
+        ? '上方留下你的信号；下方频道里可以回复任意一条留言，所有访客都能看到。'
+        : '共享频道暂不可用，留言与回复会先保存在这台设备中。';
     }
-    render();
   }
+
+  /* 下方频道：始终展示所有发布人的留言（含姓名、时间、内容）与每条的回复框。 */
   function render() {
-    if (currentMode === 'message') {
-      // 发布模式只显示发布表单，不显示留言列表与回复
-      recent.hidden = true;
-      recent.innerHTML = '';
-      return;
-    }
     if (!messages.length) {
       recent.hidden = false;
       recent.innerHTML = '<p class="message-board__empty">频道里还没有留言，等第一条信号出现。</p>';
@@ -127,12 +106,12 @@
     return request(apiUrl).then(function (result) {
       mode = 'cloud';
       applyResult(result);
-      setMode(currentMode);
+      syncView();
     }).catch(function () {
       mode = 'local';
       messages = readLocal();
       render();
-      setMode(currentMode);
+      syncView();
     });
   }
   function postMessage(data) {
@@ -140,13 +119,13 @@
     return request(apiUrl, { method: 'POST', body: JSON.stringify(data) }).then(function (result) {
       mode = 'cloud';
       applyResult(result);
-      setMode('message');
+      syncView();
     }).catch(function () {
       var item = normalize(data);
       messages = [item].concat(messages);
       writeLocal(messages);
       render();
-      setMode('message');
+      syncView();
       if (window.showSiteToast) window.showSiteToast('云端暂不可用，留言已保存在本机');
     }).finally(function () { setBusy(false); });
   }
@@ -156,7 +135,7 @@
       mode = 'cloud';
       activeReplyId = null;
       applyResult(result);
-      setMode('reply');
+      syncView();
     }).catch(function () {
       messages = messages.map(function (item) {
         if (item.id === id) item.replies = item.replies.concat([normalize(data)]);
@@ -165,8 +144,8 @@
       activeReplyId = null;
       writeLocal(messages);
       render();
-      setMode('reply');
-      if (window.showSiteToast) window.showSiteToast('云端暂不可用，回复已保存在本机');
+      syncView();
+      if (window.showSiteToast) window.showSiteToast('云端暂不可用，回复已保存到本机');
     }).finally(function () { setBusy(false); });
   }
   function focusReply(id) {
@@ -180,20 +159,12 @@
       if (input) input.focus();
     }, 80);
   }
-  function open(nextMode) {
-    setMode(nextMode);
-    activeReplyId = null;
+  function open() {
     if (typeof dialog.showModal === 'function') dialog.showModal();
     else dialog.setAttribute('open', '');
     load().then(function () {
-      if (currentMode === 'reply' && messages.length) {
-        focusReply(messages[0].id);
-      } else if (currentMode === 'message') {
-        window.setTimeout(function () {
-          var name = form.elements.name;
-          if (name) name.focus();
-        }, 80);
-      }
+      var name = form.elements.name;
+      if (name) name.focus();
     });
   }
   function hide() {
@@ -204,14 +175,13 @@
 
   document.querySelectorAll('[data-message-trigger]').forEach(function (trigger) {
     trigger.addEventListener('click', function (event) {
-      var rect = trigger.getBoundingClientRect();
-      var isBottomHalf = event.clientY > rect.top + rect.height / 2;
-      open(isBottomHalf ? 'reply' : 'message');
+      event.preventDefault();
+      open();
     });
     trigger.addEventListener('keydown', function (event) {
       if (event.key === 'Enter' || event.key === ' ') {
         event.preventDefault();
-        open('message');
+        open();
       }
     });
   });
@@ -220,7 +190,9 @@
   dialog.addEventListener('click', function (event) { if (event.target === dialog) hide(); });
   form.addEventListener('submit', function (event) {
     event.preventDefault();
-    if (busy || currentMode !== 'message') return;
+    if (busy) return;
+    // 在下方频道的输入框里按回车会隐式提交发布表单，这里拦掉
+    if (document.activeElement && recent.contains(document.activeElement)) return;
     var data = new FormData(form);
     var item = { name: String(data.get('name') || '').trim(), message: String(data.get('message') || '').trim() };
     if (!item.name || !item.message) return;
