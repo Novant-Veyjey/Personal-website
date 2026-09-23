@@ -84,12 +84,6 @@ export default async (request) => {
     let body = {};
     try { body = await request.json(); } catch (_) {}
 
-    // 临时清理接口，用于清掉测试/垃圾数据，上线后会移除
-    if (tail === '__reset') {
-      await writeBoard([]);
-      return json({ messages: [] });
-    }
-
     const replyMatch = tail.match(/^([^/]+)\/replies$/);
     if (replyMatch) {
       const id = decodeURIComponent(replyMatch[1]);
