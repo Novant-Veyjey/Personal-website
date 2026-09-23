@@ -294,7 +294,7 @@
     }
     try { localStorage.setItem(OWNER_KEY_STORAGE, key); } catch (error) {}
     showToast('正在同步到云端…');
-    fetch('/api/profile', {
+    fetch('/.netlify/functions/profile', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', 'x-owner-key': key },
       body: JSON.stringify(data)
@@ -309,7 +309,7 @@
   /* 打开页面时拉取云端资料：别人改过/自己换设备也能看到最新版。
      云端没有有效姓名时保持本地状态不动。 */
   function loadCloud() {
-    fetch('/api/profile').then(function (response) {
+    fetch('/.netlify/functions/profile').then(function (response) {
       return response.ok ? response.json() : null;
     }).then(function (res) {
       var cloud = res && res.profile;
