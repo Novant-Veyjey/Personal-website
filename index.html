@@ -38,6 +38,8 @@
   <link rel="stylesheet" href="assets/css/auth.css?v=20260923d" />
   <!-- 右上角背景音乐控件 -->
   <link rel="stylesheet" href="assets/css/audio-player.css?v=20260923d" />
+  <!-- 全息卡片浮层：点进卡片在页内打开，音乐不中断 -->
+  <link rel="stylesheet" href="assets/css/holo-overlay.css" />
   <!-- 压缩能力区与联络区之间的空档（务必最后加载以覆盖旧规则） -->
   <link rel="stylesheet" href="assets/css/section-gap.css?v=20260923b" />
   <!-- 能力卡片下方的拼贴照片墙 -->
@@ -540,7 +542,6 @@
             <span id="contact-email">wyj2783157338@gmail.com</span><b>点击复制</b>
           </button>
           <a class="contact-link" id="contact-github" href="https://github.com/Novant-Veyjey" target="_blank" rel="noreferrer"><span class="contact-link__label">GITHUB</span> <b>↗</b></a>
-          <a class="contact-link" id="contact-wechat" href="#" data-wechat="X1096856" aria-label="点击复制微信号 X1096856" title="微信号：X1096856"><span class="contact-link__label">WECHAT</span> <b id="contact-wechat-value">X1096856</b></a>
         </div>
 
         <footer class="site-footer">
@@ -598,7 +599,6 @@
           <legend>官方联系方式 <small>（仅站长可改，需填对上方密钥）</small></legend>
           <label><span>邮箱</span><input name="email" type="email" maxlength="80" placeholder="example@gmail.com" disabled /></label>
           <label><span>GitHub 链接</span><input name="github" type="text" maxlength="160" placeholder="https://github.com/..." disabled /></label>
-          <label><span>微信号</span><input name="wechat" type="text" maxlength="40" placeholder="微信号" disabled /></label>
           <p class="profile-contact-hint" id="profile-contact-hint">填对管理员密钥后即可修改；未填密钥时这部分锁定，保存也不会改动。</p>
         </fieldset>
         <label class="profile-field-wide"><span>档案卡引言</span><input name="note" type="text" maxlength="100" /></label>
@@ -736,5 +736,15 @@
 
   <!-- 留言板：复用 auth.js 的登录态与弹窗 -->
   <script src="assets/js/contact-message.js?v=20260923g"></script>
+
+  <!-- 全息卡片浮层：点进卡片在页内打开，背景音乐不中断 -->
+  <div class="holo-overlay" id="holo-overlay" aria-hidden="true" hidden>
+    <div class="holo-overlay__scrim" data-holo-close></div>
+    <div class="holo-overlay__stage" role="dialog" aria-modal="true" aria-label="全息卡片预览">
+      <button class="holo-overlay__close" type="button" data-holo-close aria-label="关闭卡片">×</button>
+      <iframe class="holo-overlay__frame" id="holo-overlay-frame" title="全息卡片预览" allow="fullscreen; autoplay"></iframe>
+    </div>
+  </div>
+  <script src="assets/js/holo-overlay.js"></script>
 </body>
 </html>

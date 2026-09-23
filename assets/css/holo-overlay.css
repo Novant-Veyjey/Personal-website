@@ -1,0 +1,77 @@
+/* ============================================================
+   全息卡片浮层：点进卡片在页内打开（iframe），不离开首页，
+   所以右上角背景音乐不会因整页跳转而中断。
+   ------------------------------------------------------------
+   · 浮层覆盖内容区，但站点头部（含音频控件）抬高到更高层级，
+     边看卡片也能随时暂停 / 切歌。
+   · 关闭时清空 iframe src，停掉卡片甲的动画与媒体。
+   ============================================================ */
+.holo-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 300;
+  display: grid;
+  place-items: center;
+  padding: 96px clamp(16px, 4vw, 48px) 24px;
+}
+.holo-overlay[hidden] { display: none; }
+
+.holo-overlay__scrim {
+  position: absolute;
+  inset: 0;
+  background: rgba(2, 2, 5, .92);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
+.holo-overlay__stage {
+  position: relative;
+  width: min(1200px, 100%);
+  height: calc(100svh - 120px);
+  max-height: calc(100svh - 120px);
+  border: 1px solid rgba(229, 35, 45, .5);
+  box-shadow: 0 36px 120px rgba(0, 0, 0, .7), 0 0 48px rgba(229, 35, 45, .16);
+  background: #06060a;
+  overflow: hidden;
+}
+
+.holo-overlay__frame {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border: 0;
+  background: #06060a;
+}
+
+.holo-overlay__close {
+  position: absolute;
+  top: 88px;
+  right: clamp(16px, 4vw, 48px);
+  z-index: 1;
+  width: 42px;
+  height: 42px;
+  display: grid;
+  place-items: center;
+  border: 1px solid rgba(255, 255, 255, .2);
+  border-radius: 50%;
+  background: rgba(8, 4, 8, .8);
+  color: #fff;
+  font: 300 24px/1 Georgia, serif;
+  cursor: pointer;
+  transition: border-color .25s ease, background-color .25s ease, transform .2s ease;
+}
+.holo-overlay__close:hover,
+.holo-overlay__close:focus-visible {
+  border-color: var(--red-bright);
+  background: rgba(125, 4, 16, .85);
+  transform: scale(1.06);
+  outline: none;
+}
+
+/* 浮层打开时抬高头部，保证右上角音频控件始终可点 */
+body.holo-overlay-open { overflow: hidden; }
+body.holo-overlay-open .site-header { z-index: 400; }
+
+@media (prefers-reduced-motion: reduce) {
+  .holo-overlay__close { transition: none; }
+}

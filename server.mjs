@@ -62,11 +62,11 @@ async function readBody(request) {
 
 /* 档案资料：与 netlify/functions/profile.mjs 同逻辑，方便本地调试 */
 const OWNER_KEY = process.env.SITE_OWNER_KEY || 'UPSIDE-DOWN-7F3K-OWNER';
-const CONTACT_FIELDS = ['email', 'github', 'wechat'];
+const CONTACT_FIELDS = ['email', 'github'];
 const PROFILE_FIELDS = {
   cnName: 24, enName: 32, role: 40, location: 40, initials: 3,
   oneLine: 64, statement: 120, bio0: 220, bio1: 220, bio2: 220,
-  tags: 100, cardKicker: 40, email: 80, github: 160, wechat: 40, note: 100,
+  tags: 100, cardKicker: 40, email: 80, github: 160, note: 100,
 };
 function sanitizeProfile(input) {
   const data = input || {};

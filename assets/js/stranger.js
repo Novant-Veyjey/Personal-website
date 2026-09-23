@@ -109,7 +109,7 @@ document.documentElement.classList.add('js');
   }
   window.showSiteToast = showToast;
 
-  /* message 可自定义成功提示，避免复制微信号时也被说成“信号” */
+  /* 复制文本到剪贴板时可自定义成功提示（邮箱复制用） */
   function copyText(text, message) {
     if (navigator.clipboard && window.isSecureContext) {
       navigator.clipboard.writeText(text).then(function () {
@@ -137,17 +137,6 @@ document.documentElement.classList.add('js');
       copyText(copyMail.getAttribute('data-mail') || 'you@example.com');
     });
   }
-
-  $$('a[href="#"]').forEach(function (link) {
-    link.addEventListener('click', function (e) {
-      e.preventDefault();
-      if (link.id === 'contact-wechat' && link.dataset.wechat) {
-        copyText(link.dataset.wechat, '微信号已复制：' + link.dataset.wechat);
-        return;
-      }
-      showToast('这里可以放你的微信二维码或主页链接');
-    });
-  });
 
   var heroContent = $('.hero__content');
   if (heroContent && !reducedMotion && window.matchMedia('(pointer: fine)').matches) {

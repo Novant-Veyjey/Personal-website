@@ -8,11 +8,10 @@
   var KEY = 'upsideDownProfile.v1';
   var OWNER_KEY_STORAGE = 'upsideDownOwnerKey.v1';
   /* 官方联系方式的兜底默认值：当云端 / 本机资料里没有填联系方式时回退到这些。
-     这三项是「官方联系方式」，只有填对管理员密钥才能在编辑器里改（其余资料免密钥）。 */
+     这两项（邮箱 / GitHub）是「官方联系方式」，只有填对管理员密钥才能在编辑器里改（其余资料免密钥）。 */
   var CONTACT = {
     email: 'wyj2783157338@gmail.com',
-    github: 'https://github.com/Novant-Veyjey',
-    wechat: 'X1096856'
+    github: 'https://github.com/Novant-Veyjey'
   };
   var form = $('#profile-form');
   if (!form) return;
@@ -29,10 +28,9 @@
     bio1: '第二段可以写你的经历、代表项目与擅长领域。不要堆砌标签，讲一个能证明能力的细节。',
     bio2: '第三段留给未来：你正在学习什么，下一步想去哪里，希望与怎样的人合作。',
     tags: 'CREATIVE, CODE, DESIGN, STORY',
-    /* 这三项固定，仅作内部占位；页面上永远取 CONTACT 里的值 */
+    /* 这两项固定，仅作内部占位；页面上永远取 CONTACT 里的值 */
     email: CONTACT.email,
     github: CONTACT.github,
-    wechat: CONTACT.wechat,
     note: '好奇心不是弱点，它是通向我们世界的那道裂缝。',
     avatar: '',
     cardBackground: '',      /* 档案卡媒体区的背景图（用户上传，cover 铺满整块） */
@@ -241,12 +239,11 @@
       });
     }
 
-    /* 底部官方联系方式：优先用资料里的 email / github / wechat（站长填密钥后改的），
+    /* 底部官方联系方式：优先用资料里的 email / github（站长填密钥后改的），
        没有就回退到 CONTACT 兜底默认值。 */
     var contact = {
       email: clean(data.email) || CONTACT.email,
-      github: clean(data.github) || CONTACT.github,
-      wechat: clean(data.wechat) || CONTACT.wechat
+      github: clean(data.github) || CONTACT.github
     };
     var mail = $('#copy-mail');
     var email = $('#contact-email');
@@ -256,14 +253,6 @@
     if (github) {
       github.href = contact.github;
       github.removeAttribute('aria-disabled');
-    }
-    var wechat = $('#contact-wechat');
-    if (wechat) {
-      wechat.dataset.wechat = contact.wechat;
-      wechat.setAttribute('aria-label', '点击复制微信号 ' + contact.wechat);
-      wechat.title = '微信号：' + contact.wechat;
-      var wechatValue = $('#contact-wechat-value');
-      if (wechatValue) wechatValue.textContent = contact.wechat;
     }
 
     document.title = heroTitleText(data);
@@ -408,7 +397,7 @@
     var payload = data;
     if (!key) {
       payload = Object.assign({}, data);
-      delete payload.email; delete payload.github; delete payload.wechat;
+      delete payload.email; delete payload.github;
     } else {
       try { localStorage.setItem(OWNER_KEY_STORAGE, key); } catch (error) {}
     }
