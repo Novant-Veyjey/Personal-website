@@ -12,10 +12,10 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="assets/css/stranger-base.css" />
-  <link rel="stylesheet" href="assets/css/stranger-content.css" />
+  <link rel="stylesheet" href="assets/css/stranger-content.css?v=20260923d" />
   <link rel="stylesheet" href="assets/css/stranger-contact.css" />
   <link rel="stylesheet" href="assets/css/stranger-art.css" />
-  <link rel="stylesheet" href="assets/css/stranger-profile.css" />
+  <link rel="stylesheet" href="assets/css/stranger-profile.css?v=20260923e" />
   <link rel="stylesheet" href="assets/css/poster-sphere.css" />
   <link rel="stylesheet" href="assets/css/contact-message.css" />
   <link rel="stylesheet" href="assets/css/section-editor.css" />
@@ -31,11 +31,13 @@
   <!-- 红色字型：联络标题内部全红 + 海报两行标语的描边反色 -->
   <link rel="stylesheet" href="assets/css/red-type.css?v=20260923a" />
   <!-- 关于我区块：增加视觉层次 -->
-  <link rel="stylesheet" href="assets/css/profile-richer.css" />
+  <link rel="stylesheet" href="assets/css/profile-richer.css?v=20260923a" />
   <!-- 联系海报：上下两半独立响应鼠标（务必最后加载以覆盖旧规则） -->
   <link rel="stylesheet" href="assets/css/story-art-split.css?v=20260923j" />
   <!-- 登录 / 注册系统 -->
-  <link rel="stylesheet" href="assets/css/auth.css" />
+  <link rel="stylesheet" href="assets/css/auth.css?v=20260923d" />
+  <!-- 右上角背景音乐控件 -->
+  <link rel="stylesheet" href="assets/css/audio-player.css?v=20260923d" />
   <!-- 压缩能力区与联络区之间的空档（务必最后加载以覆盖旧规则） -->
   <link rel="stylesheet" href="assets/css/section-gap.css?v=20260923b" />
   <!-- 能力卡片下方的拼贴照片墙 -->
@@ -72,11 +74,87 @@
     </nav>
 
     <div class="header-right">
-      <div class="header-status" aria-hidden="true">
-        <i></i><span>LIVE</span><b data-clock>00:00:00</b>
+      <!-- 第一行：LIVE 时钟 + 登录 / 用户名·退出 -->
+      <div class="header-right__row">
+        <div class="header-status" aria-hidden="true">
+          <i></i><span>LIVE</span><b data-clock>00:00:00</b>
+        </div>
+        <button class="auth-trigger" id="auth-trigger" type="button">登录 / 注册</button>
+        <div class="header-account" id="header-account" hidden></div>
       </div>
-      <button class="auth-trigger" id="auth-trigger" type="button">登录 / 注册</button>
-      <div class="header-account" id="header-account" hidden></div>
+
+      <!-- 第二行：背景音乐（曲名 · 随机 · 上一首 · 播放/暂停 · 下一首 · 播放列表 · 音量 · 静音） -->
+      <div class="audio-pill" id="audio-pill" role="group" aria-label="背景音乐">
+        <!-- 左组：播放键固定在整条控件正中，左右两组各占一半，控件自然对称 -->
+        <div class="audio-group audio-group--left">
+          <button class="audio-now" id="audio-now" type="button" data-playing="false" aria-label="当前曲目" title="点击打开播放列表">
+            <span class="audio-now__bars" aria-hidden="true"><i></i><i></i><i></i></span>
+            <span class="audio-now__text" id="audio-now-title">Kids</span>
+          </button>
+          <button class="audio-btn audio-btn--shuffle" id="audio-shuffle" type="button" aria-pressed="false" aria-label="随机播放" title="随机播放：已关闭">
+            <svg class="audio-svg audio-svg--stroke" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+              <path d="M3.4 16.6h3.2c1.2 0 2.3-.6 3-1.5l5-7c.7-.9 1.8-1.5 3-1.5h3" />
+              <path d="M3.4 7.4h3.2c1.2 0 2.3.6 3 1.5l5 7c.7.9 1.8 1.5 3 1.5h3" />
+              <path d="M18.2 4.9l2.6 2.7-2.6 2.7" />
+              <path d="M18.2 14.9l2.6 2.7-2.6 2.7" />
+            </svg>
+          </button>
+          <button class="audio-btn audio-btn--step" id="audio-prev" type="button" aria-label="上一首" title="上一首">
+            <svg class="audio-svg audio-svg--fill" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+              <rect x="6.6" y="5.6" width="2.6" height="12.8" rx="1" />
+              <path d="M19.8 6.5v11L9.7 12z" />
+            </svg>
+          </button>
+        </div>
+
+        <button class="audio-btn audio-btn--play" id="audio-toggle" type="button" aria-pressed="false" aria-label="播放背景音乐" title="播放">
+          <!-- ▶ ↔ ❚❚ 由 JS 逐数字插值形变，两个状态写在同一段路径里 -->
+          <svg class="audio-svg audio-svg--fill" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+            <path id="audio-icon-play" d="M9.6 6.4L18.8 12L9.6 17.6L9.6 12ZM12.1 12L12.1 12L12.1 12L12.1 12Z" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round" />
+          </svg>
+        </button>
+
+        <!-- 右组：下一首 + 播放列表 + 音量 + 静音 -->
+        <div class="audio-group audio-group--right">
+          <button class="audio-btn audio-btn--step" id="audio-next" type="button" aria-label="下一首" title="下一首">
+            <svg class="audio-svg audio-svg--fill" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+              <rect x="14.8" y="5.6" width="2.6" height="12.8" rx="1" />
+              <path d="M4.2 6.5v11L14.3 12z" />
+            </svg>
+          </button>
+          <button class="audio-btn audio-btn--list" id="audio-playlist-button" type="button" aria-expanded="false" aria-controls="audio-playlist" aria-label="播放列表" title="播放列表">
+            <svg class="audio-svg audio-svg--stroke" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+              <path d="M4 7.7l4.4 2.8L4 13.3z" />
+              <path d="M11.6 7.4h8.4" />
+              <path d="M11.6 12h8.4" />
+              <path d="M11.6 16.6h6" />
+            </svg>
+          </button>
+          <!-- 音量：拖动即调，拖到 0 就是静音；音量会记在本机 -->
+          <span class="audio-volume">
+            <input type="range" id="audio-volume" min="0" max="100" step="1" value="100" aria-label="音量" title="音量" />
+          </span>
+          <button class="audio-btn audio-btn--mute" id="audio-mute" type="button" aria-pressed="true" aria-label="取消静音" title="取消静音">
+            <svg class="audio-svg audio-svg--stroke" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+              <!-- 喇叭箱体固定不动 -->
+              <path d="M4.4 9.4h2.9L10.8 6v12l-3.5-3.4H4.4z" />
+              <!-- 声波 ↔ ✕（同一段路径形变；初始 d 就是静音态的 ✕） -->
+              <path id="audio-icon-waves" d="M14.4 9.7C15.87 11.23 17.33 12.77 18.8 14.3M18.8 9.7C17.33 11.23 15.87 12.77 14.4 14.3" />
+            </svg>
+          </button>
+        </div>
+
+        <!-- 播放列表弹层：曲目由 site-audio.js 生成，点歌即播 -->
+        <div class="audio-playlist" id="audio-playlist" hidden>
+          <p class="audio-playlist__head"><span>PLAYLIST</span><span id="audio-track-index">2/2</span></p>
+          <ul class="audio-playlist__list" id="audio-track-list" role="menu" aria-label="曲目列表"></ul>
+          <div class="audio-playlist__import">
+            <button type="button" id="audio-import" class="audio-import-btn">＋ 导入本地音乐</button>
+            <input type="file" id="audio-import-input" accept="audio/*" multiple hidden />
+            <p class="audio-playlist__hint">导入的音频会保存在本浏览器（IndexedDB），刷新或下次访问仍在；不会上传到服务器。</p>
+          </div>
+        </div>
+      </div>
     </div>
   </header>
 
@@ -121,6 +199,8 @@
     </section>
 
     <section class="section section--profile" id="profile" aria-labelledby="profile-title">
+      <!-- 飘浮尘埃：铺满整个 profile 区块（在内容之下，不挡交互） -->
+      <div class="profile-dust" aria-hidden="true"></div>
       <div class="section__ghost" aria-hidden="true">01</div>
       <div class="container">
         <header class="section-head section-edit-frame reveal" data-section-edit="profile" tabindex="0" role="button" aria-label="编辑关于我区块">
@@ -145,22 +225,33 @@
         </figure>
         <div class="dossier">
           <article class="subject-card reveal" aria-label="个人档案，点击编辑" data-profile-edit tabindex="0" role="button">
+            <!-- 卡片上飘浮的尘埃（纯 CSS，不打扰交互） -->
+            <div class="subject-card__dust" aria-hidden="true"></div>
             <div class="subject-card__top">
               <p>SUBJECT PROFILE</p><span>NO. 011</span>
             </div>
             <div class="subject-card__portrait" aria-hidden="true">
+              <!-- 档案卡背景：用户上传的图，object-fit:cover 恰好铺满这块区域 -->
+              <img class="subject-card__bg" id="subject-card-bg" alt="" hidden />
               <div class="portrait-orbit"></div>
               <img class="subject-card__avatar" id="subject-avatar" alt="个人头像" hidden />
               <strong data-profile-initials>YN</strong>
-              <span>UNKNOWN<br />ORIGIN</span>
+              <span class="subject-card__origin">UNKNOWN<br />ORIGIN</span>
+              <!-- 卡片式装饰：内框 + 角标缺口 + 左侧刻度 -->
+              <span class="subject-card__frame" aria-hidden="true"></span>
+              <span class="subject-card__ticks" aria-hidden="true"></span>
             </div>
-            <dl class="subject-data">
-              <div><dt>NAME</dt><dd data-profile-cn>——</dd></div>
-              <div><dt>ROLE</dt><dd data-profile-role>职业 / 身份</dd></div>
-              <div><dt>BASE</dt><dd data-profile-location>城市 · 时区</dd></div>
-              <div><dt>STATUS</dt><dd class="is-online">ONLINE</dd></div>
+            <!-- 下半部分：卡片式排版 —— 小标 → 大号拉丁衬线名字 → 职业 · 城市 + 状态
+                 不再出现 NAME / ROLE / BASE 这些左侧提示词 -->
+            <div class="subject-data">
+              <p class="subject-data__kicker" data-profile-cardkicker>——</p>
+              <p class="subject-data__name" data-profile-cardname>——</p>
+              <p class="subject-data__meta">
+                <span class="subject-data__role" data-profile-role>职业 / 身份</span>
+                <span class="subject-data__base" data-profile-location>城市 · 时区</span>
+              </p>
               <div id="profile-extra-data" class="profile-extra-data"></div>
-            </dl>
+            </div>
             <p class="subject-card__note" data-profile-note>“好奇心不是弱点，它是通向我们世界的那道裂缝。”</p>
           </article>
 
@@ -449,7 +540,7 @@
             <span id="contact-email">wyj2783157338@gmail.com</span><b>点击复制</b>
           </button>
           <a class="contact-link" id="contact-github" href="https://github.com/Novant-Veyjey" target="_blank" rel="noreferrer"><span class="contact-link__label">GITHUB</span> <b>↗</b></a>
-          <a class="contact-link" id="contact-wechat" href="#" aria-label="微信二维码占位"><span class="contact-link__label">WECHAT</span> <b>↗</b></a>
+          <a class="contact-link" id="contact-wechat" href="#" data-wechat="X1096856" aria-label="点击复制微信号 X1096856" title="微信号：X1096856"><span class="contact-link__label">WECHAT</span> <b id="contact-wechat-value">X1096856</b></a>
         </div>
 
         <footer class="site-footer">
@@ -474,6 +565,12 @@
             <label class="profile-file-btn">上传头像<input id="profile-avatar-input" type="file" accept="image/png,image/jpeg,image/webp" /></label>
             <button id="profile-avatar-remove" type="button">移除头像</button>
             <small>图片会压缩后保存在浏览器中</small>
+
+            <!-- 档案卡背景：铺满档案卡上方那块媒体区 -->
+            <div class="profile-bg-preview" id="profile-bg-preview" aria-hidden="true"></div>
+            <label class="profile-file-btn">上传档案卡背景<input id="profile-bg-input" type="file" accept="image/png,image/jpeg,image/webp" /></label>
+            <button id="profile-bg-remove" type="button">移除背景</button>
+            <small>背景图按原始比例压缩，显示时等比铺满整块区域（不拉伸变形）</small>
           </div>
           <div class="profile-fields">
             <label><span>中文姓名</span><input name="cnName" type="text" maxlength="24" required /></label>
@@ -493,11 +590,17 @@
         </div>
         <div class="profile-form__grid">
           <label><span>标签，用逗号分隔</span><input name="tags" type="text" maxlength="100" /></label>
-          <label><span>邮箱</span><input name="email" type="email" maxlength="80" /></label>
-          <label><span>GitHub 地址</span><input name="github" type="url" maxlength="160" /></label>
-          <label><span>微信号</span><input name="wechat" type="text" maxlength="40" /></label>
-          <label><span>管理员密钥（同步云端必填）</span><input id="profile-owner-key" name="ownerKey" type="password" maxlength="64" placeholder="仅站长持有，填对才会上线" /></label>
+          <label><span>卡片小标（名字上方那行，留空则显示中文名）</span><input name="cardKicker" type="text" maxlength="40" placeholder="例如：视觉开发 / FROM THE UPSIDE DOWN" /></label>
+          <label><span>管理员密钥（可选，填对才能改底部联系方式）</span><input id="profile-owner-key" name="ownerKey" type="password" maxlength="64" placeholder="留空也能同步到云端" /></label>
         </div>
+
+        <fieldset class="profile-contact-fields" id="profile-contact-fields">
+          <legend>官方联系方式 <small>（仅站长可改，需填对上方密钥）</small></legend>
+          <label><span>邮箱</span><input name="email" type="email" maxlength="80" placeholder="example@gmail.com" disabled /></label>
+          <label><span>GitHub 链接</span><input name="github" type="text" maxlength="160" placeholder="https://github.com/..." disabled /></label>
+          <label><span>微信号</span><input name="wechat" type="text" maxlength="40" placeholder="微信号" disabled /></label>
+          <p class="profile-contact-hint" id="profile-contact-hint">填对管理员密钥后即可修改；未填密钥时这部分锁定，保存也不会改动。</p>
+        </fieldset>
         <label class="profile-field-wide"><span>档案卡引言</span><input name="note" type="text" maxlength="100" /></label>
 
         <fieldset class="profile-extra-editor">
@@ -616,17 +719,22 @@
   </dialog>
   <!-- 常驻编辑入口：修改名字 / 资料（之前只有档案卡可点，很难发现） -->
   <button class="profile-fab" id="open-profile-editor-fab" type="button" title="修改我的名字与个人资料"><span>◉</span>编辑名字 / 资料</button>
-  <script src="assets/js/stranger.js"></script>
+  <script src="assets/js/stranger.js?v=20260923a"></script>
   <script src="assets/js/section-editor.js?v=20260923a"></script>
   <script src="assets/js/ability-editor.js"></script>
   <script src="assets/js/project-editor.js"></script>
   <script src="assets/js/poster-manager.js?v=20260923a"></script>
   <script src="assets/js/poster-sphere.js?v=20260923a"></script>
-  <script src="assets/js/profile-editor.js?v=20260923b"></script>
+  <script src="assets/js/profile-editor.js?v=20260923h"></script>
   <script src="assets/js/back-to-vault.js"></script>
-  <!-- 账号系统 + 留言板：都走本站自带后端（/api/auth、/api/messages），不依赖任何第三方服务 -->
-  <script src="assets/js/auth.js?v=20260923d"></script>
-  <!-- auth.js 先加载：留言板要复用它的登录态与弹窗 -->
+  <!-- 账号系统：必须先于背景音乐加载，后者要订阅它的登录态（window.SiteAuth.onChange） -->
+  <script src="assets/js/auth.js?v=20260923e"></script>
+
+  <!-- 右上角背景音乐：登录态出现（含注册用户凭 Cookie 自动登录）即自动播放 -->
+  <audio id="site-audio" preload="none"></audio>
+  <script src="assets/js/site-audio.js?v=20260923j"></script>
+
+  <!-- 留言板：复用 auth.js 的登录态与弹窗 -->
   <script src="assets/js/contact-message.js?v=20260923g"></script>
 </body>
 </html>

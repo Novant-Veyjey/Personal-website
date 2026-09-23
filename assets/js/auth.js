@@ -27,6 +27,7 @@
   var mode = 'login';
   var user = null;
   var listeners = [];
+  var forced = false;     /* 强制登录门禁：未登录时打开，且禁止关闭直到登录成功 */
 
   /* 接口地址：优先 /api/xxx（本地 server.mjs 与生效的重写都吃这个），
      若返回 404（这个站点的 Netlify 重写一直没生效，见仓库里 /api/profile 那次修复）
@@ -65,9 +66,11 @@
   function toast(text) { if (window.showSiteToast) window.showSiteToast(text); }
 
   function openDialog() {
+    if (closeBtn) closeBtn.hidden = forced;   /* 强制登录模式下不给关闭键 */
     if (dialog.showModal) dialog.showModal(); else dialog.setAttribute('open', '');
   }
   function closeDialog() {
+    if (forced) return;                       /* 强制登录模式：不允许关闭，必须先登录 */
     if (dialog.close) dialog.close(); else dialog.removeAttribute('open');
   }
 
@@ -110,7 +113,11 @@
             toast(networkMessage(error));
           });
         });
-        accountEl.append(chip, out);
+        /* 退出键套一层等权占位：与左侧时钟各占一半，用户名因此恰好居中 */
+        var outSlot = document.createElement('span');
+        outSlot.className = 'account-out-slot';
+        outSlot.appendChild(out);
+        accountEl.append(chip, outSlot);
       }
     }
     if (trigger) trigger.hidden = !!user;
@@ -168,25 +175,50 @@
         showMessage((res.data && res.data.error) || '操作失败，请稍后再试。');
         return;
       }
+      var name = (res.data.user && res.data.user.name) || '';
       setUser(res.data.user);
       form.reset();
-      if (mode === 'register') {
+      if (forced) {
+        forced = false;
+        document.body.classList.remove('login-locked');
+        closeDialog();
+        toast(mode === 'register' ? ('欢迎，' + name + '！') : ('已登录：' + name));
+      } else if (mode === 'register') {
         showMessage('注册成功，已自动登录。');
-        toast('欢迎，' + (res.data.user.name || '') + '！');
+        toast('欢迎，' + name + '！');
         window.setTimeout(closeDialog, 900);
       } else {
         closeDialog();
-        toast('已登录：' + (res.data.user.name || ''));
+        toast('已登录：' + name);
       }
     }).catch(function (error) {
-      showMessage(networkMessage(error));
+      /* 后端连不上且处于强制登录墙：放行进入，避免卡死（无法校验登录态） */
+      if (forced) {
+        forced = false;
+        document.body.classList.remove('login-locked');
+        closeDialog();
+        toast('后端连接失败，已放行（未登录）');
+      } else {
+        showMessage(networkMessage(error));
+      }
     }).finally(function () {
       submitBtn.disabled = false;
     });
   });
 
+  /* 强制登录门禁：打开登录弹窗且禁止关闭，直到登录成功 */
+  function requireLogin() {
+    forced = true;
+    document.body.classList.add('login-locked');
+    if (titleEl) titleEl.textContent = '进入需先登录';
+    openDialog();
+  }
+
   setMode('login');
-  refresh();
+  refresh().then(function (u) {
+    /* 进站未登录 → 强制先登录；已登录（含 cookie 续期）则直接进入 */
+    if (!u) requireLogin();
+  });
 
   /* 给留言板用的公开接口（含同一套接口地址回退逻辑） */
   window.SiteAuth = {

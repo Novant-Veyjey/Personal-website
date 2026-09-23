@@ -7,6 +7,13 @@
   var $$ = function (s, root) { return Array.prototype.slice.call((root || document).querySelectorAll(s)); };
   var KEY = 'upsideDownProfile.v1';
   var OWNER_KEY_STORAGE = 'upsideDownOwnerKey.v1';
+  /* 官方联系方式的兜底默认值：当云端 / 本机资料里没有填联系方式时回退到这些。
+     这三项是「官方联系方式」，只有填对管理员密钥才能在编辑器里改（其余资料免密钥）。 */
+  var CONTACT = {
+    email: 'wyj2783157338@gmail.com',
+    github: 'https://github.com/Novant-Veyjey',
+    wechat: 'X1096856'
+  };
   var form = $('#profile-form');
   if (!form) return;
 
@@ -22,11 +29,14 @@
     bio1: '第二段可以写你的经历、代表项目与擅长领域。不要堆砌标签，讲一个能证明能力的细节。',
     bio2: '第三段留给未来：你正在学习什么，下一步想去哪里，希望与怎样的人合作。',
     tags: 'CREATIVE, CODE, DESIGN, STORY',
-    email: 'wyj2783157338@gmail.com',
-    github: 'https://github.com/Novant-Veyjey',
-    wechat: 'your_wechat',
+    /* 这三项固定，仅作内部占位；页面上永远取 CONTACT 里的值 */
+    email: CONTACT.email,
+    github: CONTACT.github,
+    wechat: CONTACT.wechat,
     note: '好奇心不是弱点，它是通向我们世界的那道裂缝。',
     avatar: '',
+    cardBackground: '',      /* 档案卡媒体区的背景图（用户上传，cover 铺满整块） */
+    cardKicker: '',          /* 档案卡名字上方那行小标（留空则显示中文名） */
     extras: []
   };
 
@@ -34,10 +44,33 @@
   var modal = $('#profile-modal');
   var avatarPreview = $('#profile-avatar-preview');
   var avatarInput = $('#profile-avatar-input');
+  var bgPreview = $('#profile-bg-preview');
+  var bgInput = $('#profile-bg-input');
+  var bgRemove = $('#profile-bg-remove');
   var extraFields = $('#profile-extra-fields');
   var ownerKeyInput = $('#profile-owner-key');
   var toastEl = $('#toast');
   var toastTimer;
+
+  /* 管理员密钥只用于解锁「官方联系方式」三个输入框：填了才启用，否则锁定。
+     密钥是服务端机密，前端不校验对错，只做乐观解锁；真正能否改联系方式由后端把关。 */
+  function refreshContactLock() {
+    var key = (ownerKeyInput && ownerKeyInput.value || '').trim();
+    var unlocked = !!key;
+    $$('#profile-contact-fields input').forEach(function (input) { input.disabled = !unlocked; });
+    var hint = $('#profile-contact-hint');
+    if (hint) hint.textContent = unlocked
+      ? '已解锁：保存即更新底部联系方式。'
+      : '填对管理员密钥后即可修改；未填密钥时这部分锁定，保存也不会改动。';
+  }
+  if (ownerKeyInput) {
+    try {
+      var savedKey = localStorage.getItem(OWNER_KEY_STORAGE);
+      if (savedKey) ownerKeyInput.value = savedKey;
+    } catch (error) {}
+    ownerKeyInput.addEventListener('input', refreshContactLock);
+  }
+  refreshContactLock();
 
   function clean(value, fallback) {
     value = String(value == null ? '' : value).trim();
@@ -69,7 +102,7 @@
       localStorage.setItem(KEY, JSON.stringify(state));
       showToast('资料已保存，并同步到页面');
     } catch (error) {
-      showToast('保存失败：头像图片可能过大');
+      showToast('保存失败：头像或背景图可能过大，换一张小一点的');
     }
   }
 
@@ -124,7 +157,26 @@
     renderHeroTitle($('#hero-title'), data);
     // 没有自定义姓名时不留“你的名字”占位文字，显示中划线
     var shownName = displayName(data);
-    $$('[data-profile-cn]').forEach(function (el) { el.textContent = shownName || '——'; });
+    $$('[data-profile-cn]').forEach(function (el) {
+      el.textContent = shownName || '——';
+      /* 没填名字时给档案卡的大字一个"占位"样式，别让 42px 的破折号很突兀 */
+      el.classList.toggle('is-empty', !shownName);
+    });
+
+    /* 档案卡大字：优先英文名（拉丁衬线更像海报），没有英文名再退回中文名 */
+    var enName = clean(data.enName);
+    var hasEnglish = enName && enName.toUpperCase() !== 'YOUR NAME';
+    var bigName = hasEnglish ? enName : shownName;
+    $$('[data-profile-cardname]').forEach(function (el) {
+      el.textContent = bigName || '——';
+      el.classList.toggle('is-empty', !bigName);
+    });
+    /* 名字上方的小标：自定义优先 → 中文名 → 职业（保证这行不会空着） */
+    var cnName = clean(data.cnName);
+    var kicker = clean(data.cardKicker) ||
+      (cnName && cnName !== DEFAULTS.cnName ? cnName : '') ||
+      clean(data.role);
+    $$('[data-profile-cardkicker]').forEach(function (el) { el.textContent = kicker; });
     $$('[data-profile-role]').forEach(function (el) { el.textContent = data.role; });
     $$('[data-profile-location]').forEach(function (el) { el.textContent = data.location; });
     $$('[data-profile-initials]').forEach(function (el) { el.textContent = data.initials || makeInitials(data); });
@@ -159,35 +211,59 @@
         portrait.classList.remove('is-avatar');
       }
     }
+    /* 档案卡背景：铺满整块媒体区（cover），改资料/换设备都跟着走 */
+    var cardBg = $('#subject-card-bg');
+    if (portrait && cardBg) {
+      if (data.cardBackground) {
+        cardBg.src = data.cardBackground;
+        cardBg.hidden = false;
+        portrait.classList.add('has-bg');
+      } else {
+        cardBg.removeAttribute('src');
+        cardBg.hidden = true;
+        portrait.classList.remove('has-bg');
+      }
+    }
 
     var extras = $('#profile-extra-data');
     if (extras) {
       extras.innerHTML = '';
       data.extras.forEach(function (item) {
         var row = document.createElement('div');
-        var dt = document.createElement('dt');
-        var dd = document.createElement('dd');
-        dt.textContent = item.label;
-        dd.textContent = item.value;
-        row.append(dt, dd);
+        var label = document.createElement('span');
+        var value = document.createElement('span');
+        label.className = 'profile-extra-data__label';
+        value.className = 'profile-extra-data__value';
+        label.textContent = item.label;
+        value.textContent = item.value;
+        row.append(label, value);
         extras.appendChild(row);
       });
     }
 
+    /* 底部官方联系方式：优先用资料里的 email / github / wechat（站长填密钥后改的），
+       没有就回退到 CONTACT 兜底默认值。 */
+    var contact = {
+      email: clean(data.email) || CONTACT.email,
+      github: clean(data.github) || CONTACT.github,
+      wechat: clean(data.wechat) || CONTACT.wechat
+    };
     var mail = $('#copy-mail');
     var email = $('#contact-email');
-    if (mail) mail.setAttribute('data-mail', data.email);
-    if (email) email.textContent = data.email;
+    if (mail) mail.setAttribute('data-mail', contact.email);
+    if (email) email.textContent = contact.email;
     var github = $('#contact-github');
     if (github) {
-      github.href = data.github || '#contact';
-      github.toggleAttribute('aria-disabled', !data.github);
+      github.href = contact.github;
+      github.removeAttribute('aria-disabled');
     }
     var wechat = $('#contact-wechat');
     if (wechat) {
-      wechat.dataset.wechat = data.wechat;
-      wechat.setAttribute('aria-label', '复制微信号 ' + data.wechat);
-      wechat.title = '微信号：' + data.wechat;
+      wechat.dataset.wechat = contact.wechat;
+      wechat.setAttribute('aria-label', '点击复制微信号 ' + contact.wechat);
+      wechat.title = '微信号：' + contact.wechat;
+      var wechatValue = $('#contact-wechat-value');
+      if (wechatValue) wechatValue.textContent = contact.wechat;
     }
 
     document.title = heroTitleText(data);
@@ -213,6 +289,15 @@
       avatarPreview.textContent = state.initials || makeInitials(state);
       avatarPreview.style.backgroundImage = state.avatar ? 'url("' + state.avatar + '")' : '';
     }
+    renderBgPreview();
+  }
+
+  /* 编辑器里的背景缩略图 */
+  function renderBgPreview() {
+    if (!bgPreview) return;
+    var has = !!state.cardBackground;
+    bgPreview.classList.toggle('is-empty', !has);
+    bgPreview.style.backgroundImage = has ? 'url("' + state.cardBackground + '")' : '';
   }
 
   function renderExtras(items) {
@@ -255,6 +340,7 @@
       return { label: row.children[0].value.trim(), value: row.children[1].value.trim() };
     }).filter(function (item) { return item.label && item.value; }) : [];
     next.avatar = state.avatar || '';
+    next.cardBackground = state.cardBackground || '';
     next.initials = clean(next.initials) || makeInitials(next);
     return normalize(next);
   }
@@ -306,7 +392,7 @@
     try {
       localStorage.setItem(KEY, JSON.stringify(state));
     } catch (error) {
-      showToast('保存失败：头像图片可能过大');
+      showToast('保存失败：头像或背景图可能过大，换一张小一点的');
       return;
     }
     applyProfile(state);
@@ -315,22 +401,28 @@
   });
 
   /* 把资料同步到云端：所有访客、所有设备、清缓存后都生效。
-     必须填对管理员密钥，否则只保存在本机。 */
+     管理员密钥只决定「官方联系方式」三项能否改；其余字段免密钥即可同步。
+     未填密钥时不把联系方式带进 payload（后端也会兜底拦下），避免误改。 */
   function syncCloud(data) {
     var key = ownerKeyInput ? String(ownerKeyInput.value || '').trim() : '';
+    var payload = data;
     if (!key) {
-      showToast('资料已保存在本机（填管理员密钥才会同步给所有访客）');
-      return;
+      payload = Object.assign({}, data);
+      delete payload.email; delete payload.github; delete payload.wechat;
+    } else {
+      try { localStorage.setItem(OWNER_KEY_STORAGE, key); } catch (error) {}
     }
-    try { localStorage.setItem(OWNER_KEY_STORAGE, key); } catch (error) {}
     showToast('正在同步到云端…');
     fetch('/.netlify/functions/profile', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'x-owner-key': key },
-      body: JSON.stringify(data)
+      headers: Object.assign({ 'Content-Type': 'application/json' }, key ? { 'x-owner-key': key } : {}),
+      body: JSON.stringify(payload)
     }).then(function (response) {
       if (!response.ok) throw new Error('HTTP ' + response.status);
-      showToast('已保存并同步到云端，所有访客都能看到');
+      return response.json();
+    }).then(function (res) {
+      if (res && res.contactLocked) showToast('联系方式需填对管理员密钥才能修改（其余已保存）');
+      else showToast('已保存并同步到云端，所有访客都能看到');
     }).catch(function () {
       showToast('云端同步失败，资料暂存在本机');
     });
@@ -374,28 +466,65 @@
     showToast('头像已移除，保存后生效');
   });
 
-  avatarInput.addEventListener('change', function () {
-    var file = avatarInput.files && avatarInput.files[0];
+  /* 选图 → 解码：头像与档案卡背景共用 */
+  function readImageFile(input, onReady) {
+    var file = input.files && input.files[0];
     if (!file) return;
     if (!/^image\//.test(file.type)) return showToast('请选择图片文件');
     if (file.size > 10 * 1024 * 1024) return showToast('图片不能超过 10 MB');
     var reader = new FileReader();
     reader.onload = function () {
       var image = new Image();
-      image.onload = function () {
-        var size = Math.min(image.width, image.height);
-        var canvas = document.createElement('canvas');
-        canvas.width = canvas.height = 640;
-        var context = canvas.getContext('2d');
-        context.drawImage(image, (image.width - size) / 2, (image.height - size) / 2, size, size, 0, 0, 640, 640);
-        state.avatar = canvas.toDataURL('image/jpeg', .86);
-        if (avatarPreview) avatarPreview.style.backgroundImage = 'url("' + state.avatar + '")';
-        showToast('头像已准备好，保存后生效');
-      };
+      image.onload = function () { onReady(image); };
       image.src = reader.result;
     };
     reader.readAsDataURL(file);
+  }
+
+  /* 只压尺寸、不改比例（显示时由 object-fit:cover 铺满整块区域，不拉伸） */
+  function imageToJpeg(image, maxEdge, quality) {
+    var scale = Math.min(1, maxEdge / Math.max(image.width, image.height));
+    var width = Math.max(1, Math.round(image.width * scale));
+    var height = Math.max(1, Math.round(image.height * scale));
+    var canvas = document.createElement('canvas');
+    canvas.width = width;
+    canvas.height = height;
+    canvas.getContext('2d').drawImage(image, 0, 0, width, height);
+    return canvas.toDataURL('image/jpeg', quality || .86);
+  }
+
+  avatarInput.addEventListener('change', function () {
+    readImageFile(avatarInput, function (image) {
+      var size = Math.min(image.width, image.height);
+      var canvas = document.createElement('canvas');
+      canvas.width = canvas.height = 640;
+      canvas.getContext('2d').drawImage(image, (image.width - size) / 2, (image.height - size) / 2, size, size, 0, 0, 640, 640);
+      state.avatar = canvas.toDataURL('image/jpeg', .86);
+      if (avatarPreview) avatarPreview.style.backgroundImage = 'url("' + state.avatar + '")';
+      showToast('头像已准备好，保存后生效');
+    });
   });
+
+  /* 档案卡背景：最长边压到 1600，保持原始比例 */
+  if (bgInput) {
+    bgInput.addEventListener('change', function () {
+      readImageFile(bgInput, function (image) {
+        state.cardBackground = imageToJpeg(image, 1600, .86);
+        renderBgPreview();
+        applyProfile(state);                     /* 立刻看到效果 */
+        showToast('背景已铺满档案卡，记得点「保存并更新页面」');
+      });
+    });
+  }
+  if (bgRemove) {
+    bgRemove.addEventListener('click', function () {
+      state.cardBackground = '';
+      if (bgInput) bgInput.value = '';
+      renderBgPreview();
+      applyProfile(state);
+      showToast('背景已移除，记得点「保存并更新页面」');
+    });
+  }
 
   if (ownerKeyInput) {
     try { ownerKeyInput.value = localStorage.getItem(OWNER_KEY_STORAGE) || ''; } catch (error) {}

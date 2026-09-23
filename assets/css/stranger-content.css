@@ -18,13 +18,14 @@
 .section--contact { min-height:100svh; display:flex; align-items:center; background:#030304; padding-bottom:0; }
 
 .dossier { display:grid; grid-template-columns:minmax(320px,.82fr) minmax(420px,1.18fr); gap:clamp(52px,8vw,120px); align-items:center; }
-.subject-card { position:relative; padding:18px; border:1px solid rgba(229,35,45,.34); background:linear-gradient(145deg,rgba(229,35,45,.05),transparent 38%),rgba(10,10,13,.88); box-shadow:0 38px 90px rgba(0,0,0,.54),inset 0 0 0 1px rgba(255,255,255,.025); }
+.subject-card { position:relative; max-width:360px; justify-self:center; padding:18px; border:1px solid rgba(229,35,45,.34); background:linear-gradient(145deg,rgba(229,35,45,.05),transparent 38%),rgba(10,10,13,.88); box-shadow:0 38px 90px rgba(0,0,0,.54),inset 0 0 0 1px rgba(255,255,255,.025); }
 .subject-card::before, .subject-card::after { content:""; position:absolute; width:30px; height:30px; border-color:var(--red-bright); pointer-events:none; }
 .subject-card::before { top:-6px; left:-6px; border-top:1px solid; border-left:1px solid; }
 .subject-card::after { right:-6px; bottom:-6px; border-right:1px solid; border-bottom:1px solid; }
 .subject-card__top { display:flex; justify-content:space-between; padding:2px 2px 16px; color:var(--red-bright); font:650 9px/1 var(--mono); letter-spacing:.16em; }
 .subject-card__top span { color:var(--muted-2); }
-.subject-card__portrait { position:relative; display:grid; place-items:center; min-height:275px; overflow:hidden; border:1px solid rgba(255,255,255,.1); background:radial-gradient(circle at 50% 48%,rgba(229,35,45,.25),transparent 26%),radial-gradient(circle at 50% 50%,#16151a 0%,#09090c 58%,#030304 100%); }
+/* 媒体区竖版（3:4），但限制最大高度：窄屏占满整行时不会被拉得过长 */
+.subject-card__portrait { position:relative; display:grid; place-items:center; aspect-ratio:3 / 4; min-height:240px; overflow:hidden; border:1px solid rgba(255,255,255,.1); background:radial-gradient(circle at 50% 48%,rgba(229,35,45,.25),transparent 26%),radial-gradient(circle at 50% 50%,#16151a 0%,#09090c 58%,#030304 100%); }
 .subject-card__portrait::before { content:""; position:absolute; inset:0; opacity:.18; background-image:repeating-linear-gradient(0deg,transparent 0 6px,rgba(255,255,255,.13) 6px 7px); }
 .portrait-orbit { position:absolute; width:176px; height:176px; border:1px solid rgba(229,35,45,.42); border-radius:50%; box-shadow:0 0 42px rgba(229,35,45,.13),inset 0 0 32px rgba(229,35,45,.1); animation:orbitSpin 16s linear infinite; }
 .portrait-orbit::before, .portrait-orbit::after { content:""; position:absolute; border-radius:50%; }
@@ -32,13 +33,181 @@
 .portrait-orbit::after { top:-4px; left:50%; width:7px; height:7px; background:var(--red-bright); box-shadow:0 0 13px var(--red); }
 @keyframes orbitSpin { to{transform:rotate(360deg)} }
 .subject-card__portrait strong { position:relative; z-index:1; color:rgba(255,255,255,.72); font:900 76px/1 var(--serif); letter-spacing:-.08em; text-shadow:0 0 34px rgba(229,35,45,.55); }
-.subject-card__portrait > span { position:absolute; right:14px; bottom:12px; color:rgba(255,255,255,.4); font:600 8px/1.5 var(--mono); letter-spacing:.16em; text-align:right; }
-.subject-data { padding:12px 2px 0; }
-.subject-data > div { display:grid; grid-template-columns:70px 1fr; gap:16px; padding:11px 0; border-bottom:1px solid rgba(255,255,255,.075); }
-.subject-data dt { color:var(--muted-2); font:600 8px/1 var(--mono); letter-spacing:.15em; }
-.subject-data dd { color:rgba(255,255,255,.78); font-size:12px; text-align:right; }
-.subject-data .is-online { color:#7ee6bd; text-shadow:0 0 12px rgba(126,230,189,.4); }
-.subject-card__note { padding:18px 18px 6px; color:rgba(238,233,223,.64); font:italic 13px/1.8 var(--serif); }
+.subject-card__origin { position:absolute; right:20px; bottom:18px; z-index:2; color:rgba(255,255,255,.4); font:600 8px/1.5 var(--mono); letter-spacing:.16em; text-align:right; }
+/* 卡片式装饰：内框、角标缺口、左侧刻度 —— 参考卡片上的框线细节 */
+.subject-card__frame { position:absolute; inset:10px; z-index:5; border:1px solid rgba(255,255,255,.22); pointer-events:none; }
+.subject-card__frame::before,
+.subject-card__frame::after { content:""; position:absolute; width:9px; height:9px; background:var(--red-bright); box-shadow:0 0 12px rgba(229,35,45,.8); }
+.subject-card__frame::before { top:-1px; left:-1px; }
+.subject-card__frame::after { right:-1px; bottom:-1px; }
+.subject-card__ticks { position:absolute; left:17px; top:24px; bottom:24px; z-index:5; width:5px; pointer-events:none;
+  background-image:repeating-linear-gradient(180deg, rgba(255,255,255,.26) 0 1px, transparent 1px 14px);
+  -webkit-mask-image:linear-gradient(180deg, transparent, #000 18%, #000 82%, transparent);
+  mask-image:linear-gradient(180deg, transparent, #000 18%, #000 82%, transparent); }
+/* 下半部分：卡片式排版 —— 职业小标 → 大号衬线名字 → 城市 / 状态
+   不再有 NAME / ROLE / BASE 这类左侧提示词 */
+.subject-data { display:grid; gap:5px; padding:14px 18px 4px; text-align:center; }
+.subject-data > p { margin:0; }
+/* 小标：名字上方那行（自定义小标 / 中文名 / 职业） */
+.subject-data__kicker { color:var(--red-bright); font:700 9px/1.4 var(--mono); letter-spacing:.2em; text-transform:uppercase; }
+/* 大字：拉丁衬线全大写，海报质感 */
+.subject-data__name { position:relative; padding-top:13px; color:#fff; font:900 clamp(32px,3.6vw,46px)/.98 var(--serif); letter-spacing:-.015em; text-transform:uppercase; text-shadow:0 0 30px rgba(229,35,45,.34); }
+/* 居中对齐时，红色短横线放在名字上方（原来是名字左侧的竖条） */
+.subject-data__name::before { content:""; position:absolute; left:50%; top:0; width:36px; height:2px; margin-left:-18px; background:var(--red-bright); box-shadow:0 0 12px rgba(229,35,45,.7); }
+.subject-data__name.is-empty { font-size:24px; color:rgba(255,255,255,.34); }
+/* 第三行：职业 · 城市   ONLINE */
+.subject-data__meta { display:flex; flex-wrap:wrap; align-items:baseline; justify-content:center; gap:5px 10px; padding-top:4px; }
+.subject-data__role,
+.subject-data__base { color:rgba(238,233,223,.66); font:italic 15px/1.5 var(--serif); }
+.subject-data__base::before { content:"·"; margin-right:9px; color:rgba(255,255,255,.3); font-style:normal; }
+.subject-data__base { color:rgba(238,233,223,.64); font:italic 15px/1.5 var(--serif); }
+/* 自定义资料项：小胶囊 */
+.profile-extra-data { display:flex; flex-wrap:wrap; justify-content:center; gap:8px; margin-top:8px; }
+.profile-extra-data:empty { display:none; }
+.profile-extra-data > div { display:flex; align-items:baseline; gap:7px; padding:5px 10px; border:1px solid rgba(255,255,255,.12); }
+.profile-extra-data__label { color:var(--muted-2); font:600 8px/1 var(--mono); letter-spacing:.12em; }
+.profile-extra-data__value { color:rgba(255,255,255,.76); font-size:11px; }
+
+/* 卡片上飘浮的尘埃：两层不同粗细与速度的颗粒，慢速漂移（纯 CSS） */
+.subject-card > *:not(.subject-card__dust) { position:relative; z-index:1; }
+.subject-card__dust { position:absolute; inset:0; z-index:0; overflow:hidden; pointer-events:none; }
+.subject-card__dust::before,
+.subject-card__dust::after { content:""; position:absolute; inset:-8%; }
+.subject-card__dust::before {
+  background-image:
+    radial-gradient(2.2px 2.2px at 8% 12%, rgba(255,255,255,.8), transparent 70%),
+    radial-gradient(1.8px 1.8px at 21% 37%, rgba(255,236,236,.6), transparent 70%),
+    radial-gradient(2.4px 2.4px at 37% 9%, rgba(255,255,255,.62), transparent 70%),
+    radial-gradient(1.7px 1.7px at 53% 29%, rgba(255,120,120,.72), transparent 70%),
+    radial-gradient(2.2px 2.2px at 69% 6%, rgba(255,255,255,.68), transparent 70%),
+    radial-gradient(1.6px 1.6px at 84% 24%, rgba(255,255,255,.58), transparent 70%),
+    radial-gradient(2px 2px at 96% 41%, rgba(255,255,255,.6), transparent 70%),
+    radial-gradient(1.9px 1.9px at 12% 57%, rgba(255,255,255,.66), transparent 70%),
+    radial-gradient(1.7px 1.7px at 29% 73%, rgba(255,150,150,.66), transparent 70%),
+    radial-gradient(2.3px 2.3px at 45% 86%, rgba(255,255,255,.62), transparent 70%),
+    radial-gradient(1.6px 1.6px at 61% 66%, rgba(255,255,255,.6), transparent 70%),
+    radial-gradient(2.1px 2.1px at 76% 81%, rgba(255,255,255,.58), transparent 70%),
+    radial-gradient(1.8px 1.8px at 91% 68%, rgba(255,255,255,.6), transparent 70%),
+    radial-gradient(1.7px 1.7px at 42% 49%, rgba(255,255,255,.52), transparent 70%),
+    radial-gradient(2px 2px at 66% 45%, rgba(255,180,180,.56), transparent 70%),
+    radial-gradient(1.6px 1.6px at 88% 91%, rgba(255,255,255,.56), transparent 70%),
+    radial-gradient(1.9px 1.9px at 24% 92%, rgba(255,255,255,.5), transparent 70%),
+    radial-gradient(1.7px 1.7px at 5% 77%, rgba(255,255,255,.52), transparent 70%),
+    radial-gradient(2.1px 2.1px at 57% 16%, rgba(255,255,255,.56), transparent 70%),
+    radial-gradient(1.6px 1.6px at 78% 55%, rgba(255,255,255,.5), transparent 70%);
+  animation: dustDriftNear 42s ease-in-out infinite alternate;
+}
+.subject-card__dust::after {
+  background-image:
+    radial-gradient(1.2px 1.2px at 6% 31%, rgba(255,255,255,.46), transparent 70%),
+    radial-gradient(1.3px 1.3px at 14% 8%, rgba(255,255,255,.4), transparent 70%),
+    radial-gradient(1.5px 1.5px at 25% 22%, rgba(255,255,255,.48), transparent 70%),
+    radial-gradient(1.2px 1.2px at 33% 47%, rgba(255,200,200,.42), transparent 70%),
+    radial-gradient(1.4px 1.4px at 41% 68%, rgba(255,255,255,.46), transparent 70%),
+    radial-gradient(1.2px 1.2px at 48% 17%, rgba(255,255,255,.38), transparent 70%),
+    radial-gradient(1.6px 1.6px at 56% 44%, rgba(255,255,255,.48), transparent 70%),
+    radial-gradient(1.3px 1.3px at 63% 57%, rgba(255,150,150,.44), transparent 70%),
+    radial-gradient(1.4px 1.4px at 71% 12%, rgba(255,255,255,.4), transparent 70%),
+    radial-gradient(1.2px 1.2px at 79% 34%, rgba(255,255,255,.42), transparent 70%),
+    radial-gradient(1.5px 1.5px at 86% 49%, rgba(255,255,255,.46), transparent 70%),
+    radial-gradient(1.2px 1.2px at 94% 21%, rgba(255,255,255,.4), transparent 70%),
+    radial-gradient(1.3px 1.3px at 9% 46%, rgba(255,255,255,.42), transparent 70%),
+    radial-gradient(1.4px 1.4px at 18% 62%, rgba(255,255,255,.44), transparent 70%),
+    radial-gradient(1.2px 1.2px at 27% 84%, rgba(255,255,255,.4), transparent 70%),
+    radial-gradient(1.5px 1.5px at 36% 94%, rgba(255,255,255,.42), transparent 70%),
+    radial-gradient(1.2px 1.2px at 46% 76%, rgba(255,255,255,.4), transparent 70%),
+    radial-gradient(1.3px 1.3px at 54% 88%, rgba(255,180,180,.44), transparent 70%),
+    radial-gradient(1.4px 1.4px at 62% 74%, rgba(255,255,255,.42), transparent 70%),
+    radial-gradient(1.2px 1.2px at 69% 92%, rgba(255,255,255,.38), transparent 70%),
+    radial-gradient(1.5px 1.5px at 77% 71%, rgba(255,255,255,.44), transparent 70%),
+    radial-gradient(1.2px 1.2px at 85% 84%, rgba(255,255,255,.4), transparent 70%),
+    radial-gradient(1.3px 1.3px at 92% 62%, rgba(255,255,255,.42), transparent 70%),
+    radial-gradient(1.2px 1.2px at 98% 78%, rgba(255,255,255,.38), transparent 70%);
+  animation: dustDriftFar 29s ease-in-out infinite alternate;
+}
+/* profile 区块：整页飘浮的尘埃（三层、比卡片更密更明显，在内容之下）
+   区块很高，所以粒子图样按固定高度纵向平铺，密度不会随高度被摊薄 */
+.profile-dust { position:absolute; inset:0; z-index:0; overflow:hidden; pointer-events:none; }
+.profile-dust,
+.profile-dust::before,
+.profile-dust::after {
+  position:absolute; inset:-4%;
+  background-size:100% 760px;
+  background-repeat:repeat;
+}
+.profile-dust::before,
+.profile-dust::after { content:""; }
+.profile-dust {
+  background-image:
+    radial-gradient(1.6px 1.6px at 7% 9%, rgba(255,255,255,.6), transparent 70%),
+    radial-gradient(1.4px 1.4px at 19% 24%, rgba(255,255,255,.5), transparent 70%),
+    radial-gradient(1.8px 1.8px at 31% 7%, rgba(255,255,255,.56), transparent 70%),
+    radial-gradient(1.3px 1.3px at 43% 31%, rgba(255,160,160,.5), transparent 70%),
+    radial-gradient(1.6px 1.6px at 55% 14%, rgba(255,255,255,.54), transparent 70%),
+    radial-gradient(1.4px 1.4px at 67% 36%, rgba(255,255,255,.48), transparent 70%),
+    radial-gradient(1.7px 1.7px at 79% 11%, rgba(255,255,255,.56), transparent 70%),
+    radial-gradient(1.3px 1.3px at 91% 28%, rgba(255,255,255,.48), transparent 70%),
+    radial-gradient(1.5px 1.5px at 12% 46%, rgba(255,255,255,.5), transparent 70%),
+    radial-gradient(1.8px 1.8px at 36% 58%, rgba(255,255,255,.52), transparent 70%),
+    radial-gradient(1.4px 1.4px at 61% 71%, rgba(255,255,255,.48), transparent 70%),
+    radial-gradient(1.6px 1.6px at 84% 54%, rgba(255,160,160,.5), transparent 70%);
+  animation: dustDriftMid 36s ease-in-out infinite alternate;
+}
+.profile-dust::before {
+  background-image:
+    radial-gradient(2.4px 2.4px at 5% 18%, rgba(255,255,255,.78), transparent 70%),
+    radial-gradient(2px 2px at 16% 63%, rgba(255,255,255,.68), transparent 70%),
+    radial-gradient(2.6px 2.6px at 28% 35%, rgba(255,255,255,.7), transparent 70%),
+    radial-gradient(1.9px 1.9px at 39% 82%, rgba(255,140,140,.72), transparent 70%),
+    radial-gradient(2.3px 2.3px at 51% 47%, rgba(255,255,255,.72), transparent 70%),
+    radial-gradient(2px 2px at 63% 88%, rgba(255,255,255,.66), transparent 70%),
+    radial-gradient(2.5px 2.5px at 74% 21%, rgba(255,255,255,.7), transparent 70%),
+    radial-gradient(1.9px 1.9px at 86% 67%, rgba(255,255,255,.66), transparent 70%),
+    radial-gradient(2.2px 2.2px at 95% 39%, rgba(255,255,255,.68), transparent 70%),
+    radial-gradient(2px 2px at 22% 91%, rgba(255,255,255,.64), transparent 70%),
+    radial-gradient(2.4px 2.4px at 45% 12%, rgba(255,255,255,.7), transparent 70%),
+    radial-gradient(1.9px 1.9px at 68% 55%, rgba(255,180,180,.68), transparent 70%);
+  animation: dustDriftNear 44s ease-in-out infinite alternate;
+}
+.profile-dust::after {
+  background-image:
+    radial-gradient(1.2px 1.2px at 8% 33%, rgba(255,255,255,.44), transparent 70%),
+    radial-gradient(1.1px 1.1px at 15% 77%, rgba(255,255,255,.4), transparent 70%),
+    radial-gradient(1.3px 1.3px at 23% 16%, rgba(255,255,255,.46), transparent 70%),
+    radial-gradient(1.1px 1.1px at 29% 52%, rgba(255,255,255,.4), transparent 70%),
+    radial-gradient(1.2px 1.2px at 37% 88%, rgba(255,255,255,.42), transparent 70%),
+    radial-gradient(1.1px 1.1px at 44% 24%, rgba(255,255,255,.4), transparent 70%),
+    radial-gradient(1.3px 1.3px at 50% 66%, rgba(255,200,200,.44), transparent 70%),
+    radial-gradient(1.1px 1.1px at 57% 38%, rgba(255,255,255,.4), transparent 70%),
+    radial-gradient(1.2px 1.2px at 65% 79%, rgba(255,255,255,.44), transparent 70%),
+    radial-gradient(1.1px 1.1px at 71% 18%, rgba(255,255,255,.38), transparent 70%),
+    radial-gradient(1.3px 1.3px at 78% 46%, rgba(255,255,255,.46), transparent 70%),
+    radial-gradient(1.1px 1.1px at 83% 92%, rgba(255,255,255,.4), transparent 70%),
+    radial-gradient(1.2px 1.2px at 89% 62%, rgba(255,255,255,.44), transparent 70%),
+    radial-gradient(1.1px 1.1px at 94% 26%, rgba(255,255,255,.38), transparent 70%),
+    radial-gradient(1.3px 1.3px at 97% 74%, rgba(255,255,255,.44), transparent 70%),
+    radial-gradient(1.1px 1.1px at 3% 55%, rgba(255,255,255,.38), transparent 70%),
+    radial-gradient(1.2px 1.2px at 12% 96%, rgba(255,255,255,.42), transparent 70%),
+    radial-gradient(1.1px 1.1px at 33% 71%, rgba(255,150,150,.42), transparent 70%),
+    radial-gradient(1.3px 1.3px at 41% 44%, rgba(255,255,255,.44), transparent 70%),
+    radial-gradient(1.1px 1.1px at 48% 91%, rgba(255,255,255,.38), transparent 70%),
+    radial-gradient(1.2px 1.2px at 60% 9%, rgba(255,255,255,.44), transparent 70%),
+    radial-gradient(1.1px 1.1px at 67% 29%, rgba(255,255,255,.4), transparent 70%),
+    radial-gradient(1.3px 1.3px at 76% 96%, rgba(255,255,255,.42), transparent 70%),
+    radial-gradient(1.1px 1.1px at 81% 13%, rgba(255,255,255,.38), transparent 70%),
+    radial-gradient(1.2px 1.2px at 91% 44%, rgba(255,255,255,.44), transparent 70%),
+    radial-gradient(1.1px 1.1px at 99% 55%, rgba(255,255,255,.38), transparent 70%);
+  animation: dustDriftFar 30s ease-in-out infinite alternate;
+}
+
+@keyframes dustDriftMid { from { transform:translate3d(0,0,0); } to { transform:translate3d(-2.6%,2.4%,0); } }
+@keyframes dustDriftNear { from { transform:translate3d(0,0,0); } to { transform:translate3d(2.4%,-3.2%,0); } }
+@keyframes dustDriftFar { from { transform:translate3d(0,1.6%,0); } to { transform:translate3d(-3.2%,-1.8%,0); } }
+@media (prefers-reduced-motion:reduce) {
+  .subject-card__dust::before, .subject-card__dust::after,
+  .profile-dust, .profile-dust::before, .profile-dust::after { animation:none; }
+}
+.subject-card__note { padding:12px 18px 4px; color:rgba(238,233,223,.64); font:italic 13px/1.8 var(--serif); text-align:center; }
 .profile-copy { min-width:0; }
 .statement { max-width:740px; color:#f2eee7; font:500 clamp(28px,3.5vw,52px)/1.28 var(--serif); letter-spacing:-.025em; }
 .statement span { color:var(--red-bright); text-shadow:0 0 24px rgba(229,35,45,.22); }
@@ -97,4 +266,35 @@
 .signal-lines i:nth-child(2), .signal-lines i:nth-child(4) { height:62px; animation-delay:.18s; }
 .signal-lines i:nth-child(3) { height:112px; animation-delay:.3s; }
 @keyframes signalWave { 50%{transform:scaleY(.34);opacity:.26} }
+
+/* ============================================================
+   用户填写内容：斜体艺术字 + 红色描边
+   大字号（名字 / 主张）用纯红镂空描边，营造海报艺术字质感；
+   小字号（职业 · 城市 / 签名 / 自定义值）用浅填充 + 细红描边，
+   保留可读性的同时统一为斜体艺术字风格。
+   ============================================================ */
+.subject-data__name,
+.statement {
+  font-family:'Playfair Display', var(--serif);
+  font-style:italic;
+  color:transparent;
+  -webkit-text-stroke:1.2px var(--red-bright);
+  text-stroke:1.2px var(--red-bright);
+  text-shadow:0 0 26px rgba(229,35,45,.30);
+}
+.subject-data__name { -webkit-text-stroke-width:1.7px; }
+.statement { -webkit-text-stroke-width:1px; letter-spacing:-.02em; }
+
+.subject-data__role,
+.subject-data__base,
+.subject-card__note,
+.profile-extra-data__value {
+  font-family:'Playfair Display', var(--serif);
+  font-style:italic;
+  color:rgba(255,255,255,.84);
+  -webkit-text-stroke:.5px rgba(229,35,45,.55);
+  text-stroke:.5px rgba(229,35,45,.55);
+}
+/* 自定义资料值原本是 sans，这里仅描边、保持字号节奏 */
+.profile-extra-data__value { color:rgba(255,255,255,.82); }
 .case-card__art--signal > span { position:absolute; bottom:18px; left:20px; color:rgba(111,214,232,.52); font:600 8px/1 var(--mono); letter-spacing:.18em; }

@@ -70,25 +70,9 @@
   50%      { box-shadow: inset 0 0 96px rgba(229, 35, 45, .24); }
 }
 
-/* ---- 3. 数据行 ---- */
-.subject-data > div {
-  position: relative;
-  transition: background-color .3s ease;
-}
-.subject-data > div::after {
-  content: "";
-  position: absolute;
-  left: -18px;
-  top: 11px;
-  bottom: 11px;
-  width: 2px;
-  background: var(--red-bright);
-  box-shadow: 0 0 12px rgba(229, 35, 45, .7);
-  opacity: 0;
-  transition: opacity .3s ease;
-}
-.subject-data > div:hover { background: rgba(229, 35, 45, .07); }
-.subject-data > div:hover::after { opacity: 1; }
+/* ---- 3. 数据区 ---- */
+/* 旧的 NAME / ROLE / BASE 数据行已换成卡片式排版（见 stranger-content.css），
+   原来的行 hover 高亮随之移除；红色竖条改由 .subject-data__name::before 承担。 */
 
 /* 引言上方加一条渐隐的红线 */
 .subject-card__note { position: relative; }

@@ -5,7 +5,7 @@
      · 静态文件：index.html / assets / holo-card-deck …
      · /api/auth/*      账号接口      （与 Netlify Function 共用 lib/api.mjs）
      · /api/messages    留言与回复     （同上）
-     · /api/profile     档案资料       （同上，带站长密钥）
+     · /api/profile     档案资料       （同上，联系方式需密钥，其余免密钥）
    数据默认落在 netlify/.data/*.json（线上则是 Netlify Blobs）。
    端口：PORT 环境变量，默认 5173。
    ============================================================ */
@@ -34,6 +34,10 @@ const types = {
   '.webp': 'image/webp',
   '.glb': 'model/gltf-binary',
   '.mp4': 'video/mp4',
+  '.mp3': 'audio/mpeg',
+  '.m4a': 'audio/mp4',
+  '.ogg': 'audio/ogg',
+  '.wav': 'audio/wav',
   '.woff': 'font/woff',
   '.woff2': 'font/woff2',
 };
@@ -58,10 +62,11 @@ async function readBody(request) {
 
 /* 档案资料：与 netlify/functions/profile.mjs 同逻辑，方便本地调试 */
 const OWNER_KEY = process.env.SITE_OWNER_KEY || 'UPSIDE-DOWN-7F3K-OWNER';
+const CONTACT_FIELDS = ['email', 'github', 'wechat'];
 const PROFILE_FIELDS = {
   cnName: 24, enName: 32, role: 40, location: 40, initials: 3,
   oneLine: 64, statement: 120, bio0: 220, bio1: 220, bio2: 220,
-  tags: 100, email: 80, github: 160, wechat: 40, note: 100,
+  tags: 100, cardKicker: 40, email: 80, github: 160, wechat: 40, note: 100,
 };
 function sanitizeProfile(input) {
   const data = input || {};
@@ -87,10 +92,22 @@ async function handleProfile(request, response) {
     return sendJson(response, 200, { profile: profile && typeof profile === 'object' ? profile : null });
   }
   if (request.method === 'POST') {
-    if ((request.headers['x-owner-key'] || '') !== OWNER_KEY) return sendJson(response, 403, { error: 'FORBIDDEN' });
-    const profile = sanitizeProfile(await readBody(request));
-    await writeKey('signal-messages', 'profile', profile);
-    return sendJson(response, 200, { profile });
+    const incoming = sanitizeProfile(await readBody(request));
+    const current = (await readKey('signal-messages', 'profile', null)) || {};
+    const keyOk = (request.headers['x-owner-key'] || '') === OWNER_KEY;
+    const merged = Object.assign({}, current, incoming);
+    /* 官方联系方式只有填对密钥才能改；否则保留已存值，避免被游客覆盖 */
+    let contactLocked = false;
+    if (!keyOk) {
+      CONTACT_FIELDS.forEach((f) => {
+        if (Object.prototype.hasOwnProperty.call(incoming, f)) {
+          merged[f] = current[f] != null ? current[f] : '';
+          contactLocked = true;
+        }
+      });
+    }
+    await writeKey('signal-messages', 'profile', merged);
+    return sendJson(response, 200, { profile: merged, contactLocked });
   }
   return sendJson(response, 405, { error: 'METHOD_NOT_ALLOWED' });
 }

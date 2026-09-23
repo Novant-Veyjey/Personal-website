@@ -109,23 +109,24 @@ document.documentElement.classList.add('js');
   }
   window.showSiteToast = showToast;
 
-  function copyText(text) {
+  /* message 可自定义成功提示，避免复制微信号时也被说成“信号” */
+  function copyText(text, message) {
     if (navigator.clipboard && window.isSecureContext) {
       navigator.clipboard.writeText(text).then(function () {
-        showToast('信号已复制：' + text);
-      }).catch(function () { fallbackCopy(text); });
+        showToast(message || ('信号已复制：' + text));
+      }).catch(function () { fallbackCopy(text, message); });
     } else {
-      fallbackCopy(text);
+      fallbackCopy(text, message);
     }
   }
-  function fallbackCopy(text) {
+  function fallbackCopy(text, message) {
     var input = document.createElement('textarea');
     input.value = text;
     input.style.position = 'fixed';
     input.style.opacity = '0';
     document.body.appendChild(input);
     input.select();
-    try { document.execCommand('copy'); showToast('信号已复制：' + text); }
+    try { document.execCommand('copy'); showToast(message || ('信号已复制：' + text)); }
     catch (error) { showToast('复制失败，请手动选择邮箱'); }
     document.body.removeChild(input);
   }
@@ -141,8 +142,7 @@ document.documentElement.classList.add('js');
     link.addEventListener('click', function (e) {
       e.preventDefault();
       if (link.id === 'contact-wechat' && link.dataset.wechat) {
-        copyText(link.dataset.wechat);
-        showToast('微信号已复制：' + link.dataset.wechat);
+        copyText(link.dataset.wechat, '微信号已复制：' + link.dataset.wechat);
         return;
       }
       showToast('这里可以放你的微信二维码或主页链接');
