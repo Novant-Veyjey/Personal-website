@@ -32,6 +32,7 @@
 .message-board__reply-toggle { margin-top: 10px; padding: 0; border: 0; background: transparent; color: var(--red-bright); font: 700 9px/1 var(--mono); letter-spacing: .1em; cursor: pointer; }
 .message-board__reply-editor { display: grid; gap: 7px; margin-top: 10px; }
 .message-board__reply-editor[hidden] { display: none; }
+.message-dialog label[hidden], .message-dialog__save[hidden], .message-dialog__recent[hidden] { display: none; }
 .message-board__reply-send { justify-self: start; min-height: 34px; padding: 0 12px; border: 1px solid rgba(229,35,45,.58); background: rgba(174,9,20,.5); color: #fff; font: 700 9px/1 var(--mono); cursor: pointer; }
 .message-board__reply-send:hover { background: rgba(229,35,45,.78); }
 .message-dialog__surface.is-reply-mode > label, .message-dialog__surface.is-reply-mode .message-dialog__actions { display: none; }

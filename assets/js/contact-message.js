@@ -64,23 +64,39 @@
   }
   function setMode(nextMode) {
     currentMode = nextMode === 'reply' ? 'reply' : 'message';
-    form.classList.toggle('is-reply-mode', currentMode === 'reply');
-    if (title) title.textContent = currentMode === 'reply' ? '回复另一端' : '写一条留言';
+    var isReply = currentMode === 'reply';
+    form.classList.toggle('is-reply-mode', isReply);
+    if (title) title.textContent = isReply ? '回复留言' : '写一条留言';
+    // 上面只能发布、下面只能回复：回复模式隐藏发布表单，发布模式隐藏留言列表
+    ['name', 'message'].forEach(function (key) {
+      var field = form.elements[key];
+      if (!field) return;
+      var wrap = field.closest('label') || field;
+      wrap.hidden = isReply;
+    });
+    var saveButton = form.querySelector('.message-dialog__save');
+    if (saveButton) saveButton.hidden = isReply;
     if (!hint) return;
-    if (currentMode === 'reply') {
+    if (isReply) {
       hint.textContent = mode === 'cloud'
-        ? '选择一条留言，写下你的回复。所有访客都能看到这条回应。'
+        ? '选择下方一条留言进行回复，所有访客都能看到。'
         : '共享频道暂不可用，回复会先保存在这台设备中。';
     } else {
       hint.textContent = mode === 'cloud'
-        ? '留言与回复会同步到共享频道，所有访客都能看到。'
+        ? '留言会同步到共享频道，所有访客都能看到。'
         : '共享频道暂不可用，当前留言会先保存在这台设备中。';
     }
   }
   function render() {
+    if (currentMode === 'message') {
+      // 发布模式只显示发布表单，不显示留言列表与回复
+      recent.hidden = true;
+      recent.innerHTML = '';
+      return;
+    }
     if (!messages.length) {
       recent.hidden = false;
-      recent.innerHTML = '<p class="message-board__empty">频道里还没有留言，写下第一条信号。</p>';
+      recent.innerHTML = '<p class="message-board__empty">频道里还没有留言，等第一条信号出现。</p>';
       return;
     }
     recent.hidden = false;
