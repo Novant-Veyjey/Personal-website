@@ -48,8 +48,6 @@
 .hero-title__name {
   position: relative;
   display: block;
-  margin: .1em 0 .12em;
-  padding: .09em .05em;
   font-family: "ITC Benguiat", "Benguiat", "Bookman Old Style", "Elephant", Georgia, "Songti SC", serif;
   font-weight: 900;
   letter-spacing: .035em;
@@ -71,29 +69,6 @@
   -webkit-text-stroke: clamp(1px, .13vw, 2.6px) #ff3b30;
   filter: drop-shadow(0 0 12px rgba(255, 59, 48, .62)) drop-shadow(0 0 38px rgba(229, 35, 45, .38));
 }
-
-/* Logo 招牌元素：名字上下各一条向外延伸的红横线 */
-.hero-title__name::before,
-.hero-title__name::after {
-  content: "";
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
-  width: min(118%, 92vw);
-  height: clamp(2px, .2vw, 4px);
-  background-image: linear-gradient(
-    90deg,
-    rgba(255, 59, 48, 0) 0%,
-    #ff5a48 10%,
-    #ffd2cb 50%,
-    #ff5a48 90%,
-    rgba(255, 59, 48, 0) 100%
-  );
-  box-shadow: 0 0 12px rgba(255, 59, 48, .88), 0 0 30px rgba(229, 35, 45, .5);
-  pointer-events: none;
-}
-.hero-title__name::before { top: 0; }
-.hero-title__name::after { bottom: 0; }
 
 /* 第三行：来到颠倒世界 —— 红色小字，斜体衬线 */
 .hero-title__suffix {
