@@ -32,6 +32,8 @@
   <link rel="stylesheet" href="assets/css/red-type.css" />
   <!-- 关于我区块：增加视觉层次 -->
   <link rel="stylesheet" href="assets/css/profile-richer.css" />
+  <!-- 联系海报：上下两半独立响应鼠标（务必最后加载以覆盖旧规则） -->
+  <link rel="stylesheet" href="assets/css/story-art-split.css?v=20260923e" />
   <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js" defer></script>
   <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js" defer></script>
 </head>
@@ -405,7 +407,13 @@
       <div class="container contact-inner">
         <figure class="story-art story-art--signal story-art--message-trigger reveal" data-message-trigger="true" tabindex="0" role="button" aria-label="点击联系图片写留言">
           <div class="story-art__media">
-            <img src="assets/art/signal-station.jpg" alt="山顶天线和手电筒信号下的儿童剪影插画" width="1600" height="900" loading="lazy" />
+            <!-- 拆成上下两个裁切窗：鼠标在上半部分只动上半，下半部分只动下半 -->
+            <span class="story-art__half story-art__half--top">
+              <img src="assets/art/signal-station.jpg" alt="山顶天线和手电筒信号下的儿童剪影插画" width="1600" height="900" loading="lazy" />
+            </span>
+            <span class="story-art__half story-art__half--bottom" aria-hidden="true">
+              <img src="assets/art/signal-station.jpg" alt="" width="1600" height="900" loading="lazy" />
+            </span>
             <span class="story-art__scan" aria-hidden="true"></span>
           </div>
           <figcaption class="story-art__caption">
