@@ -49,7 +49,7 @@ async function writeBoard(list) {
 
 export default async (request) => {
   const url = new URL(request.url);
-  const tail = url.pathname.replace(/^\/\.netlify\/functions\/messages/, '').replace(/^\//, '');
+  const tail = (url.pathname.split('/messages').pop() || '').replace(/^\//, '');
 
   if (request.method === 'OPTIONS') {
     return new Response(null, {
@@ -69,6 +69,12 @@ export default async (request) => {
   if (request.method === 'POST') {
     let body = {};
     try { body = await request.json(); } catch (_) {}
+
+    // 临时清理接口，用于清掉测试/垃圾数据，上线后会移除
+    if (tail === '__reset') {
+      await writeBoard([]);
+      return json({ messages: [] });
+    }
 
     const replyMatch = tail.match(/^([^/]+)\/replies$/);
     if (replyMatch) {
