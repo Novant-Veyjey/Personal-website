@@ -264,6 +264,21 @@
       if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); openEditor(); }
     });
   });
+  /* 首页大标题就是「名字」，点它应该改名字（而不是打开区块编辑器）。
+     拦掉冒泡，避免同时触发 .hero__title-wrap 的区块编辑。 */
+  var heroTitleEl = $('#hero-title');
+  if (heroTitleEl) {
+    heroTitleEl.style.cursor = 'pointer';
+    heroTitleEl.title = '点击修改我的名字';
+    heroTitleEl.addEventListener('click', function (event) {
+      event.preventDefault();
+      event.stopPropagation();
+      openEditor();
+    });
+  }
+  // 供其它脚本（如区块编辑器里的「去修改名字」按钮）唤起资料编辑器
+  window.openProfileEditor = openEditor;
+
   $$('[data-profile-close]').forEach(function (el) { el.addEventListener('click', closeEditor); });
   document.addEventListener('keydown', function (event) {
     if (event.key === 'Escape' && modal.classList.contains('is-open')) closeEditor();

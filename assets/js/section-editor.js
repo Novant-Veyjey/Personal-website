@@ -55,6 +55,29 @@
 
   var titleInput = form.elements.title;
   var titleRow = titleInput ? titleInput.closest('label') : null;
+  var titleNote = null;
+
+  /* 首页没有「主标题」可编辑（大标题＝姓名），给一条明确指引，
+     免得用户在这里找不到改名字的地方。 */
+  function showTitleNote(show) {
+    if (!titleNote) {
+      titleNote = document.createElement('p');
+      titleNote.className = 'section-editor__note';
+      var text = document.createElement('span');
+      text.textContent = '首页大标题由「我的资料」里的姓名自动生成，改这里没用。';
+      var jump = document.createElement('button');
+      jump.type = 'button';
+      jump.textContent = '去修改名字 ↗';
+      jump.addEventListener('click', function () {
+        hide();
+        if (window.openProfileEditor) window.openProfileEditor();
+      });
+      titleNote.append(text, jump);
+      if (titleRow && titleRow.parentNode) titleRow.parentNode.insertBefore(titleNote, titleRow);
+      else form.insertBefore(titleNote, form.firstChild);
+    }
+    titleNote.hidden = !show;
+  }
 
   function open(key) {
     var config = configs[key];
@@ -62,6 +85,7 @@
     // 没有主标题字段的区块（首页大标题由档案姓名驱动），把这一栏藏起来，
     // 免得用户填了却看不到任何变化
     if (titleRow) titleRow.hidden = !config.title;
+    showTitleNote(!config.title);
     if (titleInput) titleInput.required = !!config.title;
     var current = { title: value(field(config.section, config.title)), subtitle: value(field(config.section, config.subtitle)), lead: value(field(config.section, config.lead)), extra: value(note(config.section)) };
     form.elements.sectionKey.value = key;

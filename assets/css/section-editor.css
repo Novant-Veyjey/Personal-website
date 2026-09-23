@@ -41,6 +41,9 @@
 .section-editor-dialog label { display: grid; gap: 7px; color: rgba(255,255,255,.68); font: 700 9px/1 var(--mono); letter-spacing: .12em; }
 .section-editor-dialog input, .section-editor-dialog textarea { width: 100%; border: 1px solid rgba(255,255,255,.16); border-radius: 0; outline: none; background: rgba(255,255,255,.045); color: #fff; padding: 12px; font: 14px/1.6 var(--sans); resize: vertical; }
 .section-editor-dialog input:focus, .section-editor-dialog textarea:focus { border-color: var(--red-bright); box-shadow: 0 0 0 2px rgba(229,35,45,.13); }
+.section-editor__note { display: flex; align-items: center; justify-content: space-between; gap: 14px; flex-wrap: wrap; margin: 0; padding: 12px 14px; border: 1px dashed rgba(229,35,45,.55); background: rgba(167,8,20,.12); color: rgba(255,255,255,.74); font: 12px/1.6 var(--sans); }
+.section-editor__note button { border: 1px solid var(--red); background: rgba(167,8,20,.5); color: #fff; padding: 9px 13px; font: 700 9px/1 var(--mono); letter-spacing: .12em; cursor: pointer; transition: border-color .25s ease; }
+.section-editor__note button:hover { border-color: #fff; }
 .section-editor__actions { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 10px; margin-top: 4px; }
 .section-editor__save, .section-editor__reset { min-height: 44px; padding: 0 16px; border: 1px solid var(--red); cursor: pointer; font: 700 10px/1 var(--mono); letter-spacing: .12em; }
 .section-editor__save { background: rgba(174,9,20,.68); color: #fff; }
