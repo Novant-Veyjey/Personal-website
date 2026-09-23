@@ -411,7 +411,7 @@
           <figcaption class="story-art__caption">
             <span>SCENE 04 / OPEN CHANNEL</span>
             <strong>等待另一端回应</strong>
-            <small>点开图片：上方发布你的信号，下方频道里回复任意一条留言。</small>
+            <small>点图片上半部分发布留言，下半部分查看并回复。</small>
           </figcaption>
         </figure>
         <p class="section-kicker reveal">OPEN CHANNEL</p>
@@ -492,10 +492,9 @@
   <dialog class="message-dialog" id="message-dialog" aria-labelledby="message-dialog-title">
     <form class="message-dialog__surface" id="message-form">
       <button class="message-dialog__close" id="message-close" type="button" aria-label="关闭留言窗口">×</button>
-      <p class="message-dialog__kicker">OPEN CHANNEL / SHARED FREQUENCY</p>
-      <h2 id="message-dialog-title">发布 & 回复</h2>
-      <p class="message-dialog__hint">上方留下你的信号；下方频道里可以回复任意一条留言，所有访客都能看到。</p>
-      <label><span>你的名字</span><input name="name" type="text" maxlength="40" autocomplete="name" required /></label>
+      <h2 id="message-dialog-title">发布</h2>
+      <p class="message-dialog__hint">留言会同步到共享频道，所有访客都能看到。</p>
+      <label><span>你的称呼</span><input name="name" type="text" maxlength="40" autocomplete="name" required /></label>
       <label><span>留言内容</span><textarea name="message" rows="5" maxlength="500" required></textarea></label>
       <div class="message-dialog__actions">
         <button class="message-dialog__save" type="submit">保存留言 <span>↗</span></button>
@@ -575,7 +574,7 @@
   <!-- 常驻编辑入口：修改名字 / 资料（之前只有档案卡可点，很难发现） -->
   <button class="profile-fab" id="open-profile-editor-fab" type="button" title="修改我的名字与个人资料"><span>◉</span>编辑名字 / 资料</button>
   <script src="assets/js/stranger.js"></script>
-  <script src="assets/js/contact-message.js?v=20260923a"></script>
+  <script src="assets/js/contact-message.js?v=20260923c"></script>
   <script src="assets/js/section-editor.js?v=20260923a"></script>
   <script src="assets/js/ability-editor.js"></script>
   <script src="assets/js/project-editor.js"></script>
