@@ -6,6 +6,7 @@
   var $ = function (s, root) { return (root || document).querySelector(s); };
   var $$ = function (s, root) { return Array.prototype.slice.call((root || document).querySelectorAll(s)); };
   var KEY = 'upsideDownProfile.v1';
+  var OWNER_KEY_STORAGE = 'upsideDownOwnerKey.v1';
   var form = $('#profile-form');
   if (!form) return;
 
@@ -34,6 +35,7 @@
   var avatarPreview = $('#profile-avatar-preview');
   var avatarInput = $('#profile-avatar-input');
   var extraFields = $('#profile-extra-fields');
+  var ownerKeyInput = $('#profile-owner-key');
   var toastEl = $('#toast');
   var toastTimer;
 
@@ -271,10 +273,55 @@
     event.preventDefault();
     if (!form.reportValidity()) return;
     state = collectForm();
-    saveState();
+    try {
+      localStorage.setItem(KEY, JSON.stringify(state));
+    } catch (error) {
+      showToast('保存失败：头像图片可能过大');
+      return;
+    }
     applyProfile(state);
     closeEditor();
+    syncCloud(state);
   });
+
+  /* 把资料同步到云端：所有访客、所有设备、清缓存后都生效。
+     必须填对管理员密钥，否则只保存在本机。 */
+  function syncCloud(data) {
+    var key = ownerKeyInput ? String(ownerKeyInput.value || '').trim() : '';
+    if (!key) {
+      showToast('资料已保存在本机（填管理员密钥才会同步给所有访客）');
+      return;
+    }
+    try { localStorage.setItem(OWNER_KEY_STORAGE, key); } catch (error) {}
+    showToast('正在同步到云端…');
+    fetch('/api/profile', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'x-owner-key': key },
+      body: JSON.stringify(data)
+    }).then(function (response) {
+      if (!response.ok) throw new Error('HTTP ' + response.status);
+      showToast('已保存并同步到云端，所有访客都能看到');
+    }).catch(function () {
+      showToast('云端同步失败，资料暂存在本机');
+    });
+  }
+
+  /* 打开页面时拉取云端资料：别人改过/自己换设备也能看到最新版。
+     云端没有有效姓名时保持本地状态不动。 */
+  function loadCloud() {
+    fetch('/api/profile').then(function (response) {
+      return response.ok ? response.json() : null;
+    }).then(function (res) {
+      var cloud = res && res.profile;
+      if (!cloud) return;
+      var hasName = (cloud.cnName && cloud.cnName !== DEFAULTS.cnName) ||
+        (cloud.enName && String(cloud.enName).toUpperCase() !== 'YOUR NAME');
+      if (!hasName) return;
+      state = normalize(Object.assign({}, state, cloud));
+      applyProfile(state);
+      fillForm();
+    }).catch(function () {});
+  }
 
   $('#profile-add-extra').addEventListener('click', function () {
     if ($$('.profile-extra-row', extraFields).length >= 10) return showToast('最多添加 10 项');
@@ -282,7 +329,7 @@
   });
 
   $('#profile-reset').addEventListener('click', function () {
-    if (!window.confirm('确定恢复默认资料吗？当前保存在浏览器中的修改会被清除。')) return;
+    if (!window.confirm('确定恢复默认资料吗？浏览器里保存的修改会被清除（云端资料不受影响）。')) return;
     try { localStorage.removeItem(KEY); } catch (error) {}
     state = normalize({});
     applyProfile(state);
@@ -320,7 +367,12 @@
     reader.readAsDataURL(file);
   });
 
+  if (ownerKeyInput) {
+    try { ownerKeyInput.value = localStorage.getItem(OWNER_KEY_STORAGE) || ''; } catch (error) {}
+  }
+
   applyProfile(state);
+  loadCloud();
 
   /* 兜底：首页大标题统一由这里的姓名驱动。
      section-editor / poster-manager 也可能去写 #hero-title（会把三段

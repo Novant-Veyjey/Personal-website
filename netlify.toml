@@ -35,3 +35,8 @@
   from = "/api/messages/*"
   to = "/.netlify/functions/messages/:splat"
   status = 200
+
+[[redirects]]
+  from = "/api/profile"
+  to = "/.netlify/functions/profile"
+  status = 200

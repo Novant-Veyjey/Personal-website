@@ -439,7 +439,7 @@
     <div class="profile-modal__scrim" data-profile-close></div>
     <section class="profile-modal__panel" role="dialog" aria-modal="true" aria-labelledby="profile-editor-title">
       <header class="profile-modal__head">
-        <div><p>SUBJECT DATABASE / LOCAL ONLY</p><h2 id="profile-editor-title">编辑我的资料</h2></div>
+        <div><p>SUBJECT DATABASE / CLOUD SYNC</p><h2 id="profile-editor-title">编辑我的资料</h2></div>
         <button class="profile-modal__close" type="button" data-profile-close aria-label="关闭编辑器">×</button>
       </header>
       <form class="profile-form" id="profile-form">
@@ -471,6 +471,7 @@
           <label><span>邮箱</span><input name="email" type="email" maxlength="80" /></label>
           <label><span>GitHub 地址</span><input name="github" type="url" maxlength="160" /></label>
           <label><span>微信号</span><input name="wechat" type="text" maxlength="40" /></label>
+          <label><span>管理员密钥（同步云端必填）</span><input id="profile-owner-key" name="ownerKey" type="password" maxlength="64" placeholder="仅站长持有，填对才会上线" /></label>
         </div>
         <label class="profile-field-wide"><span>档案卡引言</span><input name="note" type="text" maxlength="100" /></label>
 
