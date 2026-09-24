@@ -210,15 +210,19 @@
       box-shadow: 0 0 16px rgba(115,16,16,.2), inset 0 0 0 1px rgba(255,225,190,.05), inset 0 0 22px rgba(0,0,0,.55);
     }
   }
-  /* 悬停呼吸灯：暗—亮对比拉开，平滑起伏，没有突然明灭 */
+  /* 悬停呼吸灯：字芯与描边一起“通电”，亮—暗平滑起伏，没有突然明灭 */
   @keyframes stBreathe {
     0%, 100% {
+      color: #2e0606;
+      -webkit-text-stroke-color: #6b1d1e;
       text-shadow: 0 0 6px rgba(170,42,38,.2), 0 0 16px rgba(128,20,20,.15), 0 0 30px rgba(88,8,10,.1), 0 2px 3px #000;
       box-shadow: 0 0 12px rgba(100,14,14,.12), inset 0 0 26px rgba(0,0,0,.6), inset 0 1px 0 rgba(255,220,180,.05);
     }
     50% {
-      text-shadow: 0 0 18px rgba(212,64,52,.6), 0 0 40px rgba(168,30,30,.42), 0 0 72px rgba(122,12,14,.3), 0 2px 3px #000;
-      box-shadow: 0 0 40px rgba(142,20,20,.34), inset 0 0 26px rgba(0,0,0,.6), inset 0 1px 0 rgba(255,220,180,.05);
+      color: #ff5646;                          /* 字芯点亮：霓虹灯管亮起的红 */
+      -webkit-text-stroke-color: #ff8272;      /* 描边同步提亮 */
+      text-shadow: 0 0 8px rgba(255,110,90,.9), 0 0 24px rgba(255,70,55,.7), 0 0 60px rgba(210,40,40,.5), 0 0 100px rgba(160,20,22,.32), 0 2px 3px #000;
+      box-shadow: 0 0 48px rgba(170,26,26,.45), inset 0 0 26px rgba(0,0,0,.6), inset 0 1px 0 rgba(255,220,180,.05);
     }
   }
   /* ================= 场景二：昏暗走廊里的雕花座钟（真实照片） ================= */
