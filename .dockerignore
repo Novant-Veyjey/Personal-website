@@ -1,0 +1,15 @@
+# 不进 Fly 镜像的文件：依赖、git、日志、以及用不到的 Blender 源产物
+node_modules
+.git
+.netlify
+netlify/.data
+server.log
+server.err
+
+# Blender 源文件与中间产物（站点只用 web/、source/、cards/*/web 下的网页副本）
+*.blend
+*.blend1
+holo-card-deck/verification
+holo-card-deck/tools
+holo-card-deck/references
+holo-card-deck/cards/*/assets

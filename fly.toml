@@ -1,0 +1,24 @@
+# Fly.io 部署配置：把 server.mjs 作为常驻 Node 服务运行
+# 静态页面 + /api/*（登录 / 留言 / 照片球）全部可用，无需 Netlify。
+# 存储自动回退到本地文件（netlify/.data/*.json）。
+app = "upside-down-personal-website"
+primary_region = "sin"            # 新加坡（亚洲延迟低）；可用 lax/nrt/fra 等
+
+[build]
+  dockerfile = "Dockerfile"
+
+[env]
+  NODE_ENV = "production"
+
+[http_service]
+  internal_port = 8080            # Fly 会把 PORT 环境变量设为这个值，server.mjs 据此监听
+  force_https = true
+  # 关键：关闭空闲自动停机 + 至少常驻 1 台，保证“永不停机/不休眠”
+  auto_stop_machines = "off"
+  auto_start_machines = true
+  min_machines_running = 1
+
+[[vm]]
+  size = "shared-cpu-1x"
+  cpus = 1
+  memory = "256mb"                # 免费额度内（单台 shared-cpu 256MB）
