@@ -170,4 +170,6 @@ http.createServer(async (request, response) => {
     if (!response.headersSent) response.writeHead(404, { 'Content-Type': 'text/plain; charset=utf-8' });
     response.end('Not found');
   }
-}).listen(port, '127.0.0.1', () => console.log(`Upside Down personal site: http://127.0.0.1:${port}/`));
+/* 监听 0.0.0.0：本地(127.0.0.1)与容器外部(Render 等平台负载均衡)都能访问；
+   之前绑 127.0.0.1 在本地可用，但部署到 Render 会因外部连不进而打不开。 */
+}).listen(port, '0.0.0.0', () => console.log(`Upside Down personal site: http://127.0.0.1:${port}/`));

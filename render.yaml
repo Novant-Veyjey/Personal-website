@@ -1,0 +1,13 @@
+# Render Blueprint：把 server.mjs 作为 Node 应用部署
+# 静态页面 + /api/*（登录 / 留言 / 照片球）全部可用，无需 Netlify。
+# 存储自动回退到本地文件（netlify/.data/*.json），数据随实例存活。
+services:
+  - type: web
+    name: upside-down-personal-website
+    runtime: node
+    plan: free                 # 免费档：空闲后休眠，首次访问会冷启动几秒
+    branch: main
+    buildCommand: npm install
+    startCommand: npm start
+    healthCheckPath: /
+    envVars: []

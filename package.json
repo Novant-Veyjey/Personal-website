@@ -2,6 +2,12 @@
   "name": "upside-down-personal-website",
   "private": true,
   "type": "module",
+  "scripts": {
+    "start": "node server.mjs"
+  },
+  "engines": {
+    "node": ">=18"
+  },
   "dependencies": {
     "@netlify/blobs": "^8.1.0"
   }
