@@ -141,7 +141,7 @@
   /* 四角细红角标：让边框更精致（像刻在墙上的牌子） */
   #enter-btn::before, #enter-btn::after {
     content: ''; position: absolute; width: 11px; height: 11px;
-    border: 1px solid rgba(226,74,64,.95);
+    border: 1px solid rgba(226,74,64,.4);
     pointer-events: none;
   }
   #enter-btn::before { left: -5px; top: -5px; border-right: 0; border-bottom: 0; }
@@ -162,11 +162,11 @@
     font-size: clamp(17px, 2.5vw, 24px);
     letter-spacing: .22em; text-indent: .22em;
     color: #2e0606;                         /* 字芯暗红：霓虹灯管的暗腔（压暗） */
-    -webkit-text-stroke: 1px #a12a2b;       /* 描边压暗，不那么鲜艳 */
-    --tglow: 6; --glow: 18;                 /* GSAP 驱动的红光呼吸变量（无 GSAP 时由 btnPulse 兜底） */
-    text-shadow: 0 0 calc(var(--tglow) * 1px) rgba(200,50,45,.45), 0 0 20px rgba(150,22,22,.32), 0 0 42px rgba(110,10,12,.25), 0 2px 3px #000;
+    -webkit-text-stroke: 1px #6b1d1e;       /* 描边压暗，与暗背景融合 */
+    --tglow: 3; --glow: 10;                 /* GSAP 驱动的红光呼吸变量（无 GSAP 时由 btnPulse 兜底） */
+    text-shadow: 0 0 calc(var(--tglow) * 1px) rgba(150,36,32,.26), 0 0 20px rgba(110,16,16,.2), 0 0 42px rgba(90,8,10,.16), 0 2px 3px #000;
     background: linear-gradient(180deg, rgba(20,12,9,.6), rgba(7,4,3,.82));
-    border: 1px solid rgba(150,40,36,.7);   /* 外：细红框（压暗） */
+    border: 1px solid rgba(110,30,28,.5);   /* 外：细红框（更暗，融入背景） */
     border-radius: 2px;
     padding: .5em 1.15em .55em;             /* 框放大 */
     cursor: pointer;
@@ -182,11 +182,11 @@
     margin-top: .5em;
   }
   #enter-btn:hover, #enter-btn:focus-visible {
-    text-shadow: 0 0 12px rgba(220,60,52,.65), 0 0 30px rgba(170,28,28,.45), 0 0 56px rgba(120,12,14,.32), 0 2px 3px #000;
-    box-shadow: 0 0 36px rgba(150,20,20,.34), inset 0 0 26px rgba(0,0,0,.6), inset 0 1px 0 rgba(255,220,180,.07);
+    text-shadow: 0 0 12px rgba(190,50,44,.42), 0 0 30px rgba(140,24,24,.3), 0 0 56px rgba(100,10,12,.2), 0 2px 3px #000;
+    box-shadow: 0 0 26px rgba(120,16,16,.22), inset 0 0 26px rgba(0,0,0,.6), inset 0 1px 0 rgba(255,220,180,.05);
     outline: none;
-    /* 悬停瞬间像灯管“断电重亮”般不规则闪烁一下，随后稳定点亮 */
-    animation: stFlicker 1.3s linear;
+    /* 悬停时像呼吸灯一样柔和起伏（取代原先的硬性闪烁） */
+    animation: stBreathe 5s ease-in-out infinite;
   }
   /* 怪奇物语片头同款：灯光忽明忽暗几下再稳定 */
   @keyframes stFlicker {
@@ -195,23 +195,32 @@
     14%  { opacity: .3;  text-shadow: 0 0 2px rgba(255,60,50,.18); box-shadow: none; }
     20%  { opacity: 1;  text-shadow: 0 0 14px rgba(255,80,66,.8), 0 0 34px rgba(230,40,40,.55), 0 0 64px rgba(170,12,14,.4); box-shadow: 0 0 44px rgba(190,22,22,.4), inset 0 0 26px rgba(0,0,0,.6); }
     26%  { opacity: .18; text-shadow: none; box-shadow: none; }
-    34%  { opacity: 1;  text-shadow: 0 0 16px rgba(255,90,70,.9), 0 0 42px rgba(235,45,45,.6), 0 0 72px rgba(175,14,16,.45); box-shadow: 0 0 50px rgba(195,26,26,.46), inset 0 0 26px rgba(0,0,0,.6); }
-    42%  { opacity: .35; text-shadow: 0 0 4px rgba(255,60,50,.25); box-shadow: none; }
-    50%  { opacity: 1;  text-shadow: 0 0 14px rgba(255,80,66,.8), 0 0 34px rgba(230,40,40,.55), 0 0 64px rgba(170,12,14,.4); box-shadow: 0 0 44px rgba(190,22,22,.4), inset 0 0 26px rgba(0,0,0,.6); }
-    100% { opacity: 1;  text-shadow: 0 0 14px rgba(255,70,60,.8), 0 0 34px rgba(230,40,40,.55), 0 0 64px rgba(170,12,14,.4); box-shadow: 0 0 44px rgba(190,22,22,.4), inset 0 0 26px rgba(0,0,0,.6); }
+    34%  { opacity: 1;  text-shadow: 0 0 16px rgba(210,70,58,.55), 0 0 42px rgba(180,36,36,.36), 0 0 72px rgba(130,12,14,.26); box-shadow: 0 0 32px rgba(150,22,22,.28), inset 0 0 26px rgba(0,0,0,.6); }
+    42%  { opacity: .35; text-shadow: 0 0 4px rgba(210,50,42,.15); box-shadow: none; }
+    50%  { opacity: 1;  text-shadow: 0 0 14px rgba(205,62,52,.5), 0 0 34px rgba(175,32,32,.32), 0 0 64px rgba(125,10,12,.24); box-shadow: 0 0 28px rgba(140,18,18,.24), inset 0 0 26px rgba(0,0,0,.6); }
+    100% { opacity: 1;  text-shadow: 0 0 14px rgba(205,56,48,.5), 0 0 34px rgba(175,32,32,.32), 0 0 64px rgba(125,10,12,.24); box-shadow: 0 0 28px rgba(140,18,18,.24), inset 0 0 26px rgba(0,0,0,.6); }
   }
   @keyframes btnPulse {
     0%, 100% {
-      text-shadow: 0 0 6px rgba(200,50,45,.45), 0 0 20px rgba(150,22,22,.32), 0 2px 3px #000;
-      box-shadow: 0 0 18px rgba(110,14,14,.24), inset 0 0 0 1px rgba(255,225,190,.06), inset 0 0 20px rgba(0,0,0,.6);
+      text-shadow: 0 0 6px rgba(150,36,32,.26), 0 0 20px rgba(110,16,16,.2), 0 2px 3px #000;
+      box-shadow: 0 0 10px rgba(90,12,12,.16), inset 0 0 0 1px rgba(255,225,190,.04), inset 0 0 20px rgba(0,0,0,.6);
     }
     50% {
-      text-shadow: 0 0 10px rgba(220,60,52,.6), 0 0 32px rgba(170,28,28,.4), 0 2px 3px #000;
-      box-shadow: 0 0 28px rgba(150,20,20,.32), inset 0 0 0 1px rgba(255,225,190,.08), inset 0 0 22px rgba(0,0,0,.55);
+      text-shadow: 0 0 10px rgba(180,44,38,.38), 0 0 32px rgba(130,22,22,.26), 0 2px 3px #000;
+      box-shadow: 0 0 16px rgba(115,16,16,.2), inset 0 0 0 1px rgba(255,225,190,.05), inset 0 0 22px rgba(0,0,0,.55);
     }
   }
-  body:not(.has-gsap) #enter-btn { animation: btnPulse 3.4s ease-in-out infinite; }
-
+  /* 悬停呼吸灯：暗—亮对比拉开，平滑起伏，没有突然明灭 */
+  @keyframes stBreathe {
+    0%, 100% {
+      text-shadow: 0 0 6px rgba(170,42,38,.2), 0 0 16px rgba(128,20,20,.15), 0 0 30px rgba(88,8,10,.1), 0 2px 3px #000;
+      box-shadow: 0 0 12px rgba(100,14,14,.12), inset 0 0 26px rgba(0,0,0,.6), inset 0 1px 0 rgba(255,220,180,.05);
+    }
+    50% {
+      text-shadow: 0 0 18px rgba(212,64,52,.6), 0 0 40px rgba(168,30,30,.42), 0 0 72px rgba(122,12,14,.3), 0 2px 3px #000;
+      box-shadow: 0 0 40px rgba(142,20,20,.34), inset 0 0 26px rgba(0,0,0,.6), inset 0 1px 0 rgba(255,220,180,.05);
+    }
+  }
   /* ================= 场景二：昏暗走廊里的雕花座钟（真实照片） ================= */
   #scene-clock {
     z-index: 2;
@@ -481,8 +490,7 @@
       <span class="fp fp1"></span>
       <span class="fp fp2"></span>
       <span class="fp fp3"></span>
-      <!-- 顶端两个暗红雷电 -->
-      <span class="flash flash--a" aria-hidden="true"></span>
+      <!-- 顶端雷电（左上那个已按要求移除） -->
       <span class="flash flash--b" aria-hidden="true"></span>
       <div id="darkener"></div>
 
@@ -567,28 +575,48 @@
 
     /* 音乐只有一套：首页右上角那个站内播放器。
        点击 ACCESS 后延迟 1.2 秒让它开始播放；房子段、座钟段不再有独立音乐。
-       首页此时已在下方静默加载，所以在轮询到 #site-audio 后再起播。 */
+       首页此时已在下方静默加载，所以在轮询到 #site-audio 后再起播。
+       进入后默认不静音、自动播放：带声音起播；若被浏览器自动播放策略拦下，
+       则先静音起播，等用户在站内首次点击 / 按键（此时已具备用户手势）立即取消静音。 */
     function startSiteMusic() {
       var frame = $('#main-frame');
       var tries = 0;
       var timer = setInterval(function () {
         tries++;
+        var doc = frame.contentDocument;
         var a = null;
-        try { a = frame.contentDocument && frame.contentDocument.getElementById('site-audio'); } catch (e) {}
+        try { a = doc && doc.getElementById('site-audio'); } catch (e) {}
         if (a) {
+          clearInterval(timer);
           try {
-            if (a.muted) a.muted = false;          /* 之前若被静音过，这里恢复 */
             if (!a.volume) a.volume = 0.6;         /* 音量为 0 时给一个能听见的值 */
-            if (a.paused) { var p = a.play(); if (p && p.catch) p.catch(function () {}); }
+            a.muted = false;                        /* 进入后默认不静音 */
+            var p = a.play();
+            if (p && p.catch) p.catch(function () {
+              /* 带声音自动播放被拦：先静音起播，保证“进入即响”；
+                 随后在站内首次交互（点击 / 按键）时取消静音，此时已满足手势要求 */
+              a.muted = true;
+              a.play().catch(function () {});
+              var unmute = function () {
+                try { a.muted = false; } catch (e) {}
+                try {
+                  var w = frame.contentWindow;
+                  w.removeEventListener('pointerdown', unmute);
+                  w.removeEventListener('keydown', unmute);
+                } catch (e) {}
+              };
+              try {
+                var w = frame.contentWindow;
+                w.addEventListener('pointerdown', unmute, { once: true });
+                w.addEventListener('keydown', unmute, { once: true });
+              } catch (e) {}
+            });
           } catch (e) {}
-          if (!a.paused) {
-            clearInterval(timer);
-            try {
-              var iv = frame.contentDocument.getElementById('audio-volume');
-              if (iv && epVolume) epVolume.value = iv.value;   /* 音量条对齐站内状态 */
-            } catch (e) {}
-            if (epBar) epBar.classList.add('show');            /* 浮现开场页控制条 */
-          }
+          try {
+            var iv = doc.getElementById('audio-volume');
+            if (iv && epVolume) epVolume.value = iv.value;   /* 音量条对齐站内状态 */
+          } catch (e) {}
+          if (epBar) epBar.classList.add('show');            /* 浮现开场页控制条 */
         }
         if (tries > 150) clearInterval(timer);     /* 最多等约 15s */
       }, 100);
@@ -756,8 +784,7 @@
       /* 封面缓慢呼吸（Ken Burns），让鬼屋像在雾里轻轻起伏 */
       gsap.fromTo('.cover-img', { scale: 1.08 }, { scale: 1.13, duration: 26, ease: 'sine.inOut', yoyo: true, repeat: -1 });
 
-      /* ACCESS 红光呼吸：通过 CSS 变量驱动辉光，不会覆盖 hover 态 */
-      gsap.to('#enter-btn', { '--tglow': 10, '--glow': 28, duration: 3.4, ease: 'sine.inOut', yoyo: true, repeat: -1 });
+      /* ACCESS 静止态保持静态暗红辉光（由基础 --tglow/--glow 提供），呼吸效果仅在悬停时由 CSS stBreathe 触发 */
 
       /* 光斑：有机随机闪烁（每次间隔与亮度都随机，比固定 CSS 更自然）
          主页(main-glow)上的光斑闪得更勤一些；鬼屋场景维持原有节奏 */

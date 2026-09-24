@@ -528,6 +528,9 @@
     buildList();
     render();
     firstPaint = false;
+    /* 进首页即尝试自动播放（带声音；被浏览器策略拦下则先静音，首次交互再取消静音）。
+       已登录访客在 refresh 解析后也会走到这里；用户此前手动关闭过(autoplay=false)则跳过。 */
+    startIfAllowed();
   }
 
   /* 自动播放触发条件：

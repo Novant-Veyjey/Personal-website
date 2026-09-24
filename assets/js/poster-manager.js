@@ -42,9 +42,15 @@
     if (!(window.SiteAuth && window.SiteAuth.getUser())) return;
     window.SiteAuth.api('/api/posters', { method: 'POST', body: JSON.stringify({ posters: items }) })
       .then(function (res) {
-        if (!res.ok) console.warn('[posters] 云端保存失败：', res.data && res.data.error);
+        if (!res.ok) {
+          console.warn('[posters] 云端保存失败：', res.data && res.data.error);
+          if (window.showSiteToast) window.showSiteToast('照片云端保存失败：' + ((res.data && res.data.error) || '未知错误'));
+        }
       })
-      .catch(function (error) { console.warn('[posters] 云端保存失败：', error); });
+      .catch(function (error) {
+        console.warn('[posters] 云端保存失败：', error);
+        if (window.showSiteToast) window.showSiteToast('照片云端保存失败：网络错误');
+      });
   }
   function applyCloud(list) {
     items = list.slice();
@@ -65,7 +71,12 @@
 
   function persist() {
     cloudDirty = true;
-    try { localStorage.setItem(storageKey, JSON.stringify(items)); } catch (error) {}
+    try {
+      localStorage.setItem(storageKey, JSON.stringify(items));
+    } catch (error) {
+      /* 本机配额（约 5MB）装不下时明确提示，别再静默丢数据 */
+      if (window.showSiteToast) window.showSiteToast('本机存不下这么多照片，请删几张或登录后用云端同步');
+    }
     if (window.posterSphere && window.posterSphere.setImages) window.posterSphere.setImages(items, false);
     pushCloud();
   }
@@ -78,12 +89,14 @@
       reader.onload = function () {
         var image = new Image();
         image.onload = function () {
-          var max = 1300, scale = Math.min(1, max / Math.max(image.width, image.height));
+          /* 上限 950px / 质量 .78：单张约 100-200KB，十几张也能进 localStorage（约 5MB），
+             之前 1300px/.84 单张可到 400KB+，几张就把本机配额挤爆导致刷新后全丢 */
+          var max = 950, scale = Math.min(1, max / Math.max(image.width, image.height));
           var canvas = document.createElement('canvas');
           canvas.width = Math.max(1, Math.round(image.width * scale));
           canvas.height = Math.max(1, Math.round(image.height * scale));
           canvas.getContext('2d').drawImage(image, 0, 0, canvas.width, canvas.height);
-          resolve({ src: canvas.toDataURL('image/jpeg', .84), landscape: canvas.width / canvas.height > 1.18, alt: file.name.replace(/\.[^.]+$/, '') || '自定义科幻海报' });
+          resolve({ src: canvas.toDataURL('image/jpeg', .78), landscape: canvas.width / canvas.height > 1.18, alt: file.name.replace(/\.[^.]+$/, '') || '自定义科幻海报' });
         };
         image.onerror = reject;
         image.src = reader.result;

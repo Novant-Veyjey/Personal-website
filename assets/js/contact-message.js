@@ -176,7 +176,7 @@
     view = next === 'reply' ? 'reply' : 'publish';
     var isReply = view === 'reply';
     form.classList.toggle('is-reply-mode', isReply);
-    if (title) title.textContent = isReply ? '回复' : '发布';
+    if (title) title.textContent = isReply ? '来自颠倒世界的回应' : '来自霍金斯的呼喊';
     recent.hidden = !isReply;
     syncIdentity();
     render();

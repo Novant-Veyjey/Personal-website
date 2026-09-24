@@ -9,7 +9,7 @@
 .message-dialog__close { position: absolute; top: 18px; right: 18px; z-index: 1; width: 34px; height: 34px; border: 1px solid rgba(255,255,255,.18); background: transparent; color: #fff; font: 300 23px/1 Georgia, serif; cursor: pointer; }
 .message-dialog__close:hover { border-color: var(--red-bright); background: rgba(229,35,45,.18); }
 .message-dialog__kicker { color: var(--red-bright); font: 700 9px/1 var(--mono); letter-spacing: .2em; }
-.message-dialog h2 { padding-right: 40px; color: #fff; font: 800 36px/1 var(--poster); }
+.message-dialog h2 { padding-right: 40px; color: #4a0f10; font: italic 800 36px/1 var(--poster); -webkit-text-stroke: 1px #a1302e; }
 .message-dialog__hint { color: rgba(238,233,223,.56); font-size: 12px; line-height: 1.8; }
 .message-dialog label { display: grid; gap: 7px; color: rgba(255,255,255,.68); font: 700 9px/1 var(--mono); letter-spacing: .12em; }
 .message-dialog input, .message-dialog textarea { width: 100%; border: 1px solid rgba(255,255,255,.16); border-radius: 0; outline: none; background: rgba(255,255,255,.045); color: #fff; padding: 12px; font: 14px/1.6 var(--sans); resize: vertical; }

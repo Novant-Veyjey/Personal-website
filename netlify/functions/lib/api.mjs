@@ -108,7 +108,7 @@ export async function handleApi({ method, pathname, body, cookie }) {
     return ok({ user: null }, { setCookie: clearedCookie() });
   }
 
-  /* ---------------- 留言板 ---------------- */
+  /* ---------------- 留言板（公开：所有人可见与使用） ---------------- */
   if (route === 'GET /api/messages') {
     const messages = await readBoard();
     return ok({ messages: messages.map(publicMessage) });
