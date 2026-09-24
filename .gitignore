@@ -7,3 +7,7 @@ node_modules/
 netlify/.data/
 serve.log
 .codebuddy/
+
+# 设计源文件（不参与部署；web/assets 里已有网页用的副本）
+*.blend
+holo-card-deck/cards/*/assets/
