@@ -7,6 +7,8 @@
 <title>怪奇物语 · 点击进入</title>
 <!-- 怪奇物语同款字体 ITC Benguiat（cdnfonts 免费源，加载失败时回退 Georgia 衬线） -->
 <link rel="stylesheet" href="https://fonts.cdnfonts.com/css/benguiat">
+<!-- 预载进站默认曲目：点击 ACCESS 时 mp3 已在缓存，起播零等待 -->
+<link rel="preload" as="audio" href="assets/audio/kids.mp3">
 <style>
   * { margin: 0; padding: 0; box-sizing: border-box; }
   html, body { height: 100%; }
@@ -578,9 +580,10 @@
     var hasGSAP = !!window.gsap;
 
     /* 音乐只有一套：首页右上角那个站内播放器。
-       点击 ACCESS 后延迟 1.2 秒让它开始播放；房子段、座钟段不再有独立音乐。
-       首页此时已在下方静默加载，所以在轮询到 #site-audio 后再起播。
-       进入后默认不静音、自动播放：带声音起播；若被浏览器自动播放策略拦下，
+       点击 ACCESS 的瞬间立即起播（点击手势满足自动播放策略，无需任何延迟）；
+       首页从入口页加载起就已在下方静默预载，起播时若 #site-audio 还没就绪，
+       由轮询兜底（通常早已就绪）。mp3 由入口页 <link rel=preload> 提前缓存。
+       进入后默认不静音：带声音起播；若被浏览器自动播放策略拦下，
        则先静音起播，等用户在站内首次点击 / 按键（此时已具备用户手势）立即取消静音。 */
     function startSiteMusic() {
       var frame = $('#main-frame');
@@ -636,8 +639,9 @@
       /* 2) 立刻在下方静默加载首页（不可见，为最后的叠化做准备） */
       loadMain();
 
-      /* 3) 延迟 1.2 秒后，让首页的音乐（右上角 Kids）开始播放 */
-      setTimeout(startSiteMusic, 1200);
+      /* 3) 点击瞬间即起播（点击手势内执行 play() 不会被自动播放策略拦截；
+            iframe 万一还没就绪，startSiteMusic 内部的轮询会兜底） */
+      startSiteMusic();
 
       /* 4) 用 GSAP 时间线统一调度整段入场序列；GSAP 未加载时回退到定时器 */
       if (window.gsap) {
