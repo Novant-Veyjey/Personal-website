@@ -1,0 +1,757 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#050507" />
+  <meta name="description" content="一个怪奇物语风格的沉浸式个人主页模板。" />
+  <title>YOUR NAME · THE UPSIDE DOWN</title>
+  <script>document.documentElement.classList.add('js');</script>
+  <!-- 高对比度衬线：用于联络海报那两行标语，接近官方 Logo 的字形 -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="assets/css/stranger-base.css" />
+  <link rel="stylesheet" href="assets/css/stranger-content.css?v=20260923d" />
+  <link rel="stylesheet" href="assets/css/stranger-contact.css" />
+  <link rel="stylesheet" href="assets/css/stranger-art.css" />
+  <link rel="stylesheet" href="assets/css/stranger-profile.css?v=20260923e" />
+  <link rel="stylesheet" href="assets/css/poster-sphere.css" />
+  <link rel="stylesheet" href="assets/css/contact-message.css" />
+  <link rel="stylesheet" href="assets/css/section-editor.css" />
+  <link rel="stylesheet" href="assets/css/poster-manager.css" />
+  <!-- 修复：作品卡图片显示不全（必须放在其它样式表之后） -->
+  <link rel="stylesheet" href="assets/css/case-art-fix.css" />
+  <!-- 首页大标题「WELCOME 名字 TO THE UPSIDE DOWN」三段排版 -->
+  <link rel="stylesheet" href="assets/css/hero-title.css?v=20260923f" />
+  <!-- 首页背景压暗偏红 -->
+  <link rel="stylesheet" href="assets/css/hero-bg.css" />
+  <!-- 修复：MIND LAIR 场景图被裁掉上下三成 -->
+  <link rel="stylesheet" href="assets/css/scene-art-fit.css?v=20260923c" />
+  <!-- 红色字型：联络标题内部全红 + 海报两行标语的描边反色 -->
+  <link rel="stylesheet" href="assets/css/red-type.css?v=20260923a" />
+  <!-- 关于我区块：增加视觉层次 -->
+  <link rel="stylesheet" href="assets/css/profile-richer.css?v=20260923a" />
+  <!-- 联系海报：上下两半独立响应鼠标（务必最后加载以覆盖旧规则） -->
+  <link rel="stylesheet" href="assets/css/story-art-split.css?v=20260923j" />
+  <!-- 登录 / 注册系统 -->
+  <link rel="stylesheet" href="assets/css/auth.css?v=20260923d" />
+  <!-- 右上角背景音乐控件 -->
+  <link rel="stylesheet" href="assets/css/audio-player.css?v=20260923d" />
+  <!-- 全息卡片浮层：点进卡片在页内打开，音乐不中断 -->
+  <link rel="stylesheet" href="assets/css/holo-overlay.css" />
+  <!-- 压缩能力区与联络区之间的空档（务必最后加载以覆盖旧规则） -->
+  <link rel="stylesheet" href="assets/css/section-gap.css?v=20260923b" />
+  <!-- 能力卡片下方的拼贴照片墙 -->
+  <link rel="stylesheet" href="assets/css/photo-wall.css?v=20260923b" />
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js" defer></script>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js" defer></script>
+</head>
+<body>
+  <a class="skip-link" href="#main">跳到主要内容</a>
+
+  <canvas id="spore-canvas" aria-hidden="true"></canvas>
+  <div class="fx fx--scanlines" aria-hidden="true"></div>
+  <div class="fx fx--grain" aria-hidden="true"></div>
+  <div class="fx fx--vignette" aria-hidden="true"></div>
+  <!-- 多个小面积暗红雷电，分散在天空各处；顶端两个（a / b） -->
+  <div class="flash flash--a" aria-hidden="true"></div>
+  <div class="flash flash--b" aria-hidden="true"></div>
+  <div class="flash flash--c" aria-hidden="true"></div>
+  <div class="flash flash--d" aria-hidden="true"></div>
+  <div class="flash flash--e" aria-hidden="true"></div>
+  <div class="flash flash--f" aria-hidden="true"></div>
+  <div class="flash flash--g" aria-hidden="true"></div>
+  <div class="scroll-progress" aria-hidden="true"><i id="scroll-progress-bar"></i></div>
+
+  <header class="site-header" id="site-header">
+    <a class="brand" href="#top" aria-label="返回首页">
+      <span class="brand__mark" aria-hidden="true">◉</span>
+      <span class="brand__text">SIGNAL<span>//</span><span class="brand__name" data-profile-en>YOUR NAME</span></span>
+    </a>
+
+    <button class="nav-toggle" id="nav-toggle" type="button" aria-expanded="false" aria-controls="main-nav">
+      <span></span><span></span>
+      <span class="sr-only">打开导航</span>
+    </button>
+
+    <nav class="main-nav" id="main-nav" aria-label="主导航">
+      <a href="#profile">档案 <small>PROFILE</small></a>
+      <a href="#works">作品 <small>WORKS</small></a>
+      <a href="#abilities">能力 <small>ABILITIES</small></a>
+      <a href="#contact">联络 <small>CONTACT</small></a>
+    </nav>
+
+    <div class="header-right">
+      <!-- 第一行：LIVE 时钟 + 登录 / 用户名·退出 -->
+      <div class="header-right__row">
+        <div class="header-status" aria-hidden="true">
+          <i></i><span>LIVE</span><b data-clock>00:00:00</b>
+        </div>
+        <button class="auth-trigger" id="auth-trigger" type="button">登录 / 注册</button>
+        <div class="header-account" id="header-account" hidden></div>
+      </div>
+
+      <!-- 第二行：背景音乐（曲名 · 随机 · 上一首 · 播放/暂停 · 下一首 · 播放列表 · 音量 · 静音） -->
+      <div class="audio-pill" id="audio-pill" role="group" aria-label="背景音乐">
+        <!-- 左组：播放键固定在整条控件正中，左右两组各占一半，控件自然对称 -->
+        <div class="audio-group audio-group--left">
+          <button class="audio-now" id="audio-now" type="button" data-playing="false" aria-label="当前曲目" title="点击打开播放列表">
+            <span class="audio-now__bars" aria-hidden="true"><i></i><i></i><i></i></span>
+            <span class="audio-now__text" id="audio-now-title">Kids</span>
+          </button>
+          <button class="audio-btn audio-btn--shuffle" id="audio-shuffle" type="button" aria-pressed="false" aria-label="随机播放" title="随机播放：已关闭">
+            <svg class="audio-svg audio-svg--stroke" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+              <path d="M3.4 16.6h3.2c1.2 0 2.3-.6 3-1.5l5-7c.7-.9 1.8-1.5 3-1.5h3" />
+              <path d="M3.4 7.4h3.2c1.2 0 2.3.6 3 1.5l5 7c.7.9 1.8 1.5 3 1.5h3" />
+              <path d="M18.2 4.9l2.6 2.7-2.6 2.7" />
+              <path d="M18.2 14.9l2.6 2.7-2.6 2.7" />
+            </svg>
+          </button>
+          <button class="audio-btn audio-btn--step" id="audio-prev" type="button" aria-label="上一首" title="上一首">
+            <svg class="audio-svg audio-svg--fill" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+              <rect x="6.6" y="5.6" width="2.6" height="12.8" rx="1" />
+              <path d="M19.8 6.5v11L9.7 12z" />
+            </svg>
+          </button>
+        </div>
+
+        <button class="audio-btn audio-btn--play" id="audio-toggle" type="button" aria-pressed="false" aria-label="播放背景音乐" title="播放">
+          <!-- ▶ ↔ ❚❚ 由 JS 逐数字插值形变，两个状态写在同一段路径里 -->
+          <svg class="audio-svg audio-svg--fill" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+            <path id="audio-icon-play" d="M9.6 6.4L18.8 12L9.6 17.6L9.6 12ZM12.1 12L12.1 12L12.1 12L12.1 12Z" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round" />
+          </svg>
+        </button>
+
+        <!-- 右组：下一首 + 播放列表 + 音量 + 静音 -->
+        <div class="audio-group audio-group--right">
+          <button class="audio-btn audio-btn--step" id="audio-next" type="button" aria-label="下一首" title="下一首">
+            <svg class="audio-svg audio-svg--fill" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+              <rect x="14.8" y="5.6" width="2.6" height="12.8" rx="1" />
+              <path d="M4.2 6.5v11L14.3 12z" />
+            </svg>
+          </button>
+          <button class="audio-btn audio-btn--list" id="audio-playlist-button" type="button" aria-expanded="false" aria-controls="audio-playlist" aria-label="播放列表" title="播放列表">
+            <svg class="audio-svg audio-svg--stroke" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+              <path d="M4 7.7l4.4 2.8L4 13.3z" />
+              <path d="M11.6 7.4h8.4" />
+              <path d="M11.6 12h8.4" />
+              <path d="M11.6 16.6h6" />
+            </svg>
+          </button>
+          <!-- 音量：拖动即调，拖到 0 就是静音；音量会记在本机 -->
+          <span class="audio-volume">
+            <input type="range" id="audio-volume" min="0" max="100" step="1" value="100" aria-label="音量" title="音量" />
+          </span>
+          <button class="audio-btn audio-btn--mute" id="audio-mute" type="button" aria-pressed="false" aria-label="静音" title="静音">
+            <svg class="audio-svg audio-svg--stroke" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+              <!-- 喇叭箱体固定不动 -->
+              <path d="M4.4 9.4h2.9L10.8 6v12l-3.5-3.4H4.4z" />
+              <!-- 声波 ↔ ✕（同一段路径形变；初始 d 就是静音态的 ✕） -->
+              <path id="audio-icon-waves" d="M14.4 9.7C15.87 11.23 17.33 12.77 18.8 14.3M18.8 9.7C17.33 11.23 15.87 12.77 14.4 14.3" />
+            </svg>
+          </button>
+        </div>
+
+        <!-- 播放列表弹层：曲目由 site-audio.js 生成，点歌即播 -->
+        <div class="audio-playlist" id="audio-playlist" hidden>
+          <p class="audio-playlist__head"><span>PLAYLIST</span><span id="audio-track-index">2/2</span></p>
+          <ul class="audio-playlist__list" id="audio-track-list" role="menu" aria-label="曲目列表"></ul>
+          <div class="audio-playlist__import">
+            <button type="button" id="audio-import" class="audio-import-btn">＋ 导入本地音乐</button>
+            <input type="file" id="audio-import-input" accept="audio/*" multiple hidden />
+            <p class="audio-playlist__hint">导入的音频会保存在本浏览器（IndexedDB），刷新或下次访问仍在；不会上传到服务器。</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main id="main">
+    <section class="hero" id="top" aria-labelledby="hero-title">
+      <div class="hero__storm" aria-hidden="true"></div>
+      <div class="hero__red-veil" aria-hidden="true"></div>
+      <div class="hero__grid" aria-hidden="true"></div>
+      <div class="hero__content">
+        <p class="eyebrow reveal" data-edit-field="hero-kicker">A PERSONAL ARCHIVE FROM THE UPSIDE DOWN</p>
+
+          <div class="hero__title-wrap section-edit-frame reveal" style="--delay: .08s" data-section-edit="hero" tabindex="0" role="button" aria-label="编辑首页内容">
+          <p class="hero__index">SUBJECT FILE · 001</p>
+          <h1 class="glitch-title" id="hero-title" data-text="YOUR NAME" data-edit-field="hero-title" data-profile-en>YOUR NAME</h1>
+          <p class="hero__cn" data-profile-one-line>把脑海里的世界带到现实中来</p>
+        </div>
+
+        <p class="hero__intro reveal" style="--delay: .16s" data-edit-field="hero-lead">
+          我在风暴边缘收集灵感，用设计、代码与叙事搭建新的入口。
+          <span>向下滚动，进入我的颠倒世界。</span>
+        </p>
+
+        <div class="hero__actions">
+          <a class="btn btn--solid" href="#profile">
+            <span>进入档案</span><b aria-hidden="true">↓</b>
+          </a>
+          <a class="btn btn--ghost" href="#contact">
+            <span>发送信号</span><b aria-hidden="true">↗</b>
+          </a>
+        </div>
+      </div>
+
+      <div class="hero__telemetry" aria-label="页面状态">
+        <div><span>LOCATION</span><strong>HAWKINS, IN</strong></div>
+        <div><span>TIME PERIOD</span><strong>1983—NOW</strong></div>
+        <div><span>THREAT LEVEL</span><strong class="is-danger">STRANGE</strong></div>
+      </div>
+
+      <a class="scroll-cue" href="#profile" aria-label="向下滚动">
+        <span>SCROLL TO DESCEND</span><i></i>
+      </a>
+    </section>
+
+    <section class="section section--profile" id="profile" aria-labelledby="profile-title">
+      <!-- 飘浮尘埃：铺满整个 profile 区块（在内容之下，不挡交互） -->
+      <div class="profile-dust" aria-hidden="true"></div>
+      <div class="section__ghost" aria-hidden="true">01</div>
+      <div class="container">
+        <header class="section-head section-edit-frame reveal" data-section-edit="profile" tabindex="0" role="button" aria-label="编辑关于我区块">
+          <p class="section-kicker">CLASSIFIED DOSSIER</p>
+          <div>
+            <span class="section-index">01 / 04</span>
+            <h2 id="profile-title"><span data-edit-field="profile-title">关于我</span><br /><em data-edit-field="profile-subtitle">WHO AM I</em></h2>
+          </div>
+          <p class="section-lead" data-edit-field="profile-lead">一名在秩序和奇想之间工作的创造者。相信好的作品，应该像午夜电台一样让人停下来听完。</p>
+        </header>
+
+        <figure class="story-art story-art--gate reveal">
+          <div class="story-art__media">
+            <img src="assets/art/portal-forest.jpg" alt="夜色森林中通往异世界的红色裂缝插画" width="1600" height="900" loading="lazy" />
+            <span class="story-art__scan" aria-hidden="true"></span>
+          </div>
+          <figcaption class="story-art__caption">
+            <span>SCENE 01 / THE GATE</span>
+            <strong>门开在森林尽头</strong>
+            <small>每个故事，都是从一次不该回头的冒险开始。</small>
+          </figcaption>
+        </figure>
+        <div class="dossier">
+          <article class="subject-card reveal" aria-label="个人档案，点击编辑" data-profile-edit tabindex="0" role="button">
+            <!-- 卡片上飘浮的尘埃（纯 CSS，不打扰交互） -->
+            <div class="subject-card__dust" aria-hidden="true"></div>
+            <div class="subject-card__top">
+              <p>SUBJECT PROFILE</p><span>NO. 011</span>
+            </div>
+            <div class="subject-card__portrait" aria-hidden="true">
+              <!-- 档案卡背景：用户上传的图，object-fit:cover 恰好铺满这块区域 -->
+              <img class="subject-card__bg" id="subject-card-bg" alt="" hidden />
+              <div class="portrait-orbit"></div>
+              <img class="subject-card__avatar" id="subject-avatar" alt="个人头像" hidden />
+              <strong data-profile-initials>YN</strong>
+              <span class="subject-card__origin">UNKNOWN<br />ORIGIN</span>
+              <!-- 卡片式装饰：内框 + 角标缺口 + 左侧刻度 -->
+              <span class="subject-card__frame" aria-hidden="true"></span>
+              <span class="subject-card__ticks" aria-hidden="true"></span>
+            </div>
+            <!-- 下半部分：卡片式排版 —— 小标 → 大号拉丁衬线名字 → 职业 · 城市 + 状态
+                 不再出现 NAME / ROLE / BASE 这些左侧提示词 -->
+            <div class="subject-data">
+              <p class="subject-data__kicker" data-profile-cardkicker>——</p>
+              <p class="subject-data__name" data-profile-cardname>——</p>
+              <p class="subject-data__meta">
+                <span class="subject-data__role" data-profile-role>职业 / 身份</span>
+                <span class="subject-data__base" data-profile-location>城市 · 时区</span>
+              </p>
+              <div id="profile-extra-data" class="profile-extra-data"></div>
+            </div>
+            <p class="subject-card__note" data-profile-note>“好奇心不是弱点，它是通向我们世界的那道裂缝。”</p>
+          </article>
+
+          <div class="profile-copy">
+            <p class="statement reveal" data-profile-statement>我把复杂的问题拆开，再重新组装成清晰、有趣、有温度的体验。</p>
+            <div class="profile-copy__body reveal" style="--delay: .08s">
+              <p data-profile-bio="0">这里可以写你现在正在做什么、为什么做，以及你最在意的事情。建议写具体一点，让读者在十秒内记住你。</p>
+              <p data-profile-bio="1">第二段可以写你的经历、代表项目与擅长领域。不要堆砌标签，讲一个能证明能力的细节。</p>
+              <p data-profile-bio="2">第三段留给未来：你正在学习什么，下一步想去哪里，希望与怎样的人合作。</p>
+            </div>
+            <div class="tag-list reveal" id="profile-tags" style="--delay: .14s" aria-label="关键词">
+              <span>CREATIVE</span><span>CODE</span><span>DESIGN</span><span>STORY</span>
+            </div>
+            <p class="profile-edit-hint reveal" style="--delay: .18s">点击档案框修改资料 · 资料只保存在你的浏览器中</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="poster-sphere" id="poster-sphere" aria-label="电影海报球体">
+      <div class="poster-sphere__stage" id="poster-sphere-stage">
+        <div class="poster-sphere__cloud" aria-hidden="true"></div>
+        <div class="poster-sphere__manager-frame" data-poster-manager tabindex="0" role="button" aria-label="管理球体海报" title="管理球体海报"><span>ARCHIVE FRAME</span><b>＋</b></div>
+        <div class="poster-sphere__ball" id="poster-sphere-ball">
+          <img class="poster" src="assets/posters/night-signal.svg" alt="科幻电影海报：夜间信号" />
+          <img class="poster" src="assets/posters/echo-room.svg" alt="科幻电影海报：回声房间" />
+          <img class="poster" src="assets/posters/after-rain.svg" alt="科幻电影海报：雨后" />
+          <img class="poster poster--landscape" src="assets/posters/red-frequency.svg" alt="科幻电影海报：红色频率" />
+          <img class="poster" src="assets/posters/low-tide.svg" alt="科幻电影海报：低潮" />
+          <img class="poster" src="assets/posters/the-long-way.svg" alt="科幻电影海报：远方" />
+          <img class="poster poster--landscape" src="assets/posters/sleepwalk.svg" alt="科幻电影海报：梦游" />
+          <img class="poster" src="assets/posters/blue-hour.svg" alt="科幻电影海报：蓝色时刻" />
+          <img class="poster" src="assets/posters/static-city.svg" alt="科幻电影海报：静电城市" />
+          <img class="poster poster--landscape" src="assets/posters/soft-focus.svg" alt="科幻电影海报：柔焦" />
+          <img class="poster poster--landscape" src="assets/posters/signal-bloom.svg" alt="科幻电影海报：信号绽放" />
+          <img class="poster poster--landscape" src="assets/posters/quiet-house.svg" alt="科幻电影海报：寂静屋" />
+          <img class="poster poster--landscape" src="assets/posters/orbit-days.svg" alt="科幻电影海报：轨道日" />
+          <img class="poster poster--landscape" src="assets/posters/last-frame.svg" alt="科幻电影海报：最后一帧" />
+          <img class="poster poster--landscape" src="assets/posters/warm-static.svg" alt="科幻电影海报：暖色静电" />
+          <img class="poster" src="assets/posters/void-cinema.svg" alt="科幻电影海报：虚空影院" />
+
+          <!-- 以下走真实图片文件（assets/art），不占浏览器 localStorage，
+               所以张数不受 5MB 限制，想再加直接往这里补 <img> 即可。
+               横向图用 poster--landscape（188×110），竖/方形图用默认（126×180）。
+               注：other-side-echo.png 有 2.4MB，会拖慢首屏，暂不放进球体。 -->
+          <img class="poster poster--landscape" src="assets/art/card-stage-upside-down.jpg" alt="上下颠倒的双世界舞台" loading="lazy" />
+          <img class="poster poster--landscape" src="assets/art/hawkins-lab.jpg" alt="红色警报下的实验室走廊" loading="lazy" />
+          <img class="poster poster--landscape" src="assets/art/mind-lair.jpg" alt="异世界的意识巢穴" loading="lazy" />
+          <img class="poster poster--landscape" src="assets/art/portal-forest.jpg" alt="夜色森林中的红色裂缝" loading="lazy" />
+          <img class="poster poster--landscape" src="assets/art/project-01-stranger-things.jpg" alt="怪奇物语主视觉" loading="lazy" />
+          <img class="poster" src="assets/art/signal-station.jpg" alt="山顶天线与手电筒信号" loading="lazy" />
+          <img class="poster poster--landscape" src="assets/art/projects/project-01.jpg" alt="项目档案 01" loading="lazy" />
+          <img class="poster poster--landscape" src="assets/art/projects/project-02.jpg" alt="项目档案 02" loading="lazy" />
+          <img class="poster poster--landscape" src="assets/art/projects/project-03.jpg" alt="项目档案 03" loading="lazy" />
+          <img class="poster poster--landscape" src="assets/art/projects/project-04.jpg" alt="项目档案 04" loading="lazy" />
+          <img class="poster poster--landscape" src="assets/art/projects/project-05.jpg" alt="项目档案 05" loading="lazy" />
+        </div>
+      </div>
+    </section>
+
+    <div class="rift" aria-hidden="true">
+      <i></i><span>THE RIFT IS OPEN</span><i></i>
+    </div>
+
+    <section class="section section--works" id="works" aria-labelledby="works-title">
+      <div class="section__ghost" aria-hidden="true">02</div>
+      <div class="container">
+        <header class="section-head section-edit-frame reveal" data-section-edit="works" tabindex="0" role="button" aria-label="编辑作品区块">
+          <p class="section-kicker">CASE FILES</p>
+          <div>
+            <span class="section-index">02 / 04</span>
+            <h2 id="works-title"><span data-edit-field="works-title">精选作品</span><br /><em data-edit-field="works-subtitle">SELECTED WORKS</em></h2>
+          </div>
+          <p class="section-lead" data-edit-field="works-lead">每一个项目都是一次现场调查。把问题、判断与结果留下来，作品才会真正开口说话。</p>
+        </header>
+
+        <figure class="story-art story-art--lab reveal">
+          <div class="story-art__media">
+            <img src="assets/art/hawkins-lab.jpg" alt="红色警报下的秘密实验室走廊插画" width="1600" height="900" loading="lazy" />
+            <span class="story-art__scan" aria-hidden="true"></span>
+          </div>
+          <figcaption class="story-art__caption">
+            <span>SCENE 02 / THE LAB</span>
+            <strong>深入实验室现场</strong>
+            <small>每个作品，都是一次从线索到真相的调查。</small>
+          </figcaption>
+        </figure>
+                <figure class="project-banner reveal"><img src="assets/art/project-01-stranger-things.jpg" alt="Stranger Things 项目主视觉" loading="lazy"></figure>
+        <div class="case-grid">
+          <article class="case-card reveal" data-project-edit="0" tabindex="0" role="button" aria-label="编辑第一章">
+            <div class="case-card__meta"><span>TASK 001</span><b>PROJECT</b></div>
+            <div class="case-card__art"><img src="assets/art/projects/project-01.jpg" alt="怪奇物语第一章" loading="lazy"></div>
+            <div class="case-card__body">
+              <p class="case-card__type" data-project-field="type">视觉企划 · 2026</p>
+              <h3 data-project-field="title">第一章</h3>
+              <p data-project-field="description">把第一个故事变成可以观看、点击和继续探索的视觉体验。</p>
+              <a href="#contact" aria-label="查看第一章" data-project-field="linkText">查看章节 <span>↗</span></a>
+            </div>
+          </article>
+          <article class="case-card reveal" data-project-edit="1" tabindex="0" role="button" aria-label="编辑第二章">
+            <div class="case-card__meta"><span>TASK 002</span><b>PROJECT</b></div>
+            <div class="case-card__art"><img src="assets/art/projects/project-02.jpg" alt="怪奇物语第二章" loading="lazy"></div>
+            <div class="case-card__body">
+              <p class="case-card__type" data-project-field="type">影像叙事 · 2026</p>
+              <h3 data-project-field="title">第二章</h3>
+              <p data-project-field="description">用画面组织线索，让每一层信息都有继续往下看的理由。</p>
+              <a href="#contact" aria-label="查看第二章" data-project-field="linkText">查看章节 <span>↗</span></a>
+            </div>
+          </article>
+          <article class="case-card reveal" data-project-edit="2" tabindex="0" role="button" aria-label="编辑第三章">
+            <div class="case-card__meta"><span>TASK 003</span><b>PROJECT</b></div>
+            <div class="case-card__art"><img src="assets/art/projects/project-03.jpg" alt="怪奇物语第三章" loading="lazy"></div>
+            <div class="case-card__body">
+              <p class="case-card__type" data-project-field="type">交互实验 · 2026</p>
+              <h3 data-project-field="title">第三章</h3>
+              <p data-project-field="description">把一个模糊的想法做成可以亲手操作的界面和动效。</p>
+              <a href="#contact" aria-label="查看第三章" data-project-field="linkText">查看章节 <span>↗</span></a>
+            </div>
+          </article>
+          <article class="case-card reveal" data-project-edit="3" tabindex="0" role="button" aria-label="编辑第四章">
+            <div class="case-card__meta"><span>TASK 004</span><b>PROJECT</b></div>
+            <div class="case-card__art"><img src="assets/art/projects/project-04.jpg" alt="怪奇物语第四章" loading="lazy"></div>
+            <div class="case-card__body">
+              <p class="case-card__type" data-project-field="type">视觉系统 · 2026</p>
+              <h3 data-project-field="title">第四章</h3>
+              <p data-project-field="description">把零散素材整理成统一、清晰、有力量感的视觉语言。</p>
+              <a href="#contact" aria-label="查看第四章" data-project-field="linkText">查看章节 <span>↗</span></a>
+            </div>
+          </article>
+          <article class="case-card reveal" data-project-edit="4" tabindex="0" role="button" aria-label="编辑第五章">
+            <div class="case-card__meta"><span>TASK 005</span><b>PROJECT</b></div>
+            <div class="case-card__art"><img src="assets/art/projects/project-05.jpg" alt="怪奇物语第五章" loading="lazy"></div>
+            <div class="case-card__body">
+              <p class="case-card__type" data-project-field="type">最终发布 · 2026</p>
+              <h3 data-project-field="title">第五章</h3>
+              <p data-project-field="description">完成最后一轮检查，让整个故事从想法变成真正可用的作品。</p>
+              <a href="#contact" aria-label="查看第五章" data-project-field="linkText">查看章节 <span>↗</span></a>
+            </div>
+          </article>
+        </div>
+
+        <div class="holo-vault reveal" id="holo-vault">
+          <div class="holo-vault__head">
+            <div>
+              <p>HOLOGRAPHIC ARCHIVE / 001—006</p>
+              <h3>全息收藏档案</h3>
+            </div>
+            <span>把四个故事节点压进三层景深里。移动鼠标，卡面会像旧时代的镭射收藏卡一样折射红光。</span>
+            <span class="holo-open holo-open--static">五张照片档案 / 点击直接查看</span>
+          </div>
+          <div class="holo-grid holo-grid--five">
+          <a class="holo-card" href="holo-card-deck/cards/card-01/web/index.html">
+            <img class="holo-card__layer holo-card__layer--back" src="holo-card-deck/web/thumbs/card-01.png" alt="" loading="lazy" />
+            <img class="holo-card__layer holo-card__layer--subject" src="holo-card-deck/web/thumbs/card-01.png" alt="照片档案 01 全息卡" loading="lazy" />
+            <span class="holo-card__layer holo-card__layer--effects" aria-hidden="true"></span>
+            <span class="holo-card__layer holo-card__layer--foil" aria-hidden="true"></span>
+            <span class="holo-card__badge">01 / 05</span>
+            <div class="holo-card__copy"><small>RuiC 3D / BLENDER</small><h4>01 / FRIENDS</h4><p>Friends don’t lie</p></div>
+          </a>
+          <a class="holo-card" href="holo-card-deck/cards/card-02/web/index.html">
+            <img class="holo-card__layer holo-card__layer--back" src="holo-card-deck/web/thumbs/card-02.png" alt="" loading="lazy" />
+            <img class="holo-card__layer holo-card__layer--subject" src="holo-card-deck/web/thumbs/card-02.png" alt="照片档案 02 全息卡" loading="lazy" />
+            <span class="holo-card__layer holo-card__layer--effects" aria-hidden="true"></span>
+            <span class="holo-card__layer holo-card__layer--foil" aria-hidden="true"></span>
+            <span class="holo-card__badge">02 / 05</span>
+            <div class="holo-card__copy"><small>RuiC 3D / BLENDER</small><h4>02 / MORNING</h4><p>Mornings are for coffee and contemplation.</p></div>
+          </a>
+          <a class="holo-card" href="holo-card-deck/cards/card-03/web/index.html">
+            <img class="holo-card__layer holo-card__layer--back" src="holo-card-deck/web/thumbs/card-03.png" alt="" loading="lazy" />
+            <img class="holo-card__layer holo-card__layer--subject" src="holo-card-deck/web/thumbs/card-03.png" alt="照片档案 03 全息卡" loading="lazy" />
+            <span class="holo-card__layer holo-card__layer--effects" aria-hidden="true"></span>
+            <span class="holo-card__layer holo-card__layer--foil" aria-hidden="true"></span>
+            <span class="holo-card__badge">03 / 05</span>
+            <div class="holo-card__copy"><small>RuiC 3D / BLENDER</small><h4>03 / FEAR</h4><p>It feeds on fear</p></div>
+          </a>
+          <a class="holo-card" href="holo-card-deck/cards/card-04/web/index.html">
+            <img class="holo-card__layer holo-card__layer--back" src="holo-card-deck/web/thumbs/card-04.png" alt="" loading="lazy" />
+            <img class="holo-card__layer holo-card__layer--subject" src="holo-card-deck/web/thumbs/card-04.png" alt="照片档案 04 全息卡" loading="lazy" />
+            <span class="holo-card__layer holo-card__layer--effects" aria-hidden="true"></span>
+            <span class="holo-card__layer holo-card__layer--foil" aria-hidden="true"></span>
+            <span class="holo-card__badge">04 / 05</span>
+            <div class="holo-card__copy"><small>RuiC 3D / BLENDER</small><h4>04 / 353 DAYS</h4><p>I called you every night. Every night for 353 days.</p></div>
+          </a>
+          <a class="holo-card" href="holo-card-deck/cards/card-05/web/index.html">
+            <img class="holo-card__layer holo-card__layer--back" src="holo-card-deck/web/thumbs/card-05.png" alt="" loading="lazy" />
+            <img class="holo-card__layer holo-card__layer--subject" src="holo-card-deck/web/thumbs/card-05.png" alt="照片档案 05 全息卡" loading="lazy" />
+            <span class="holo-card__layer holo-card__layer--effects" aria-hidden="true"></span>
+            <span class="holo-card__layer holo-card__layer--foil" aria-hidden="true"></span>
+            <span class="holo-card__badge">05 / 05</span>
+            <div class="holo-card__copy"><small>RuiC 3D / BLENDER</small><h4>05 / HEART</h4><p>You’re the heart.</p></div>
+          </a>        </div>
+      </div>
+    </section>
+
+    <section class="section section--abilities" id="abilities" aria-labelledby="abilities-title">
+      <div class="section__ghost" aria-hidden="true">03</div>
+      <div class="container">
+        <header class="section-head section-edit-frame reveal" data-section-edit="abilities" tabindex="0" role="button" aria-label="编辑能力区块">
+          <p class="section-kicker">STRANGE ABILITIES</p>
+          <div>
+            <span class="section-index">03 / 04</span>
+            <h2 id="abilities-title"><span data-edit-field="abilities-title">我的能力</span><br /><em data-edit-field="abilities-subtitle">WHAT I DO</em></h2>
+          </div>
+          <p class="section-lead" data-edit-field="abilities-lead">不是一份长长的工具清单，而是我面对未知问题时，最常调用的四种能力。</p>
+        </header>
+
+        <figure class="story-art story-art--mind reveal">
+          <div class="story-art__media">
+            <!-- 静态图垫底：视频加载前/减少动效时的回退 -->
+            <img src="assets/art/mind-lair.jpg" alt="漂浮着物体与红色能量的异世界洞穴插画" width="1600" height="900" loading="lazy" />
+            <video class="story-art__video" src="assets/art/mind-lair.mp4" autoplay muted loop playsinline preload="metadata" aria-hidden="true"></video>
+            <span class="story-art__scan" aria-hidden="true"></span>
+          </div>
+          <figcaption class="story-art__caption">
+            <span>SCENE 03 / MIND LAIR</span>
+            <strong>把想象变成力量</strong>
+            <small>灵感看不见，但可以训练、组织，并真正做出来。</small>
+          </figcaption>
+        </figure>
+        <div class="ability-board">
+          <article class="ability reveal" data-ability-edit="0" tabindex="0" role="button" aria-label="编辑发现问题能力">
+            <span class="ability__no">01</span>
+            <div class="ability__icon" aria-hidden="true">⌁</div>
+            <h3 data-ability-field="title">发现问题</h3>
+            <p data-ability-field="description">从噪声里找到真正的信号，把模糊需求翻译成清晰问题。</p>
+            <div class="ability__tags" data-ability-field="tags"><span>RESEARCH</span><span>INSIGHT</span></div>
+          </article>
+          <article class="ability reveal" data-ability-edit="1" tabindex="0" role="button" aria-label="编辑建立系统能力" style="--delay: .06s">
+            <span class="ability__no">02</span>
+            <div class="ability__icon" aria-hidden="true">◇</div>
+            <h3 data-ability-field="title">建立系统</h3>
+            <p data-ability-field="description">把灵感组织成结构，让设计、内容与技术彼此咬合。</p>
+            <div class="ability__tags" data-ability-field="tags"><span>DESIGN</span><span>SYSTEM</span></div>
+          </article>
+          <article class="ability reveal" data-ability-edit="2" tabindex="0" role="button" aria-label="编辑把它做出来能力" style="--delay: .12s">
+            <span class="ability__no">03</span>
+            <div class="ability__icon" aria-hidden="true">≋</div>
+            <h3 data-ability-field="title">把它做出来</h3>
+            <p data-ability-field="description">从第一张草图到最后一处细节，亲手把想法推出实验室。</p>
+            <div class="ability__tags" data-ability-field="tags"><span>BUILD</span><span>MOTION</span></div>
+          </article>
+          <article class="ability reveal" data-ability-edit="3" tabindex="0" role="button" aria-label="编辑持续进化能力" style="--delay: .18s">
+            <span class="ability__no">04</span>
+            <div class="ability__icon" aria-hidden="true">∞</div>
+            <h3 data-ability-field="title">持续进化</h3>
+            <p data-ability-field="description">复盘结果，快速调整，让每次发布都成为下一次进化的样本。</p>
+            <div class="ability__tags" data-ability-field="tags"><span>ITERATE</span><span>LEARN</span></div>
+          </article>
+        </div>
+
+        <!-- 照片墙：能力卡片下方的生活档案带 -->
+        <figure class="photo-wall reveal">
+          <img src="assets/art/photo-wall.jpg" alt="朋友与家人的生活照片拼贴墙" width="2400" height="960" loading="lazy" />
+        </figure>
+      </div>
+    </section>
+
+    <section class="section section--contact" id="contact" aria-labelledby="contact-title">
+      <div class="section__ghost" aria-hidden="true">04</div>
+      <div class="contact-storm" aria-hidden="true"></div>
+      <div class="container contact-inner">
+        <figure class="story-art story-art--signal story-art--message-trigger reveal" data-message-trigger="true" tabindex="0" role="button" aria-label="点击联系图片写留言">
+          <div class="story-art__media">
+            <!-- 拆成上下两个裁切窗：鼠标在上半部分只动上半，下半部分只动下半 -->
+            <span class="story-art__half story-art__half--top">
+              <img src="assets/art/signal-station.jpg" alt="山顶天线和手电筒信号下的儿童剪影插画" width="1600" height="900" loading="lazy" />
+            </span>
+            <span class="story-art__half story-art__half--bottom" aria-hidden="true">
+              <img src="assets/art/signal-station.jpg" alt="" width="1600" height="900" loading="lazy" />
+            </span>
+            <span class="story-art__scan" aria-hidden="true"></span>
+          </div>
+          <figcaption class="story-art__caption">
+            <span>SCENE 04 / OPEN CHANNEL</span>
+            <strong>等待另一端回应</strong>
+            <small>点图片上半部分发布留言，下半部分查看并回复。</small>
+          </figcaption>
+        </figure>
+        <p class="section-kicker reveal">OPEN CHANNEL</p>
+        <p class="contact-small reveal">如果你也正在做一件有点奇怪、但很酷的事情</p>
+        <h2 id="contact-title" class="section-edit-frame reveal" data-section-edit="contact" tabindex="0" role="button" aria-label="编辑联络区块"><span data-edit-field="contact-title">SEND A</span><br /><em data-edit-field="contact-subtitle">SIGNAL.</em></h2>
+        <p class="contact-copy reveal" data-edit-field="contact-lead">欢迎交流合作、项目机会，或者只是分享一个奇怪的想法。信号收到后，我会尽快回应。</p>
+
+        <div class="contact-actions reveal">
+          <button class="copy-mail" id="copy-mail" type="button" data-mail="wyj2783157338@gmail.com">
+            <span id="contact-email">wyj2783157338@gmail.com</span><b>点击复制</b>
+          </button>
+          <a class="contact-link" id="contact-github" href="https://github.com/Novant-Veyjey" target="_blank" rel="noreferrer"><span class="contact-link__label">GITHUB</span> <b>↗</b></a>
+        </div>
+
+        <footer class="site-footer">
+          <p>© <span id="year">2026</span> <span data-profile-en>YOUR NAME</span> · BUILT IN THE UPSIDE DOWN</p>
+          <a href="#top">BACK TO TOP ↑</a>
+        </footer>
+      </div>
+    </section>
+  </main>
+
+  <div class="profile-modal" id="profile-modal" aria-hidden="true">
+    <div class="profile-modal__scrim" data-profile-close></div>
+    <section class="profile-modal__panel" role="dialog" aria-modal="true" aria-labelledby="profile-editor-title">
+      <header class="profile-modal__head">
+        <div><p>SUBJECT DATABASE / CLOUD SYNC</p><h2 id="profile-editor-title">编辑我的资料</h2></div>
+        <button class="profile-modal__close" type="button" data-profile-close aria-label="关闭编辑器">×</button>
+      </header>
+      <form class="profile-form" id="profile-form">
+        <div class="profile-form__grid">
+          <div class="profile-avatar-field">
+            <div class="profile-avatar-preview" id="profile-avatar-preview">YN</div>
+            <label class="profile-file-btn">上传头像<input id="profile-avatar-input" type="file" accept="image/png,image/jpeg,image/webp" /></label>
+            <button id="profile-avatar-remove" type="button">移除头像</button>
+            <small>图片会压缩后保存在浏览器中</small>
+
+            <!-- 档案卡背景：铺满档案卡上方那块媒体区 -->
+            <div class="profile-bg-preview" id="profile-bg-preview" aria-hidden="true"></div>
+            <label class="profile-file-btn">上传档案卡背景<input id="profile-bg-input" type="file" accept="image/png,image/jpeg,image/webp" /></label>
+            <button id="profile-bg-remove" type="button">移除背景</button>
+            <small>背景图按原始比例压缩，显示时等比铺满整块区域（不拉伸变形）</small>
+          </div>
+          <div class="profile-fields">
+            <label><span>中文姓名</span><input name="cnName" type="text" maxlength="24" required /></label>
+            <label><span>英文姓名 / 标题</span><input name="enName" type="text" maxlength="32" required /></label>
+            <label><span>职业 / 身份</span><input name="role" type="text" maxlength="40" /></label>
+            <label><span>城市 · 时区</span><input name="location" type="text" maxlength="40" /></label>
+            <label><span>姓名缩写</span><input name="initials" type="text" maxlength="3" /></label>
+            <label><span>一句话介绍</span><input name="oneLine" type="text" maxlength="64" /></label>
+          </div>
+        </div>
+
+        <label class="profile-field-wide"><span>个人主张 / 首句</span><textarea name="statement" rows="2" maxlength="120"></textarea></label>
+        <div class="profile-form__grid profile-form__grid--bio">
+          <label><span>简介 01</span><textarea name="bio0" rows="3" maxlength="220"></textarea></label>
+          <label><span>简介 02</span><textarea name="bio1" rows="3" maxlength="220"></textarea></label>
+          <label><span>简介 03</span><textarea name="bio2" rows="3" maxlength="220"></textarea></label>
+        </div>
+        <div class="profile-form__grid">
+          <label><span>标签，用逗号分隔</span><input name="tags" type="text" maxlength="100" /></label>
+          <label><span>卡片小标（名字上方那行，留空则显示中文名）</span><input name="cardKicker" type="text" maxlength="40" placeholder="例如：视觉开发 / FROM THE UPSIDE DOWN" /></label>
+          <label><span>管理员密钥（可选，填对才能改底部联系方式）</span><input id="profile-owner-key" name="ownerKey" type="password" maxlength="64" placeholder="留空也能同步到云端" /></label>
+        </div>
+
+        <fieldset class="profile-contact-fields" id="profile-contact-fields">
+          <legend>官方联系方式 <small>（仅站长可改，需填对上方密钥）</small></legend>
+          <label><span>邮箱</span><input name="email" type="email" maxlength="80" placeholder="example@gmail.com" disabled /></label>
+          <label><span>GitHub 链接</span><input name="github" type="text" maxlength="160" placeholder="https://github.com/..." disabled /></label>
+          <p class="profile-contact-hint" id="profile-contact-hint">填对管理员密钥后即可修改；未填密钥时这部分锁定，保存也不会改动。</p>
+        </fieldset>
+        <label class="profile-field-wide"><span>档案卡引言</span><input name="note" type="text" maxlength="100" /></label>
+
+        <fieldset class="profile-extra-editor">
+          <legend>自定义资料项</legend>
+          <div id="profile-extra-fields"></div>
+          <button class="profile-add-extra" id="profile-add-extra" type="button">＋ 添加一项资料</button>
+        </fieldset>
+
+        <footer class="profile-form__actions">
+          <button class="profile-reset" id="profile-reset" type="button">恢复默认</button>
+          <button class="profile-save" type="submit">保存并更新页面 <span>↗</span></button>
+        </footer>
+      </form>
+    </section>
+  </div>
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  <dialog class="message-dialog" id="message-dialog" aria-labelledby="message-dialog-title">
+    <form class="message-dialog__surface" id="message-form">
+      <button class="message-dialog__close" id="message-close" type="button" aria-label="关闭留言窗口">×</button>
+      <h2 id="message-dialog-title">来自霍金斯的呼喊</h2>
+      <p class="message-dialog__hint">留言会同步到共享频道，所有访客都能看到。</p>
+      <label><span>你的称呼</span><input name="name" type="text" maxlength="40" autocomplete="name" required /></label>
+      <label><span>留言内容</span><textarea name="message" rows="5" maxlength="500" required></textarea></label>
+      <div class="message-dialog__actions">
+        <button class="message-dialog__save" type="submit">保存留言 <span>↗</span></button>
+        <button class="message-dialog__cancel" id="message-cancel" type="button">取消</button>
+      </div>
+      <div class="message-dialog__recent" id="message-recent" hidden></div>
+    </form>
+  </dialog>
+  <dialog class="section-editor-dialog" id="section-editor" aria-labelledby="section-editor-title">
+    <form class="section-editor__surface" id="section-editor-form">
+      <button class="section-editor__close" id="section-editor-close" type="button" aria-label="关闭区块编辑器">×</button>
+      <p class="section-editor__kicker">LOCAL CONTENT CONTROL</p>
+      <h2 id="section-editor-title">编辑区块</h2>
+      <input name="sectionKey" type="hidden" />
+      <label><span>主标题</span><input name="title" type="text" maxlength="80" required /></label>
+      <label><span>英文标题 / 标签</span><input name="subtitle" type="text" maxlength="100" /></label>
+      <label><span>介绍文字</span><textarea name="lead" rows="4" maxlength="320"></textarea></label>
+      <label><span>新增补充内容</span><textarea name="extra" rows="3" maxlength="260" placeholder="可以写当前区块的新备注或更新内容"></textarea></label>
+      <div class="section-editor__actions">
+        <button class="section-editor__reset" id="section-editor-reset" type="button">恢复默认</button>
+        <button class="section-editor__save" type="submit">保存区块 <span>↗</span></button>
+      </div>
+    </form>
+  </dialog>
+  <dialog class="ability-editor-dialog" id="ability-editor" aria-labelledby="ability-editor-title">
+    <form class="ability-editor__surface" id="ability-editor-form">
+      <button class="ability-editor__close" id="ability-editor-close" type="button" aria-label="关闭能力编辑器">×</button>
+      <p class="ability-editor__kicker">LOCAL ABILITY CONTROL</p>
+      <h2 id="ability-editor-title">编辑能力</h2>
+      <input name="abilityKey" type="hidden" />
+      <label><span>能力标题</span><input name="title" type="text" maxlength="50" required /></label>
+      <label><span>说明文字</span><textarea name="description" rows="4" maxlength="240" required></textarea></label>
+      <label><span>标签，用逗号分隔</span><input name="tags" type="text" maxlength="80" placeholder="RESEARCH, INSIGHT" /></label>
+      <label><span>图标字符</span><input name="icon" type="text" maxlength="3" /></label>
+      <div class="ability-editor__actions">
+        <button class="ability-editor__reset" id="ability-editor-reset" type="button">恢复默认</button>
+        <button class="ability-editor__save" type="submit">保存能力 <span>↗</span></button>
+      </div>
+    </form>
+  </dialog>
+  <dialog class="project-editor-dialog" id="project-editor" aria-labelledby="project-editor-title">
+    <form class="project-editor__surface" id="project-editor-form">
+      <button class="project-editor__close" id="project-editor-close" type="button" aria-label="关闭项目编辑器">×</button>
+      <p class="project-editor__kicker">LOCAL CASE FILE CONTROL</p>
+      <h2 id="project-editor-title">编辑项目</h2>
+      <input name="projectKey" type="hidden" />
+      <label><span>项目类型 / 年份</span><input name="type" type="text" maxlength="60" required /></label>
+      <label><span>项目名称</span><input name="title" type="text" maxlength="60" required /></label>
+      <label><span>项目说明</span><textarea name="description" rows="4" maxlength="240" required></textarea></label>
+      <label><span>链接文字</span><input name="linkText" type="text" maxlength="40" /></label>
+      <div class="project-editor__actions">
+        <button class="project-editor__reset" id="project-editor-reset" type="button">恢复默认</button>
+        <button class="project-editor__save" type="submit">保存项目 <span>↗</span></button>
+      </div>
+    </form>
+  </dialog>
+  <dialog class="poster-manager-dialog" id="poster-manager" aria-labelledby="poster-manager-title">
+    <form class="poster-manager__surface" id="poster-manager-form">
+      <button class="poster-manager__close" id="poster-manager-close" type="button" aria-label="关闭海报管理器">×</button>
+      <p class="poster-manager__kicker">ARCHIVE FRAME / LOCAL ONLY</p>
+      <h2 id="poster-manager-title">管理球体海报</h2>
+      <p class="poster-manager__hint">上传你的科幻电影封面，点击列表中的替换或删除即可立即更新球体。图片只保存在当前浏览器。</p>
+      <label class="poster-manager__upload"><span>添加图片</span><input id="poster-manager-input" type="file" accept="image/png,image/jpeg,image/webp" multiple /></label>
+      <div class="poster-manager__list" id="poster-manager-list"></div>
+      <button class="poster-manager__done" id="poster-manager-done" type="button">完成 <span>↗</span></button>
+    </form>
+  </dialog>
+  <dialog class="poster-preview-dialog" id="poster-preview" aria-labelledby="poster-preview-title">
+    <div class="poster-preview__surface">
+      <button class="poster-preview__close" id="poster-preview-close" type="button" aria-label="关闭海报预览">×</button>
+      <p class="poster-preview__kicker">SIGNAL FRAME / SELECTED IMAGE</p>
+      <h2 id="poster-preview-title">科幻海报</h2>
+      <img id="poster-preview-image" alt="海报预览" />
+      <button class="poster-preview__edit" id="poster-preview-edit" type="button">修改这张 <span>↗</span></button>
+    </div>
+  </dialog>
+  <dialog class="auth-dialog" id="auth-dialog" aria-labelledby="auth-title">
+    <form class="auth-dialog__surface" id="auth-form">
+      <button class="auth-dialog__close" id="auth-close" type="button" aria-label="关闭登录窗口">×</button>
+      <p class="auth-dialog__kicker">THE UPSIDE DOWN / ACCESS</p>
+      <h2 id="auth-title">登录</h2>
+      <div class="auth-tabs" role="tablist">
+        <button type="button" data-auth-tab="login" class="is-active" role="tab">登录</button>
+        <button type="button" data-auth-tab="register" role="tab">注册</button>
+      </div>
+      <label><span>昵称（也是登录账号）</span><input name="name" type="text" minlength="2" maxlength="20" autocomplete="username" required /></label>
+      <label><span>密码（至少 6 位）</span><input name="password" type="password" minlength="6" autocomplete="current-password" required /></label>
+      <p class="auth-message" id="auth-message" role="alert"></p>
+      <div class="auth-dialog__actions">
+        <button class="auth-submit" type="submit" id="auth-submit">登录 <span>↗</span></button>
+      </div>
+      <p class="auth-hint">昵称就是你的账号，用它登录；留言里显示的也是这个名字。留言与回复对所有访客公开。</p>
+    </form>
+  </dialog>
+  <!-- 常驻编辑入口：修改名字 / 资料（之前只有档案卡可点，很难发现） -->
+  <button class="profile-fab" id="open-profile-editor-fab" type="button" title="修改我的名字与个人资料"><span>◉</span>编辑名字 / 资料</button>
+  <script src="assets/js/stranger.js?v=20260923a"></script>
+  <script src="assets/js/section-editor.js?v=20260923a"></script>
+  <script src="assets/js/ability-editor.js"></script>
+  <script src="assets/js/project-editor.js"></script>
+  <script src="assets/js/poster-manager.js?v=20260924a"></script>
+  <script src="assets/js/poster-sphere.js?v=20260923a"></script>
+  <script src="assets/js/profile-editor.js?v=20260923h"></script>
+  <script src="assets/js/back-to-vault.js"></script>
+  <!-- 账号系统：必须先于背景音乐加载，后者要订阅它的登录态（window.SiteAuth.onChange） -->
+  <script src="assets/js/auth.js?v=20260923e"></script>
+
+  <!-- 右上角背景音乐：登录态出现（含注册用户凭 Cookie 自动登录）即自动播放 -->
+  <audio id="site-audio" preload="none"></audio>
+  <script src="assets/js/site-audio.js?v=20260923j"></script>
+
+  <!-- 留言板：复用 auth.js 的登录态与弹窗 -->
+  <script src="assets/js/contact-message.js?v=20260924a"></script>
+
+  <!-- 全息卡片浮层：点进卡片在页内打开，背景音乐不中断 -->
+  <div class="holo-overlay" id="holo-overlay" aria-hidden="true" hidden>
+    <div class="holo-overlay__scrim" data-holo-close></div>
+    <div class="holo-overlay__stage" role="dialog" aria-modal="true" aria-label="全息卡片预览">
+      <button class="holo-overlay__close" type="button" data-holo-close aria-label="关闭卡片">×</button>
+      <iframe class="holo-overlay__frame" id="holo-overlay-frame" title="全息卡片预览" allow="fullscreen; autoplay"></iframe>
+    </div>
+  </div>
+  <script src="assets/js/holo-overlay.js"></script>
+</body>
+</html>
