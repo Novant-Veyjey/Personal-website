@@ -48,8 +48,7 @@
     var saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}');
     if (saved && typeof saved === 'object') {
       /* 曲目不记忆：每次进站都回到默认那首，不沿用上次听到的歌 */
-      /* 只在存档里确实记过（布尔值）时才采用，否则保持“默认静音” */
-      if (typeof saved.muted === 'boolean') state.muted = saved.muted;
+      /* 静音也不记忆：每次进站默认不静音（本次会话内仍可手动静音） */
       if (typeof saved.shuffle === 'boolean') state.shuffle = saved.shuffle;
       if (typeof saved.volume === 'number' && isFinite(saved.volume)) {
         state.volume = Math.min(1, Math.max(0, saved.volume));
