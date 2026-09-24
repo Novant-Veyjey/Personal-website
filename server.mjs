@@ -15,6 +15,7 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 import { handleApi } from './netlify/functions/lib/api.mjs';
+import { handlePosters } from './netlify/functions/lib/posters.mjs';
 import { canonicalPath } from './netlify/functions/lib/respond.mjs';
 import { readKey, writeKey } from './netlify/functions/lib/store.mjs';
 
@@ -143,6 +144,17 @@ http.createServer(async (request, response) => {
 
     if (urlPath === '/api/profile' || urlPath === '/.netlify/functions/profile') {
       return handleProfile(request, response);
+    }
+
+    /* 照片球：按登录账号云端存取（与线上 EdgeOne/Netlify 同逻辑） */
+    if (urlPath === '/api/posters' || urlPath === '/.netlify/functions/posters') {
+      const body = request.method === 'POST' ? await readBody(request) : {};
+      const result = await handlePosters({
+        method: request.method,
+        body,
+        cookie: request.headers.cookie || '',
+      });
+      return sendJson(response, result.status, result.json);
     }
 
     let filename = safePath(urlPath);

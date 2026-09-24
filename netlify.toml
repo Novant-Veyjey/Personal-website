@@ -50,3 +50,13 @@
   from = "/api/profile"
   to = "/.netlify/functions/profile"
   status = 200
+
+[[redirects]]
+  from = "/api/posters"
+  to = "/.netlify/functions/posters"
+  status = 200
+
+[[redirects]]
+  from = "/api/posters/*"
+  to = "/.netlify/functions/posters/:splat"
+  status = 200

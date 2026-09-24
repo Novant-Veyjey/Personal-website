@@ -17,6 +17,7 @@
        SITE_OWNER_KEY（档案联系方式密钥，默认 UPSIDE-DOWN-7F3K-OWNER）。
    ============================================================ */
 import { handleApi } from '../../netlify/functions/lib/api.mjs';
+import { handlePosters } from '../../netlify/functions/lib/posters.mjs';
 import { readKey, writeKey } from '../../netlify/functions/lib/store.mjs';
 
 const STORE = 'signal-messages';
@@ -119,8 +120,15 @@ export async function onRequest(context) {
   const method = req.method;
   const cookie = req.headers.get('cookie') || '';
 
-  /* 档案走独立处理；其余 /api/auth、/api/messages 交给现有 handleApi */
+  /* 档案走独立处理；照片球按账号存取；其余 /api/auth、/api/messages 交给现有 handleApi */
   if (pathname.startsWith('/api/profile')) return handleProfile(req);
+  if (pathname.startsWith('/api/posters')) {
+    let postersBody = {};
+    if (method !== 'GET' && method !== 'OPTIONS') {
+      try { postersBody = await req.json(); } catch (_) {}
+    }
+    return toResponse(await handlePosters({ method, body: postersBody, cookie }));
+  }
 
   let body = {};
   if (method !== 'GET' && method !== 'OPTIONS') {

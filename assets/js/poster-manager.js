@@ -31,9 +31,43 @@
     if (window.posterSphere && window.posterSphere.getImages) return window.posterSphere.getImages();
     try { var saved = JSON.parse(localStorage.getItem(storageKey) || '[]'); return Array.isArray(saved) ? saved : []; } catch (error) { return []; }
   }
-  function persist() {
+
+  /* ---------------- 按账号云端同步（/api/posters，存 EdgeOne KV） ----------------
+     · 登录后：拉取云端列表，云端有数据就用它覆盖本机（跨设备保留）；
+     · 每次本地改动（增删替换）：本地照存，同时静默推送到云端；
+     · 未登录：维持纯本机行为。 */
+  var cloudDirty = false;   /* 本机刚改过还没推完时，别让迟到的云端拉取覆盖掉 */
+
+  function pushCloud() {
+    if (!(window.SiteAuth && window.SiteAuth.getUser())) return;
+    window.SiteAuth.api('/api/posters', { method: 'POST', body: JSON.stringify({ posters: items }) })
+      .then(function (res) {
+        if (!res.ok) console.warn('[posters] 云端保存失败：', res.data && res.data.error);
+      })
+      .catch(function (error) { console.warn('[posters] 云端保存失败：', error); });
+  }
+  function applyCloud(list) {
+    items = list.slice();
+    cloudDirty = false;
     try { localStorage.setItem(storageKey, JSON.stringify(items)); } catch (error) {}
     if (window.posterSphere && window.posterSphere.setImages) window.posterSphere.setImages(items, false);
+    if (dialog.open) render();
+  }
+  function pullCloud() {
+    if (!(window.SiteAuth && window.SiteAuth.getUser())) return;
+    window.SiteAuth.api('/api/posters').then(function (res) {
+      var list = res && res.data && res.data.posters;
+      if (!res.ok || !Array.isArray(list)) return;
+      /* 云端还没存过（空列表）时不动本机数据；本机刚改过时也别覆盖 */
+      if (list.length && !cloudDirty) applyCloud(list);
+    }).catch(function (error) { console.warn('[posters] 云端拉取失败：', error); });
+  }
+
+  function persist() {
+    cloudDirty = true;
+    try { localStorage.setItem(storageKey, JSON.stringify(items)); } catch (error) {}
+    if (window.posterSphere && window.posterSphere.setImages) window.posterSphere.setImages(items, false);
+    pushCloud();
   }
   var focusedIndex = -1;
   function open(index) { focusedIndex = typeof index === 'number' ? index : -1; items = load(); render(); if (typeof dialog.showModal === 'function') dialog.showModal(); }
@@ -109,6 +143,12 @@
     if (preview && preview.open) preview.close();
     open(index);
   });
+
+  /* 登录态变化（含进站自动刷新）：登录后拉取该账号的云端照片；登出不动本机缓存 */
+  if (window.SiteAuth && window.SiteAuth.onChange) {
+    window.SiteAuth.onChange(function (user) { if (user) pullCloud(); });
+  }
+  if (window.SiteAuth && window.SiteAuth.getUser()) pullCloud();
 }());
 
 (function ensureWelcomeTitle() {
