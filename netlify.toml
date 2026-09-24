@@ -64,3 +64,11 @@
   from = "/api/posters/*"
   to = "/.netlify/functions/posters/:splat"
   status = 200
+
+# 音频文件基本不会变：一年期强缓存
+# 刷新时浏览器直接用本地磁盘缓存，连 304 校验请求都不发
+# 注意：以后若同名替换音轨文件，要给 site-audio.js 里的 src 加 ?v=N 之类的参数破缓存
+[[headers]]
+  for = "/assets/audio/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
