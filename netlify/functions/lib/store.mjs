@@ -1,9 +1,12 @@
 /* ============================================================
    统一存储层
    ------------------------------------------------------------
-   线上（Netlify 部署）：用 Netlify Blobs，无需任何第三方服务，
-                        请求全部同源，国内网络也能正常读写。
+   线上有两种运行环境，存储自动切换：
+     · Netlify 部署：用 Netlify Blobs（无需第三方服务，同源读写）。
+     · EdgeOne Pages Functions 部署：用 EdgeOne 自带 KV（绑定命名空间后
+       作为全局变量 KV 访问，KV.get/KV.put，键值按 "store/key" 组织）。
    本地开发（node server.mjs）：数据落到 netlify/.data/*.json。
+   三者通过 useBlobs() / useKV() 自动判别，调用方无感知。
 
    并发安全（防同名账号被同时注册出来）：
    · 线上：writeKey(..., { onlyIfNew: true }) 走 Blobs 的条件写入，
@@ -20,6 +23,10 @@ const LOCAL_DIR = path.resolve(here, '../../.data');
 /* 线上运行时 Netlify 会注入 Blobs 上下文；本地没有，就走文件。 */
 function useBlobs() {
   return Boolean(process.env.NETLIFY_BLOBS_CONTEXT || process.env.SITE_ID || process.env.NETLIFY);
+}
+/* EdgeOne Pages Functions：绑定了 KV 命名空间后，KV 会作为全局变量存在。 */
+function useKV() {
+  return typeof globalThis.KV !== 'undefined';
 }
 
 async function localFile(storeName) {
@@ -45,6 +52,11 @@ function isUnknownOption(error) {
 }
 
 export async function readKey(storeName, key, fallback = null) {
+  if (useKV()) {
+    const raw = await globalThis.KV.get(`${storeName}/${key}`);
+    if (raw == null) return fallback;
+    try { return JSON.parse(raw); } catch { return fallback; }
+  }
   if (useBlobs()) {
     try {
       const { getStore } = await import('@netlify/blobs');
@@ -65,6 +77,17 @@ export async function readKey(storeName, key, fallback = null) {
 
 export async function writeKey(storeName, key, value, options = {}) {
   const body = JSON.stringify(value);
+
+  if (useKV()) {
+    const fullKey = `${storeName}/${key}`;
+    /* KV 没有原子的条件写入：先查后写兜底防重名（个人站并发极低，足够） */
+    if (options.onlyIfNew) {
+      const existing = await globalThis.KV.get(fullKey);
+      if (existing != null) throw keyExistsError(key);
+    }
+    await globalThis.KV.put(fullKey, body);
+    return;
+  }
 
   if (useBlobs()) {
     const { getStore } = await import('@netlify/blobs');

@@ -41,7 +41,8 @@ export function readToken(token) {
 }
 
 export function sessionCookie(token) {
-  const secure = process.env.NETLIFY ? '; Secure' : '';
+  /* 线上（Netlify / EdgeOne）走 HTTPS，加 Secure；本地 http 调试不加，否则 Cookie 落不下来 */
+  const secure = (process.env.NETLIFY || process.env.EDGEONE) ? '; Secure' : '';
   return `${COOKIE_NAME}=${encodeURIComponent(token)}; Path=/; HttpOnly; SameSite=Lax; Max-Age=${MAX_AGE_SECONDS}${secure}`;
 }
 
