@@ -64,6 +64,18 @@
   audio.muted = state.muted;
   audio.src = TRACKS[state.index].src;
 
+  /* 与开场过场音乐互通：带 index.html#t=秒数 时，从该进度接着播，
+     避免「开场放了一段、进站后又从头开始」 */
+  (function () {
+    var raw = (location.hash || '') + '&' + (location.search || '');
+    var m = /[#&?]t=([\d.]+)/.exec(raw);
+    var seek = m ? Number(m[1]) : NaN;
+    if (!isFinite(seek) || seek <= 0) return;
+    var apply = function () { try { audio.currentTime = seek; } catch (error) {} };
+    if (audio.readyState >= 1) apply();
+    else audio.addEventListener('loadedmetadata', apply, { once: true });
+  })();
+
   function save() {
     /* 记静音、随机、音量，以及“是否允许自动播放”（用户手动关/静音后置否） */
     try {

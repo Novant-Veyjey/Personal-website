@@ -29,9 +29,22 @@ button { color: inherit; }
 .fx--scanlines { z-index: 51; opacity: .16; background: repeating-linear-gradient(180deg, rgba(255,255,255,.055) 0, rgba(255,255,255,.055) 1px, transparent 1px, transparent 4px); mix-blend-mode: soft-light; }
 .fx--grain { z-index: 52; opacity: .1; background-image: radial-gradient(circle at 20% 30%, #fff 0 .55px, transparent .8px), radial-gradient(circle at 72% 46%, #fff 0 .5px, transparent .8px), radial-gradient(circle at 43% 74%, #fff 0 .45px, transparent .7px), radial-gradient(circle at 88% 82%, #fff 0 .5px, transparent .8px); background-size: 7px 11px, 13px 9px, 11px 15px, 17px 13px; animation: grainShift .22s steps(2) infinite; }
 .fx--vignette { z-index: 53; background: radial-gradient(75% 72% at 50% 48%, transparent 42%, rgba(0,0,0,.44) 76%, rgba(0,0,0,.82) 100%), linear-gradient(180deg, rgba(0,0,0,.28), transparent 18%, transparent 74%, rgba(0,0,0,.56)); }
-.flash { position: fixed; inset: 0; z-index: 60; pointer-events: none; opacity: 0; mix-blend-mode: screen; background: radial-gradient(42% 30% at 54% 24%, rgba(255,255,255,.94), transparent 65%), radial-gradient(65% 50% at 48% 26%, rgba(159,205,255,.55), transparent 72%); }
-.flash.is-striking { animation: lightningStrike .5s ease-out both; }
-@keyframes lightningStrike { 0%{opacity:0} 5%{opacity:.72} 10%{opacity:.05} 15%{opacity:.55} 34%{opacity:.04} 100%{opacity:0} }
+.flash {
+  position: fixed; z-index: 60; pointer-events: none; opacity: 0;
+  mix-blend-mode: screen;
+  /* 暗红雷电：深红、小面积（screen 叠在暗红天空上呈暗红闪光） */
+  background: radial-gradient(58% 58% at 50% 50%, rgba(210,46,40,.66), rgba(150,18,14,.3) 56%, transparent 74%);
+}
+/* 多个分散的小面积雷电；顶端放两个（a / b），其余散布在天空各处 */
+.flash--a { left: 6%;  top: -18%; width: 22vw; height: 18vh; filter: brightness(.6); }
+.flash--b { right: 5%; top: 1%;  width: 30vw; height: 24vh; }
+.flash--c { left: 33%; top: 16%; width: 28vw; height: 22vh; }
+.flash--d { right: 22%; top: 22%; width: 26vw; height: 20vh; }
+.flash--e { left: 52%; top: 34%; width: 28vw; height: 22vh; transform: translateX(-50%); }
+.flash--f { left: 4%; top: 38%; width: 28vw; height: 24vh; }
+.flash--g { left: 40%; top: 6%; width: 26vw; height: 20vh; }
+.flash.is-striking { animation: lightningStrike .45s ease-out both; }
+@keyframes lightningStrike { 0%{opacity:0} 6%{opacity:.78} 12%{opacity:.06} 18%{opacity:.6} 38%{opacity:.05} 100%{opacity:0} }
 @keyframes grainShift { 0%{transform:translate3d(0,0,0)} 25%{transform:translate3d(-1.5%,1%,0)} 50%{transform:translate3d(1%,-1.5%,0)} 75%{transform:translate3d(-.5%,1.5%,0)} 100%{transform:translate3d(1.5%,-.5%,0)} }
 .scroll-progress { position: fixed; top: 0; left: 0; right: 0; z-index: 200; height: 2px; background: rgba(255,255,255,.06); pointer-events: none; }
 .scroll-progress i { display: block; width: 0; height: 100%; background: linear-gradient(90deg,var(--red-deep),var(--red-bright),#fff0ee); box-shadow: 0 0 14px var(--red-bright); }

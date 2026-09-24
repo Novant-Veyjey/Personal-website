@@ -1,0 +1,798 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#05070c">
+<title>怪奇物语 · 点击进入</title>
+<!-- 怪奇物语同款字体 ITC Benguiat（cdnfonts 免费源，加载失败时回退 Georgia 衬线） -->
+<link rel="stylesheet" href="https://fonts.cdnfonts.com/css/benguiat">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { height: 100%; }
+  body {
+    background: #030407;
+    overflow: hidden;
+    user-select: none;
+    -webkit-user-select: none;
+    -webkit-tap-highlight-color: transparent;
+    font-family: Georgia, 'Times New Roman', 'Songti SC', 'STSong', 'SimSun', serif;
+  }
+  .scene { position: fixed; inset: 0; overflow: hidden; }
+
+  /* ================= 全局氛围：胶片颗粒 + 暗角 ================= */
+  .grain {
+    position: fixed; inset: -12%;
+    z-index: 60; pointer-events: none;
+    background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="280" height="280"><filter id="n"><feTurbulence type="fractalNoise" baseFrequency="0.82" numOctaves="2" stitchTiles="stitch"/><feColorMatrix type="matrix" values="0 0 0 0 0.85 0 0 0 0 0.85 0 0 0 0 0.85 0 0 0 0.55 0"/></filter><rect width="280" height="280" filter="url(%23n)"/></svg>');
+    opacity: .12;
+    mix-blend-mode: overlay;
+    animation: grain .9s steps(5) infinite;
+  }
+  @keyframes grain {
+    0%, 100% { transform: translate(0, 0); }
+    20% { transform: translate(-3%, 2%); }
+    40% { transform: translate(2%, -3%); }
+    60% { transform: translate(-2%, -2%); }
+    80% { transform: translate(3%, 2%); }
+  }
+  .vignette {
+    position: fixed; inset: 0; z-index: 61; pointer-events: none;
+    background: radial-gradient(ellipse at center,
+      transparent 40%, rgba(0,0,0,.45) 74%, rgba(0,0,0,.88) 100%);
+  }
+
+  /* ================= 场景一：维多利亚鬼屋（真实照片 · 黄昏压暗） ================= */
+  #scene-house {
+    z-index: 1;
+    filter: blur(0) brightness(1);
+    transition: opacity 1.7s ease-in, filter 1.7s ease-in;
+  }
+  #scene-house.fade-out { opacity: 0; filter: blur(16px) brightness(.5); }
+  .house-stage {
+    position: absolute; inset: 0;
+    transform-origin: 50% 58%;
+    transition: transform 4.6s cubic-bezier(.5, 0, .75, .4);
+  }
+  #scene-house.zooming .house-stage { transform: scale(2.1); }
+
+  /* 兜底背景（纯色，不对照片做任何处理）：竖屏时填补上下留白 */
+  #scene-house { background: #06080c; }
+  /* 封面背景：暗红云图直接铺满全屏（原图使用，不加任何滤镜）
+     放大 1.08 倍：把图片上下边缘的细白边顶出画面 */
+  .cover-img {
+    position: absolute; inset: 0;
+    width: 100%; height: 100%; display: block;
+    object-fit: cover;
+    object-position: center;
+    transform: scale(1.08);
+  }
+  /* 图片顶端：若干块暗红光斑，间歇闪烁 */
+  .fp {
+    position: absolute; border-radius: 50%;
+    pointer-events: none;
+    background: radial-gradient(circle at 50% 50%,
+      rgba(215,32,36,.8) 0%, rgba(150,16,20,.3) 42%, rgba(120,10,14,0) 72%);
+    mix-blend-mode: screen;
+    opacity: 0;
+  }
+  body:not(.has-gsap) .fp1 { left: 10%; top: -20%; width: 36%; height: 48vh; animation: flick 6.5s linear infinite; }
+  body:not(.has-gsap) .fp2 { left: 44%; top: -26%; width: 26%; height: 42vh; animation: flick 8s   linear infinite 1.4s; }
+  body:not(.has-gsap) .fp3 { left: 72%; top: -18%; width: 32%; height: 46vh; animation: flick 7.2s linear infinite 2.8s; }
+
+  /* 场景一顶端：两个暗红雷电（小面积、低调，随鬼屋场景一起淡出） */
+  .flash {
+    position: absolute; z-index: 2; pointer-events: none; opacity: 0;
+    mix-blend-mode: screen;
+    background: radial-gradient(58% 58% at 50% 50%, rgba(210,46,38,.9), rgba(150,18,16,.42) 56%, transparent 76%);
+  }
+  .flash--a { left: 7%; top: 2%; width: 34vw; height: 28vh; }
+  /* 右上这道（Kids 按钮附近）：往左上移一点，并调暗调淡，不抢视线 */
+  .flash--b {
+    right: 18%; top: -3%; width: 30vw; height: 24vh;
+    background: radial-gradient(58% 58% at 50% 50%, rgba(200,42,36,.5), rgba(140,16,14,.24) 56%, transparent 76%);
+  }
+  .flash.is-striking { animation: lightningStrike .5s ease-out both; }
+  @keyframes lightningStrike {
+    0% { opacity: 0; }
+    6% { opacity: .92; }
+    12% { opacity: .1; }
+    18% { opacity: .68; }
+    38% { opacity: .06; }
+    100% { opacity: 0; }
+  }
+  @keyframes flick {
+    0%, 70% { opacity: 0; }
+    72% { opacity: .55; }
+    73.5% { opacity: .06; }
+    75% { opacity: .78; }
+    77% { opacity: .12; }
+    80% { opacity: .45; }
+    83%, 100% { opacity: 0; }
+  }
+  @keyframes kenburns { from { transform: scale(1.08); } to { transform: scale(1.13); } }
+  body:not(.has-gsap) .cover-img { animation: kenburns 30s ease-in-out infinite alternate; }
+
+  #darkener {
+    position: absolute; inset: 0; z-index: 5;
+    background: #02040a; opacity: 0; pointer-events: none;
+    transition: opacity 4.5s ease-in;
+  }
+  #darkener.on { opacity: .74; }
+
+  /* ================= 入口按钮：刻在鬼屋墙上的诡异标记 ================= */
+  #enter-wrap {
+    position: absolute; inset: 0; z-index: 6;
+  }
+  #enter-wrap.gone {
+    opacity: 0; transform: scale(.96); pointer-events: none;
+    transition: opacity .6s ease, transform .6s ease;
+  }
+  /* 提示的位置与箭头角度：改这三个值即可对准门口 */
+  :root {
+    --hint-x: 50%;      /* 按键中心：水平居中 */
+    --hint-y: 58%;      /* 按键中心：垂直（正中再下移一点） */
+  }
+  .hint-box {
+    position: absolute;
+    left: var(--hint-x); top: var(--hint-y);
+    transform: translate(-50%, -50%);
+  }
+  /* 四角细红角标：让边框更精致（像刻在墙上的牌子） */
+  #enter-btn::before, #enter-btn::after {
+    content: ''; position: absolute; width: 11px; height: 11px;
+    border: 1px solid rgba(226,74,64,.95);
+    pointer-events: none;
+  }
+  #enter-btn::before { left: -5px; top: -5px; border-right: 0; border-bottom: 0; }
+  #enter-btn::after { right: -5px; bottom: -5px; border-left: 0; border-top: 0; }
+  /* 浮动提示：按键 + 缠绕的灰藤一起缓慢浮动（放慢） */
+  @keyframes hintFloat {
+    0%, 100% { transform: translate(-50%, calc(-50% - 3px)); }
+    50%      { transform: translate(-50%, calc(-50% + 3px)); }
+  }
+  body:not(.has-gsap) .hint-box { animation: hintFloat 13s ease-in-out infinite; }
+  #enter-btn {
+    position: relative; z-index: 1;
+    font-family: 'Benguiat', Georgia, 'Times New Roman', serif;  /* 怪奇物语同款衬线体 */
+    font-weight: 700;                       /* 加粗 */
+    /* 斜体框：整个按键 skewX 倾斜，框与文字同步成斜体标牌（替代 font-style: italic） */
+    transform: skewX(-8deg);
+    display: inline-flex; flex-direction: column; align-items: center;
+    font-size: clamp(17px, 2.5vw, 24px);
+    letter-spacing: .22em; text-indent: .22em;
+    color: #2e0606;                         /* 字芯暗红：霓虹灯管的暗腔（压暗） */
+    -webkit-text-stroke: 1px #a12a2b;       /* 描边压暗，不那么鲜艳 */
+    --tglow: 6; --glow: 18;                 /* GSAP 驱动的红光呼吸变量（无 GSAP 时由 btnPulse 兜底） */
+    text-shadow: 0 0 calc(var(--tglow) * 1px) rgba(200,50,45,.45), 0 0 20px rgba(150,22,22,.32), 0 0 42px rgba(110,10,12,.25), 0 2px 3px #000;
+    background: linear-gradient(180deg, rgba(20,12,9,.6), rgba(7,4,3,.82));
+    border: 1px solid rgba(150,40,36,.7);   /* 外：细红框（压暗） */
+    border-radius: 2px;
+    padding: .5em 1.15em .55em;             /* 框放大 */
+    cursor: pointer;
+    touch-action: manipulation;
+    box-shadow: 0 0 calc(var(--glow) * 1px) rgba(110,14,14,.24), inset 0 0 22px rgba(0,0,0,.65), inset 0 1px 0 rgba(255,220,180,.05);
+    transition: text-shadow .3s ease, box-shadow .3s ease;
+  }
+  #enter-btn .l1 { display: block; line-height: 1; }
+  #enter-btn .l2 {
+    display: block; line-height: 1;
+    font-size: .52em;                       /* 第二行缩小，主次分明 */
+    letter-spacing: .42em; text-indent: .42em;
+    margin-top: .5em;
+  }
+  #enter-btn:hover, #enter-btn:focus-visible {
+    text-shadow: 0 0 12px rgba(220,60,52,.65), 0 0 30px rgba(170,28,28,.45), 0 0 56px rgba(120,12,14,.32), 0 2px 3px #000;
+    box-shadow: 0 0 36px rgba(150,20,20,.34), inset 0 0 26px rgba(0,0,0,.6), inset 0 1px 0 rgba(255,220,180,.07);
+    outline: none;
+    /* 悬停瞬间像灯管“断电重亮”般不规则闪烁一下，随后稳定点亮 */
+    animation: stFlicker 1.3s linear;
+  }
+  /* 怪奇物语片头同款：灯光忽明忽暗几下再稳定 */
+  @keyframes stFlicker {
+    0%   { opacity: .22; text-shadow: 0 0 2px rgba(255,60,50,.18); box-shadow: none; }
+    8%   { opacity: 1;  text-shadow: 0 0 14px rgba(255,80,66,.8), 0 0 34px rgba(230,40,40,.55), 0 0 64px rgba(170,12,14,.4); box-shadow: 0 0 44px rgba(190,22,22,.4), inset 0 0 26px rgba(0,0,0,.6); }
+    14%  { opacity: .3;  text-shadow: 0 0 2px rgba(255,60,50,.18); box-shadow: none; }
+    20%  { opacity: 1;  text-shadow: 0 0 14px rgba(255,80,66,.8), 0 0 34px rgba(230,40,40,.55), 0 0 64px rgba(170,12,14,.4); box-shadow: 0 0 44px rgba(190,22,22,.4), inset 0 0 26px rgba(0,0,0,.6); }
+    26%  { opacity: .18; text-shadow: none; box-shadow: none; }
+    34%  { opacity: 1;  text-shadow: 0 0 16px rgba(255,90,70,.9), 0 0 42px rgba(235,45,45,.6), 0 0 72px rgba(175,14,16,.45); box-shadow: 0 0 50px rgba(195,26,26,.46), inset 0 0 26px rgba(0,0,0,.6); }
+    42%  { opacity: .35; text-shadow: 0 0 4px rgba(255,60,50,.25); box-shadow: none; }
+    50%  { opacity: 1;  text-shadow: 0 0 14px rgba(255,80,66,.8), 0 0 34px rgba(230,40,40,.55), 0 0 64px rgba(170,12,14,.4); box-shadow: 0 0 44px rgba(190,22,22,.4), inset 0 0 26px rgba(0,0,0,.6); }
+    100% { opacity: 1;  text-shadow: 0 0 14px rgba(255,70,60,.8), 0 0 34px rgba(230,40,40,.55), 0 0 64px rgba(170,12,14,.4); box-shadow: 0 0 44px rgba(190,22,22,.4), inset 0 0 26px rgba(0,0,0,.6); }
+  }
+  @keyframes btnPulse {
+    0%, 100% {
+      text-shadow: 0 0 6px rgba(200,50,45,.45), 0 0 20px rgba(150,22,22,.32), 0 2px 3px #000;
+      box-shadow: 0 0 18px rgba(110,14,14,.24), inset 0 0 0 1px rgba(255,225,190,.06), inset 0 0 20px rgba(0,0,0,.6);
+    }
+    50% {
+      text-shadow: 0 0 10px rgba(220,60,52,.6), 0 0 32px rgba(170,28,28,.4), 0 2px 3px #000;
+      box-shadow: 0 0 28px rgba(150,20,20,.32), inset 0 0 0 1px rgba(255,225,190,.08), inset 0 0 22px rgba(0,0,0,.55);
+    }
+  }
+  body:not(.has-gsap) #enter-btn { animation: btnPulse 3.4s ease-in-out infinite; }
+
+  /* ================= 场景二：昏暗走廊里的雕花座钟（真实照片） ================= */
+  #scene-clock {
+    z-index: 2;
+    display: flex; align-items: center; justify-content: center;
+    background: radial-gradient(58% 44% at 52% 40%, #1d0a0c 0%, #120607 46%, #070405 100%), #050303;
+    opacity: 0;
+    filter: blur(18px) brightness(.9);
+    transform: scale(1.1);
+    pointer-events: none;
+    transition: opacity 1.9s ease, filter 1.9s ease, transform 1.9s ease;
+  }
+  #scene-clock.fade-in { opacity: 1; filter: blur(0) brightness(.9); transform: scale(1); }
+  #scene-clock.gone {
+    opacity: 0; filter: blur(18px) brightness(.62);
+    transition: opacity 3.6s cubic-bezier(.4, 0, .2, 1), filter 3.6s cubic-bezier(.4, 0, .2, 1);
+  }
+  /* 窗外射入的光束：罩在照片自带的白色窗光上，把它染成暗红
+     （multiply 负责把亮处压成暗红，screen 补一点透亮红芯；
+       .beam 本身不设 z-index，避免建层叠上下文，伪元素才能混色到下面的照片） */
+  .beam { position: absolute; inset: 0; pointer-events: none; }
+  .beam::before, .beam::after {
+    content: '';
+    position: absolute;
+    top: -16%; left: 56%;
+    width: 38%; height: 115%;
+    transform: rotate(38deg);
+    transform-origin: 50% 0;
+  }
+  .beam::before {          /* 暗红染色主体：亮处（白光柱）被染成暗红，暗处基本不变 */
+    background: linear-gradient(90deg,
+      transparent 0%,
+      rgba(88,10,9,.45) 22%,
+      rgba(112,14,12,.62) 48%,
+      rgba(70,8,8,.40) 74%,
+      transparent 100%);
+    mix-blend-mode: multiply;
+    filter: blur(9px);
+    -webkit-mask-image: linear-gradient(180deg, #000 28%, transparent 80%);
+    mask-image: linear-gradient(180deg, #000 28%, transparent 80%);
+  }
+  .beam::after {           /* 红芯微光：让红束保留一点透亮，不至于死黑 */
+    background: linear-gradient(90deg,
+      transparent 10%,
+      rgba(205,58,44,.14) 44%,
+      rgba(205,58,44,.09) 64%,
+      transparent 90%);
+    mix-blend-mode: screen;
+    filter: blur(15px);
+    -webkit-mask-image: linear-gradient(180deg, #000 24%, transparent 72%);
+    mask-image: linear-gradient(180deg, #000 24%, transparent 72%);
+  }
+  .clock-stage {
+    position: absolute; inset: 0;
+    transform-origin: 50% 0%;    /* 推近时以画面正中上方为中心 */
+  }
+  /* 有 GSAP 时：推近由 GSAP 直接插值，关闭 CSS 过渡避免双重缓动 */
+  body.has-gsap .clock-stage, body.has-gsap .clock-img, body.has-gsap .red-veil { transition: none; }
+  body:not(.has-gsap) #scene-clock.push-in .clock-stage {
+    /* 近似对准钟面圆心：origin 置于钟面处，末端平移把圆心送到屏幕正中（16:9 近似值） */
+    transform: translate(0, 13vh) scale(5.5);
+    transform-origin: 50% 37%;
+  }
+  .clock-holder { position: absolute; inset: 0; }
+  .clock-img {
+    display: block;
+    width: 100%; height: 100%;
+    object-fit: cover;           /* 座钟图铺满整个屏幕 */
+    object-position: 50% 0%;     /* 顶端对齐：钟面偏上，保证座钟整体完整显示在画面里 */
+    filter: brightness(.58) saturate(1.2) contrast(1.05) sepia(.32) hue-rotate(-32deg);
+  }
+  body:not(.has-gsap) #scene-clock.push-in .clock-img {
+    filter: brightness(.5) saturate(1.5) contrast(1.12) sepia(.4) hue-rotate(-38deg);
+  }
+  .red-veil {
+    position: absolute; inset: 0; pointer-events: none; z-index: 2;
+    background: radial-gradient(90% 70% at 50% 42%,
+      rgba(150,18,18,.18) 0%, rgba(96,8,10,.5) 55%, rgba(26,2,3,.88) 100%);
+    mix-blend-mode: multiply;
+    opacity: 0;
+  }
+  #scene-clock.fade-in .red-veil { opacity: .4; }
+  body:not(.has-gsap) #scene-clock.push-in .red-veil { opacity: 1; }
+  /* 漂浮的灰尘：两层错速缓升 + 微闪，营造暗红尘埃感 */
+  .dust { position: absolute; inset: 0; pointer-events: none; z-index: 3; overflow: hidden; }
+  .dust::before, .dust::after {
+    content: ''; position: absolute; left: -20%; top: -20%;
+    width: 140%; height: 140%;
+    background-repeat: repeat;
+  }
+  .dust::before {
+    background-image:
+      radial-gradient(1.6px 1.6px at 12% 22%, rgba(230,150,130,.55), transparent 70%),
+      radial-gradient(1.2px 1.2px at 38% 64%, rgba(220,140,120,.45), transparent 70%),
+      radial-gradient(1.4px 1.4px at 64% 18%, rgba(235,160,140,.5), transparent 70%),
+      radial-gradient(1px 1px at 82% 48%, rgba(210,130,110,.4), transparent 70%),
+      radial-gradient(1.3px 1.3px at 50% 86%, rgba(225,145,125,.45), transparent 70%),
+      radial-gradient(1px 1px at 26% 40%, rgba(200,120,100,.35), transparent 70%),
+      radial-gradient(1.5px 1.5px at 74% 74%, rgba(230,150,130,.5), transparent 70%);
+    background-size: 300px 300px;
+    animation: dustA 34s linear infinite, dustTw 9s ease-in-out infinite;
+    opacity: .7;
+  }
+  .dust::after {
+    background-image:
+      radial-gradient(1px 1px at 18% 12%, rgba(215,135,115,.4), transparent 70%),
+      radial-gradient(1.3px 1.3px at 56% 30%, rgba(230,150,130,.5), transparent 70%),
+      radial-gradient(1px 1px at 88% 66%, rgba(205,125,105,.35), transparent 70%),
+      radial-gradient(1.1px 1.1px at 30% 78%, rgba(220,140,120,.45), transparent 70%),
+      radial-gradient(1.4px 1.4px at 70% 90%, rgba(232,155,135,.5), transparent 70%),
+      radial-gradient(1px 1px at 44% 52%, rgba(200,120,100,.3), transparent 70%);
+    background-size: 220px 220px;
+    animation: dustB 46s linear infinite, dustTw 13s ease-in-out infinite;
+    opacity: .55;
+  }
+  @keyframes dustA {
+    0%   { transform: translate(0, 0); }
+    100% { transform: translate(-40px, -120px); }
+  }
+  @keyframes dustB {
+    0%   { transform: translate(0, 0); }
+    100% { transform: translate(30px, -160px); }
+  }
+  @keyframes dustTw {
+    0%, 100% { opacity: .5; }
+    50%      { opacity: .95; }
+  }
+
+  /* ================= 场景三：本站首页（index.html） ================= */
+  #scene-main {
+    z-index: 3;
+    background: #0d0101;
+    opacity: 0; filter: blur(14px) brightness(.92); transform: scale(1.05);
+    pointer-events: none;
+    transition: opacity 3.6s cubic-bezier(.4, 0, .2, 1),
+                filter 3.6s cubic-bezier(.4, 0, .2, 1),
+                transform 3.8s cubic-bezier(.22, .61, .36, 1);
+  }
+  #scene-main.show { opacity: 1; filter: blur(0) brightness(1); transform: scale(1); pointer-events: auto; }
+  #scene-main iframe {
+    position: relative; z-index: 1;
+    display: block; width: 100%; height: 100%; border: 0;
+  }
+  /* 兜底层：首页若加载不出，就显示暗红背景 + 居中“主界面” */
+  .main-fallback {
+    position: absolute; inset: 0; z-index: 0;
+    display: flex; align-items: center; justify-content: center;
+    background: radial-gradient(120% 90% at 50% 42%,
+      #571010 0%, #380708 45%, #1c0303 78%, #0d0101 100%);
+    font-size: clamp(38px, 9vw, 82px);
+    letter-spacing: .42em; text-indent: .42em;
+    color: #d9c3ad;
+    -webkit-text-stroke: 1px #4a0a0a;
+    text-shadow: 0 0 10px rgba(200,30,30,.45), 0 0 34px rgba(150,15,15,.3), 0 3px 4px rgba(0,0,0,.8);
+    animation: mainGlow 4s ease-in-out infinite;
+  }
+  @keyframes mainGlow {
+    0%, 100% { text-shadow: 0 0 10px rgba(200,30,30,.45), 0 0 34px rgba(150,15,15,.3), 0 3px 4px rgba(0,0,0,.8); }
+    50% { text-shadow: 0 0 16px rgba(225,45,45,.6), 0 0 52px rgba(175,20,20,.4), 0 3px 4px rgba(0,0,0,.8); }
+  }
+
+  /* ================= 开场页音乐控制条 ================= */
+  /* 直接驱动站内播放器（切歌 / 播放暂停 / 音量），样式与站内控制条同风格；
+     音乐响起来时浮现，进入首页后收起（首页里有它自己的控制条） */
+  #entry-player {
+    position: fixed; z-index: 80;
+    top: calc(12px + env(safe-area-inset-top, 0px));
+    right: calc(12px + env(safe-area-inset-right, 0px));
+    display: flex; align-items: center; gap: 10px;
+    padding: 7px 12px;
+    background: rgba(10,8,9,.72);
+    border: 1px solid rgba(150,40,34,.55);
+    border-radius: 999px;
+    backdrop-filter: blur(6px);
+    opacity: 0; pointer-events: none; transform: translateY(-8px);
+    transition: opacity .6s ease, transform .6s ease;
+  }
+  #entry-player.show {
+    opacity: .32; pointer-events: auto; transform: translateY(0);
+  }
+  /* 入口场景里默认半透明“藏”起来，鼠标移上 / 键盘聚焦才亮起，不破坏沉浸感 */
+  #entry-player.show:hover, #entry-player.show:focus-within { opacity: 1; }
+  #ep-title {
+    font-size: 13px; letter-spacing: .06em; color: #d8c3ad;
+    text-shadow: 0 0 8px rgba(200,40,40,.4);
+    max-width: 9em; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  }
+  #entry-player button {
+    display: flex; align-items: center; justify-content: center;
+    width: 30px; height: 30px; border-radius: 50%;
+    background: transparent; border: 1px solid rgba(150,40,34,.45);
+    color: #d8b48a; cursor: pointer; padding: 0;
+    transition: border-color .3s ease, box-shadow .3s ease, color .3s ease, background .3s ease;
+    -webkit-tap-highlight-color: transparent;
+  }
+  #entry-player button:hover {
+    border-color: rgba(210,60,50,.8); color: #f0c9a0;
+    box-shadow: 0 0 12px rgba(190,30,30,.35);
+  }
+  #ep-toggle {
+    width: 38px; height: 38px;
+    background: #b3231f; border-color: #b3231f; color: #fff;
+    box-shadow: 0 0 16px rgba(180,25,25,.5);
+  }
+  #ep-toggle:hover { background: #cf2b26; }
+  #ep-toggle .ic-pause { display: none; }
+  #ep-toggle.playing .ic-pause { display: block; }
+  #ep-toggle.playing .ic-play { display: none; }
+  #ep-volume { width: 88px; accent-color: #c0392b; cursor: pointer; }
+  @media (max-width: 560px) {
+    #ep-volume { width: 64px; }
+    #ep-title { max-width: 6em; }
+  }
+
+  /* ================= 座钟 → 主页 过渡雷电 ================= */
+  /* 主页开始叠化时，天空区（标题上方）炸开一次双闪，像穿门瞬间的闪电 */
+  .main-flash {
+    position: absolute; left: 0; right: 0; top: 0; height: 42%;
+    z-index: 2; pointer-events: none; opacity: 0;
+    mix-blend-mode: screen;
+    background:
+      radial-gradient(42% 62% at 22% 30%, rgba(216,70,58,.5), transparent 72%),
+      radial-gradient(46% 66% at 66% 22%, rgba(228,84,66,.55), transparent 74%),
+      radial-gradient(38% 58% at 45% 48%, rgba(190,52,44,.4), transparent 70%);
+  }
+  #scene-main.show .main-flash { animation: mainFlash 1.5s ease-out .35s both; }
+  @keyframes mainFlash {
+    0%   { opacity: 0; }
+    7%   { opacity: .9; }
+    15%  { opacity: .08; }
+    24%  { opacity: .62; }
+    46%  { opacity: .06; }
+    58%  { opacity: .3; }
+    100% { opacity: 0; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    #scene-main.show .main-flash { animation: none; }
+  }
+
+  /* ================= 首页上的暗红光 ================= */
+  /* 随首页一起慢慢浮现，之后开始间歇闪烁（叠在首页之上，不影响点击） */
+  .main-glow {
+    position: absolute; left: 0; right: 0; top: 0; height: 46%;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 2.4s ease .5s;
+  }
+  #scene-main.show .main-glow { opacity: 1; }
+
+  @media (max-width: 640px) {
+    .hint-box { width: 74vw; }
+  }
+</style>
+</head>
+<body>
+
+  <!-- ================= 场景一：维多利亚鬼屋（真实照片） ================= -->
+  <section id="scene-house" class="scene">
+    <div class="house-stage">
+      <!-- 封面背景：暗红云图铺满全屏（原图直接使用） -->
+      <img class="cover-img" src="assets/img/sky-clouds.png" alt="">
+      <!-- 图片顶端：间歇闪烁的暗红光 -->
+      <span class="fp fp1"></span>
+      <span class="fp fp2"></span>
+      <span class="fp fp3"></span>
+      <!-- 顶端两个暗红雷电 -->
+      <span class="flash flash--a" aria-hidden="true"></span>
+      <span class="flash flash--b" aria-hidden="true"></span>
+      <div id="darkener"></div>
+
+      <!-- 入口按钮 -->
+      <div id="enter-wrap">
+        <div class="hint-box">
+          <button id="enter-btn" type="button" aria-label="Enter another world">
+            <span class="l1">ENTER</span>
+            <span class="l2">ANOTHER WORLD</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= 场景二：昏暗走廊里的雕花座钟（真实照片） ================= -->
+  <section id="scene-clock" class="scene">
+    <div class="clock-stage">
+      <div class="clock-holder">
+        <!-- 座钟本体：真实照片，完全静止 -->
+        <img class="clock-img" src="assets/img/victorian-clock.jpg" alt="昏暗走廊里的复古雕花座钟">
+      </div>
+    </div>
+    <div class="beam"></div>
+    <div class="dust"></div>
+    <div class="red-veil"></div>
+  </section>
+
+  <!-- ================= 场景三：本站首页 ================= -->
+  <section id="scene-main" class="scene">
+    <!-- 兜底：暗红背景 + 居中“主界面”；正常时由下面的首页覆盖 -->
+    <div class="main-fallback">主界面</div>
+    <!-- 最终主界面：本站首页（点击 ACCESS 后即刻在下方静默加载） -->
+    <iframe id="main-frame" data-src="index.html" title="主界面" allow="autoplay"></iframe>
+    <!-- 从座钟过渡到主页时的雷电闪光：罩在天空区，随主页浮现瞬间双闪一次 -->
+    <div class="main-flash" aria-hidden="true"></div>
+    <!-- 首页上的暗红光：随首页浮现后开始间歇闪烁 -->
+    <div class="main-glow">
+      <span class="fp fp1"></span>
+      <span class="fp fp2"></span>
+      <span class="fp fp3"></span>
+    </div>
+  </section>
+
+  <!-- 全局胶片颗粒 + 暗角 -->
+  <div class="grain"></div>
+  <div class="vignette"></div>
+
+  <!-- 开场页音乐控制条：直接驱动站内播放器（切歌 / 播放暂停 / 音量） -->
+  <div id="entry-player">
+    <span id="ep-title">Kids</span>
+    <button id="ep-prev" type="button" aria-label="上一首" title="上一首">
+      <svg viewBox="0 0 24 24" width="15" height="15" aria-hidden="true"><path d="M7 6h2v12H7zM19 6l-9 6 9 6z" fill="currentColor"/></svg>
+    </button>
+    <button id="ep-toggle" type="button" aria-label="播放 / 暂停" title="播放 / 暂停">
+      <svg class="ic-pause" viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M7 5h4v14H7zM13 5h4v14h-4z" fill="currentColor"/></svg>
+      <svg class="ic-play" viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M8 5l12 7-12 7z" fill="currentColor"/></svg>
+    </button>
+    <button id="ep-next" type="button" aria-label="下一首" title="下一首">
+      <svg viewBox="0 0 24 24" width="15" height="15" aria-hidden="true"><path d="M15 6h2v12h-2zM5 6l9 6-9 6z" fill="currentColor"/></svg>
+    </button>
+    <input id="ep-volume" type="range" min="0" max="100" value="100" aria-label="音量">
+  </div>
+
+  <script src="assets/js/gsap.min.js"></script>
+  <script>
+  (function () {
+    'use strict';
+    var $ = function (s) { return document.querySelector(s); };
+    var house = $('#scene-house');
+    var clock = $('#scene-clock');
+    var main = $('#scene-main');
+    var wrap = $('#enter-wrap');
+    var btn = $('#enter-btn');
+    var darkener = $('#darkener');
+    var started = false;
+    var hasGSAP = !!window.gsap;
+
+    /* 音乐只有一套：首页右上角那个站内播放器。
+       点击 ACCESS 后延迟 1.2 秒让它开始播放；房子段、座钟段不再有独立音乐。
+       首页此时已在下方静默加载，所以在轮询到 #site-audio 后再起播。 */
+    function startSiteMusic() {
+      var frame = $('#main-frame');
+      var tries = 0;
+      var timer = setInterval(function () {
+        tries++;
+        var a = null;
+        try { a = frame.contentDocument && frame.contentDocument.getElementById('site-audio'); } catch (e) {}
+        if (a) {
+          try {
+            if (a.muted) a.muted = false;          /* 之前若被静音过，这里恢复 */
+            if (!a.volume) a.volume = 0.6;         /* 音量为 0 时给一个能听见的值 */
+            if (a.paused) { var p = a.play(); if (p && p.catch) p.catch(function () {}); }
+          } catch (e) {}
+          if (!a.paused) {
+            clearInterval(timer);
+            try {
+              var iv = frame.contentDocument.getElementById('audio-volume');
+              if (iv && epVolume) epVolume.value = iv.value;   /* 音量条对齐站内状态 */
+            } catch (e) {}
+            if (epBar) epBar.classList.add('show');            /* 浮现开场页控制条 */
+          }
+        }
+        if (tries > 150) clearInterval(timer);     /* 最多等约 15s */
+      }, 100);
+    }
+
+    btn.addEventListener('click', function () {
+      if (started) return;
+      started = true;
+
+      /* 1) 隐藏按钮 */
+      wrap.classList.add('gone');
+
+      /* 2) 立刻在下方静默加载首页（不可见，为最后的叠化做准备） */
+      loadMain();
+
+      /* 3) 延迟 1.2 秒后，让首页的音乐（右上角 Kids）开始播放 */
+      setTimeout(startSiteMusic, 1200);
+
+      /* 4) 用 GSAP 时间线统一调度整段入场序列；GSAP 未加载时回退到定时器 */
+      if (window.gsap) {
+        gsap.timeline()
+          .call(function () {
+            house.classList.add('zooming');
+            darkener.classList.add('on');
+          }, null, 0.9)
+          .call(beginCrossfade, null, 5.3)
+          .call(approachAndSpin, null, 7.35)
+          .call(beginFinal, null, 12.35);
+      } else {
+        setTimeout(function () {
+          house.classList.add('zooming');
+          darkener.classList.add('on');
+          setTimeout(beginCrossfade, 4400);
+        }, 900);
+      }
+    });
+
+    /* 4) 鬼屋虚化淡出，座钟同步显现（叠化 1~2s） */
+    function beginCrossfade() {
+      house.classList.add('fade-out');
+      clock.classList.add('fade-in');
+      /* 暗红薄雾随座钟浮现（仅 GSAP 接管时平滑插值） */
+      if (hasGSAP) gsap.to('.red-veil', { opacity: 0.4, duration: 1.9, ease: 'power1.inOut' });
+    }
+
+    /* 5) 镜头推近座钟，色调转为暗红（座钟本体静止，指针不再转动）
+          有 GSAP 时直接插值 scale / filter / 红雾，运镜更顺；否则回退 CSS 过渡 */
+    function approachAndSpin() {
+      if (hasGSAP) {
+        /* 精准对准钟面：按 object-fit:cover 的实际裁切，算出钟面圆心在屏幕上的像素位置，
+           缩放中心对准它，并在放大末端平移把圆心送到屏幕正中（圆圈完全正对屏幕） */
+        var stage = document.querySelector('.clock-stage');
+        var img = document.querySelector('.clock-img');
+        var FACE = { x: 0.50, y: 0.19 };                  /* 钟面圆心在原图中的比例位置（新图实测） */
+        var OP = { x: 0.5, y: 0 };                        /* 对应 object-position: 50% 0%（顶端对齐） */
+        var vw = stage.clientWidth, vh = stage.clientHeight;
+        var iw = img.naturalWidth, ih = img.naturalHeight;
+        var fx, fy;
+        if (iw && ih) {                                   /* 图片已加载：按 cover 裁切精确换算 */
+          var s = Math.max(vw / iw, vh / ih);
+          fx = FACE.x * iw * s - (iw * s - vw) * OP.x;
+          fy = FACE.y * ih * s - (ih * s - vh) * OP.y;
+        } else {                                          /* 兜底：按常见 16:9 下的近似屏幕位置 */
+          fx = 0.50 * vw; fy = 0.37 * vh;
+        }
+        gsap.set('.clock-stage', { transformOrigin: fx + 'px ' + fy + 'px' });
+        gsap.to('.clock-stage', {
+          scale: 5.5, x: vw / 2 - fx, y: vh / 2 - fy,
+          duration: 5.1, ease: 'power2.inOut'
+        });
+        gsap.to('.clock-img', {
+          filter: 'brightness(.5) saturate(1.5) contrast(1.12) sepia(.4) hue-rotate(-38deg)',
+          duration: 5.1, ease: 'power2.inOut'
+        });
+        gsap.to('.red-veil', { opacity: 1, duration: 4.8, ease: 'power2.inOut' });
+      } else {
+        clock.classList.add('push-in');  /* 推近 + 色调转暗红：5.1s */
+      }
+    }
+
+    /* 首页：点击后立刻在下方静默加载（不可见），最后只做一次柔和叠化显现 */
+    function loadMain() {
+      var frame = $('#main-frame');
+      if (frame && !frame.getAttribute('src')) frame.src = frame.getAttribute('data-src');
+    }
+
+    /* 7) 座钟放大虚化淡出，本站首页同步慢慢浮现（音乐一直在放，无需交接） */
+    function beginFinal() {
+      clock.classList.add('gone');
+      if (epBar) epBar.classList.remove('show');   /* 首页有自己的控制条，这里收起 */
+      main.classList.add('show');
+    }
+
+    /* ---------- 开场页音乐控制条：切歌 / 播放暂停 / 音量 ----------
+       控制的就是站内播放器（同源 iframe 里的 site-audio）：
+       按钮直接触发站内自己的控件，状态记忆、随机、切歌提示全部沿用站内逻辑 */
+    var epBar = $('#entry-player');
+    var epTitle = $('#ep-title');
+    var epToggle = $('#ep-toggle');
+    var epVolume = $('#ep-volume');
+    function epDoc() { try { return $('#main-frame').contentDocument; } catch (e) { return null; } }
+    function epClick(id) {
+      var doc = epDoc(); if (!doc) return;
+      var el = doc.getElementById(id); if (el) el.click();
+    }
+    if (epBar) {
+      $('#ep-prev').addEventListener('click', function () { epClick('audio-prev'); });
+      $('#ep-next').addEventListener('click', function () { epClick('audio-next'); });
+      epToggle.addEventListener('click', function () { epClick('audio-toggle'); });
+      epVolume.addEventListener('input', function () {
+        var doc = epDoc(); if (!doc) return;
+        var input = doc.getElementById('audio-volume'); if (!input) return;
+        input.value = epVolume.value;                       /* 走站内的音量处理（含记忆） */
+        input.dispatchEvent(new Event('input', { bubbles: true }));
+      });
+      /* 同步曲名与播放/暂停图标（站内切歌后这里跟着变） */
+      setInterval(function () {
+        if (!epBar.classList.contains('show')) return;
+        var doc = epDoc(); if (!doc) return;
+        var a = doc.getElementById('site-audio'); if (!a) return;
+        var t = doc.getElementById('audio-now-title');
+        if (t && t.textContent) epTitle.textContent = t.textContent;
+        epToggle.classList.toggle('playing', !a.paused);
+      }, 500);
+    }
+
+    /* 入口页即提前静默加载首页（不可见），让右上角控制条能在“进入前”就选歌；
+       等站内播放器加载好后再把控制条显示出来 */
+    loadMain();
+    (function revealEntryBarWhenReady() {
+      var frame = $('#main-frame');
+      var tries = 0;
+      var timer = setInterval(function () {
+        tries++;
+        var a = null;
+        try { a = frame.contentDocument && frame.contentDocument.getElementById('site-audio'); } catch (e) {}
+        if (a) {
+          clearInterval(timer);
+          if (epBar) epBar.classList.add('show');   /* 入口页即可选歌 / 播放 */
+        }
+        if (tries > 120) clearInterval(timer);       /* 约 12s 超时 */
+      }, 100);
+    })();
+
+    /* GSAP 增强：用 GSAP 统一驱动入场显现与常驻氛围动效
+       （GSAP 未加载时回退到 CSS 关键帧，见 body:not(.has-gsap) 规则） */
+    if (window.gsap) {
+      document.body.classList.add('has-gsap');
+
+      /* 按键入场显现 */
+      gsap.from(wrap, {
+        opacity: 0, y: 26, duration: 1.6, ease: 'power2.out', delay: 0.3,
+        clearProps: 'transform,opacity'
+      });
+
+      /* 按键缓慢悬浮（以画面中心为基准，幅度 ±3px，13s 一轮） */
+      gsap.set('.hint-box', { xPercent: -50, yPercent: -50 });
+      gsap.fromTo('.hint-box', { y: -3 }, { y: 3, duration: 13, ease: 'sine.inOut', yoyo: true, repeat: -1 });
+
+      /* 封面缓慢呼吸（Ken Burns），让鬼屋像在雾里轻轻起伏 */
+      gsap.fromTo('.cover-img', { scale: 1.08 }, { scale: 1.13, duration: 26, ease: 'sine.inOut', yoyo: true, repeat: -1 });
+
+      /* ACCESS 红光呼吸：通过 CSS 变量驱动辉光，不会覆盖 hover 态 */
+      gsap.to('#enter-btn', { '--tglow': 10, '--glow': 28, duration: 3.4, ease: 'sine.inOut', yoyo: true, repeat: -1 });
+
+      /* 光斑：有机随机闪烁（每次间隔与亮度都随机，比固定 CSS 更自然）
+         主页(main-glow)上的光斑闪得更勤一些；鬼屋场景维持原有节奏 */
+      gsap.utils.toArray('.fp').forEach(function (el, i) {
+        var inMain = !!(el.closest && el.closest('.main-glow'));
+        function flick() {
+          var peek = 0.05 + Math.random() * 0.45;
+          var hold = 0.15 + Math.random() * 0.5;
+          var gap  = inMain ? 0.8 + Math.random() * 3 : 1.6 + Math.random() * 6;
+          gsap.timeline({ onComplete: flick })
+            .to(el, { opacity: peek, duration: 0.12, ease: 'power1.in' })
+            .to(el, { opacity: 0, duration: 0.09 })
+            .to(el, { opacity: hold, duration: 0.18, ease: 'power1.out' }, '+=0.04')
+            .to(el, { opacity: 0, duration: 0.2 }, '+=0.1')
+            .to(el, { opacity: 0, duration: gap });
+        }
+        gsap.set(el, { opacity: 0 });
+        gsap.delayedCall(i * 0.7, flick);
+      });
+    }
+
+    /* 场景一顶端：两个暗红雷电随机闪烁（进入座钟场景后自动停；尊重系统减少动效偏好） */
+    (function () {
+      if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+      var bolts = Array.prototype.slice.call(document.querySelectorAll('#scene-house .flash'));
+      if (!bolts.length) return;
+      function strike() {
+        var el = bolts[Math.floor(Math.random() * bolts.length)];
+        el.classList.remove('is-striking');
+        void el.offsetWidth;
+        el.classList.add('is-striking');
+        window.setTimeout(function () { el.classList.remove('is-striking'); }, 460);
+      }
+      function schedule(delay) {
+        window.setTimeout(function () {
+          if (!document.hidden && !house.classList.contains('fade-out')) strike();
+          schedule(2600 + Math.random() * 4200);
+        }, delay);
+      }
+      schedule(1200);
+    })();
+
+    /* 调试锚点（正常访问不受影响）：#clock 直达座钟态、#main 直达首页 */
+    if (location.hash === '#clock') {
+      clock.classList.add('fade-in');
+      if (hasGSAP) gsap.set('.red-veil', { opacity: 0.4 });
+    }
+    if (location.hash === '#main') { clock.classList.add('fade-in', 'push-in', 'gone'); loadMain(); main.classList.add('show'); }
+  })();
+  </script>
+</body>
+</html>

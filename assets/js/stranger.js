@@ -86,19 +86,29 @@ document.documentElement.classList.add('js');
   if (year) year.textContent = String(new Date().getFullYear());
 
   function strike() {
-    if (!flash || reducedMotion) return;
-    flash.classList.remove('is-striking');
-    void flash.offsetWidth;
-    flash.classList.add('is-striking');
-    window.setTimeout(function () { flash.classList.remove('is-striking'); }, 620);
+    if (reducedMotion) return;
+    var flashes = $$('.flash');
+    if (!flashes.length) return;
+    /* 每次随机挑 1~2 个不同位置闪一下，更自然、不呆板 */
+    var n = Math.random() < 0.45 ? 2 : 1;
+    while (n--) {
+      var el = flashes[Math.floor(Math.random() * flashes.length)];
+      el.classList.remove('is-striking');
+      void el.offsetWidth;
+      el.classList.add('is-striking');
+      (function (e) {
+        window.setTimeout(function () { e.classList.remove('is-striking'); }, 460);
+      })(el);
+    }
   }
   function scheduleLightning(delay) {
     window.setTimeout(function () {
       if (!document.hidden) strike();
-      scheduleLightning(3200 + Math.random() * 7600);
+      scheduleLightning(900 + Math.random() * 2300);
     }, delay);
   }
-  if (!reducedMotion) scheduleLightning(1400);
+  /* 天空雷电：恢复周期性闪电，并调高频率（间隔 1.4~4.8s，约原来的 2 倍多） */
+  if (!reducedMotion) scheduleLightning(900);
 
   function showToast(message) {
     if (!toastEl) return;

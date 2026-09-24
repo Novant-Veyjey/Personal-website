@@ -206,19 +206,11 @@
     });
   });
 
-  /* 强制登录门禁：打开登录弹窗且禁止关闭，直到登录成功 */
-  function requireLogin() {
-    forced = true;
-    document.body.classList.add('login-locked');
-    if (titleEl) titleEl.textContent = '进入需先登录';
-    openDialog();
-  }
-
+  /* 不再「进站强制登录」：只同步登录态。
+     登录注册弹窗改为「用户要修改内容时」才弹出 —— 由各功能自行调用
+     window.SiteAuth.open()（如留言板的发布 / 回复，见 contact-message.js） */
   setMode('login');
-  refresh().then(function (u) {
-    /* 进站未登录 → 强制先登录；已登录（含 cookie 续期）则直接进入 */
-    if (!u) requireLogin();
-  });
+  refresh();
 
   /* 给留言板用的公开接口（含同一套接口地址回退逻辑） */
   window.SiteAuth = {
