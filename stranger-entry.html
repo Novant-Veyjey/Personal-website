@@ -420,6 +420,11 @@
   #ep-toggle.playing .ic-pause { display: block; }
   #ep-toggle.playing .ic-play { display: none; }
   #ep-volume { width: 88px; accent-color: #c0392b; cursor: pointer; }
+  /* 静音键：喇叭 / 叉线两个图标随站内静音状态切换 */
+  #ep-mute .ic-muted { display: none; }
+  #ep-mute.muted .ic-sound { display: none; }
+  #ep-mute.muted .ic-muted { display: block; }
+  #ep-mute.muted { color: #e0574c; border-color: rgba(210,60,50,.7); }
   @media (max-width: 560px) {
     #ep-volume { width: 64px; }
     #ep-title { max-width: 6em; }
@@ -540,6 +545,10 @@
       <svg viewBox="0 0 24 24" width="15" height="15" aria-hidden="true"><path d="M15 6h2v12h-2zM5 6l9 6-9 6z" fill="currentColor"/></svg>
     </button>
     <input id="ep-volume" type="range" min="0" max="100" value="100" aria-label="音量">
+    <button id="ep-mute" type="button" aria-label="静音 / 取消静音" title="静音">
+      <svg class="ic-sound" viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M4 9v6h4l5 4V5L8 9H4z" fill="currentColor"/><path d="M16.5 8.5a5 5 0 0 1 0 7" stroke="currentColor" stroke-width="1.6" fill="none" stroke-linecap="round"/></svg>
+      <svg class="ic-muted" viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M4 9v6h4l5 4V5L8 9H4z" fill="currentColor"/><path d="M16 9.5l5 5M21 9.5l-5 5" stroke="currentColor" stroke-width="1.6" fill="none" stroke-linecap="round"/></svg>
+    </button>
   </div>
 
   <script src="assets/js/gsap.min.js"></script>
@@ -679,6 +688,7 @@
     var epBar = $('#entry-player');
     var epTitle = $('#ep-title');
     var epToggle = $('#ep-toggle');
+    var epMute = $('#ep-mute');
     var epVolume = $('#ep-volume');
     function epDoc() { try { return $('#main-frame').contentDocument; } catch (e) { return null; } }
     function epClick(id) {
@@ -689,6 +699,7 @@
       $('#ep-prev').addEventListener('click', function () { epClick('audio-prev'); });
       $('#ep-next').addEventListener('click', function () { epClick('audio-next'); });
       epToggle.addEventListener('click', function () { epClick('audio-toggle'); });
+      $('#ep-mute').addEventListener('click', function () { epClick('audio-mute'); });
       epVolume.addEventListener('input', function () {
         var doc = epDoc(); if (!doc) return;
         var input = doc.getElementById('audio-volume'); if (!input) return;
@@ -703,6 +714,9 @@
         var t = doc.getElementById('audio-now-title');
         if (t && t.textContent) epTitle.textContent = t.textContent;
         epToggle.classList.toggle('playing', !a.paused);
+        /* 同步静音状态（站内 #audio-mute 的 aria-pressed=true 即静音中） */
+        var m = doc.getElementById('audio-mute');
+        if (m && epMute) epMute.classList.toggle('muted', m.getAttribute('aria-pressed') === 'true');
       }, 500);
     }
 
