@@ -27,10 +27,12 @@
   node_bundler = "esbuild"
 
 # 打开根路径先看到「鬼屋入口页」（stranger-entry.html 内嵌 index.html 主站）
+# force = true 必须加：否则 / 匹配到真实存在的 index.html 时，Netlify 会跳过这条重定向
 [[redirects]]
   from = "/"
   to = "/stranger-entry.html"
   status = 200
+  force = true
 
 [[redirects]]
   from = "/api/auth"
