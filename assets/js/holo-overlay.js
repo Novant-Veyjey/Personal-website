@@ -47,6 +47,20 @@
     if (event.data === 'holo-card:back') closeCard();
   });
 
+  /* 兜底：如果卡片页因脚本未及时加载而误导航到主页面，
+     立即收起浮层，避免主页面被再次套进卡片 iframe。 */
+  frame.addEventListener('load', function () {
+    if (overlay.hidden) return;
+    try {
+      if (/\/main(?:\.html)?$/.test(frame.contentWindow.location.pathname)) {
+        closeCard();
+        if (location.hash !== '#holo-vault') {
+          history.replaceState(null, '', '#holo-vault');
+        }
+      }
+    } catch (error) {}
+  });
+
   /* 暴露给卡片页直接调用：返回选择卡片 = 关闭浮层（即 × 的功能） */
   window.holoOverlayClose = closeCard;
 
