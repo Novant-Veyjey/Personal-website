@@ -47,6 +47,9 @@
     if (event.data === 'holo-card:back') closeCard();
   });
 
+  /* 暴露给卡片页直接调用：返回选择卡片 = 关闭浮层（即 × 的功能） */
+  window.holoOverlayClose = closeCard;
+
   /* 拦截首页全息卡片的跳转：整页跳走会让音频停止，改成浮层内打开 */
   document.addEventListener('click', function (event) {
     var link = event.target.closest('a.holo-card');
