@@ -748,7 +748,7 @@
   <div class="holo-overlay" id="holo-overlay" aria-hidden="true" hidden>
     <div class="holo-overlay__scrim" data-holo-close></div>
     <div class="holo-overlay__stage" role="dialog" aria-modal="true" aria-label="全息卡片预览">
-      <button class="holo-overlay__close" type="button" data-holo-close aria-label="关闭卡片">×</button>
+      <!-- 关闭入口：卡片页内的「← 返回选择卡片」（postMessage 通知收起浮层）；点遮罩或按 Esc 也可关闭 -->
       <iframe class="holo-overlay__frame" id="holo-overlay-frame" title="全息卡片预览" allow="fullscreen; autoplay"></iframe>
     </div>
   </div>
