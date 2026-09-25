@@ -6,6 +6,9 @@ node_modules/
 .netlify/
 netlify/.data/
 serve.log
+server.log
+server.err
+dist/
 .codebuddy/
 
 # 设计源文件（不参与部署；web/assets 里已有网页用的副本）
