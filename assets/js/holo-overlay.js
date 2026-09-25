@@ -41,9 +41,10 @@
     if (event.key === 'Escape' && !overlay.hidden) closeCard();
   });
 
-  /* 卡片详情页点「← 返回选择卡片」：等价于点 ×，直接收起浮层 */
+  /* 卡片详情页点「← 返回选择卡片」：等价于点 ×，直接收起浮层
+     同域消息可信，不做 event.source 严格比对（iframe 导航时序下常比对失败） */
   window.addEventListener('message', function (event) {
-    if (event.source === frame.contentWindow && event.data === 'holo-card:back') closeCard();
+    if (event.data === 'holo-card:back') closeCard();
   });
 
   /* 拦截首页全息卡片的跳转：整页跳走会让音频停止，改成浮层内打开 */

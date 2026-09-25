@@ -51,7 +51,7 @@
     </header>
     <main>
       <section class="gallery" aria-label="卡片展台">
-        <a class="card-back" href="../../../../main.html#holo-vault" aria-label="返回选择卡片" onclick="(function(){var sent=false;try{if(window.parent&amp;&amp;window.parent!==window){window.parent.postMessage('holo-card:back','*');sent=true;setTimeout(function(){location.href='../../../../main.html#holo-vault';},500);}}catch(e){}if(!sent){location.href='../../../../main.html#holo-vault';}return false;}})()">← 返回选择卡片</a>
+        <a class="card-back" href="../../../../main.html#holo-vault" aria-label="返回选择卡片" onclick="(function(){var p=window.parent;if(p&amp;&amp;p!==window){try{p.postMessage('holo-card:back','*');}catch(e){}setTimeout(function(){var ov=null;try{ov=p.document.getElementById('holo-overlay');}catch(e){}if(ov&amp;&amp;!ov.hidden){try{p.location.href='/main.html#holo-vault';}catch(e){}}},400);return false;}location.href='../../../../main.html#holo-vault';return false;}})()">← 返回选择卡片</a>
         <div
           class="stage"
           id="stage"
